@@ -1,2 +1,1 @@
-# Breaker-Robot-Template
-A template for official robot code.
+# Infinite Recharge 2020
