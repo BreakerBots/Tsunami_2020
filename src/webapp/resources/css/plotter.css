@@ -1,0 +1,20 @@
+/* Plotter.css */
+
+#potterTabWrapper {
+	display: flex;
+	flex-wrap: wrap;
+}
+
+#plotterWindow {
+	border: 10px solid #b90013;
+	border-radius: 10px;
+	width: calc(100vw - 114px) !important;
+	height: calc(100vh - 114px) !important;
+	margin: 10px;
+}
+
+#plotterInputWrapper {
+	padding: 10px;
+	max-width: 50px;
+	min-width: 50px;
+}
