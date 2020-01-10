@@ -1,15 +1,17 @@
 package frc.team5104.util.setup;
 
+import edu.wpi.first.wpilibj.Timer;
+
 public class RobotState {
 	
 	//State Machine
 	public static enum RobotMode {
-		Disabled, Teleop, Test
+		DISABLED, TELEOP, AUTONOMOUS, TEST
 	}; 
-	protected RobotMode currentMode = RobotMode.Disabled;
-	protected RobotMode lastMode = RobotMode.Disabled;
+	protected RobotMode currentMode = RobotMode.DISABLED;
+	protected RobotMode lastMode = RobotMode.DISABLED;
+	protected Timer timer = new Timer();
 	protected double deltaTime = 0;
-	protected boolean isSandstorm = false;
 	
 	//Access
 	protected static RobotState instance;
@@ -20,9 +22,8 @@ public class RobotState {
 	}
 	
 	//External Functions
-	public static boolean isSandstorm() { return getInstance().isSandstorm; }
-	public static boolean isEnabled() { return getInstance().currentMode != RobotMode.Disabled; }
+	public static boolean isEnabled() { return getInstance().currentMode != RobotMode.DISABLED; }
 	public static RobotMode getMode() { return getInstance().currentMode; }
-	public static void setMode(RobotMode mode) { getInstance().currentMode = mode; }
 	public static double getDeltaTime() { return getInstance().deltaTime; }
+	public static double getTimeSinceEnabled() { return getInstance().timer.get(); }
 }

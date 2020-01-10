@@ -1,8 +1,6 @@
 /* BreakerBots Robotics Team (FRC 5104) 2020 */
 package frc.team5104.auto;
 
-import frc.team5104.auto.util.AutoPath;
-
 /** Handles the Execution of Actions inside the assigned Path */
 public class AutoPathScheduler {
 	

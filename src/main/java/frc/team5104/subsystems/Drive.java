@@ -8,11 +8,12 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 import frc.team5104.Constants;
 import frc.team5104.util.DriveSignal;
-import frc.team5104.util.Units;
+import frc.team5104.util.Encoder;
 import frc.team5104.util.managers.Subsystem;
 
 public class Drive extends Subsystem {
 	private static TalonSRX talonL1, talonL2, talonR1, talonR2;
+	private static Encoder leftEncoder, rightEncoder;
 	private static PigeonIMU gyro;
 	
 	//Update
@@ -31,8 +32,8 @@ public class Drive extends Subsystem {
 			}
 			case FEET_PER_SECOND: {
 				setMotors(
-						Units.feetPerSecondToTalonVel(currentDriveSignal.leftSpeed), 
-						Units.feetPerSecondToTalonVel(currentDriveSignal.rightSpeed), 
+						Encoder.feetPerSecondToTalonVel(currentDriveSignal.leftSpeed), 
+						Encoder.feetPerSecondToTalonVel(currentDriveSignal.rightSpeed), 
 						ControlMode.Velocity,
 						currentDriveSignal.leftFeedForward,
 						currentDriveSignal.rightFeedForward
@@ -73,21 +74,21 @@ public class Drive extends Subsystem {
 	public static double getRightGearboxVoltage() { return talonR1.getBusVoltage(); }
 	public static double getLeftGearboxOutputVoltage() { return talonL1.getMotorOutputVoltage(); }
 	public static double getRightGearboxOutputVoltage() { return talonR1.getMotorOutputVoltage(); }
-	public static void resetGyro() { gyro.addYaw(getGyro()); }
+	public static void resetGyro() { 
+		gyro.setFusedHeading(0);
+	}
 	public static double getGyro() {
-		double[] ypr = new double[3];
-		gyro.getYawPitchRoll(ypr); 
-		return -ypr[0];
+		return gyro.getFusedHeading();
 	}
 	public static void resetEncoders() {
-		talonL1.setSelectedSensorPosition(0);
-		talonR1.setSelectedSensorPosition(0);
+		leftEncoder.reset();
+		rightEncoder.reset();
 	}
-	public static int getLeftEncoderPositionRaw() {
-		return talonL1.getSelectedSensorPosition();
+	public static Encoder getLeftEncoder() {
+		return leftEncoder;
 	}
-	public static int getRightEncoderPositionRaw() {
-		return talonR1.getSelectedSensorPosition();
+	public static Encoder getRightEncoder() {
+		return rightEncoder;
 	}
 	
 	//Config
@@ -97,13 +98,13 @@ public class Drive extends Subsystem {
 		talonR1 = new TalonSRX(13);
 		talonR2 = new TalonSRX(14);
 		gyro = new PigeonIMU(talonR2);
+		leftEncoder = new Encoder(talonL1);
+		rightEncoder = new Encoder(talonR1);
 		
 		talonL1.configFactoryDefault();
 		talonL2.configFactoryDefault();
 		talonL1.config_kP(0, Constants.DRIVE_KP, 0);
-		talonL1.config_kI(0, Constants.DRIVE_KI, 0);
 		talonL1.config_kD(0, Constants.DRIVE_KD, 0);
-		talonL1.config_kF(0, 0, 0);
 		talonL2.set(ControlMode.Follower, talonL1.getDeviceID());
 		talonL1.setInverted(true);
 		talonL2.setInverted(true);
@@ -111,19 +112,16 @@ public class Drive extends Subsystem {
 		talonR1.configFactoryDefault();
 		talonR2.configFactoryDefault();
 		talonR1.config_kP(0, Constants.DRIVE_KP, 0);
-		talonR1.config_kI(0, Constants.DRIVE_KI, 0);
 		talonR1.config_kD(0, Constants.DRIVE_KD, 0);
-		talonR1.config_kF(0, 0, 0);
 		talonR2.set(ControlMode.Follower, talonR1.getDeviceID());
 		
 		stopMotors();
 		resetGyro();
 		resetEncoders();
 	}
-	public void enabled() {
-		currentDriveSignal = new DriveSignal();
-	}
-	public void disabled() {
+	
+	//Reset
+	public void reset() {
 		currentDriveSignal = new DriveSignal();
 	}
 }

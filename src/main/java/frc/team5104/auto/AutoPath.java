@@ -1,5 +1,5 @@
 /* BreakerBots Robotics Team (FRC 5104) 2020 */
-package frc.team5104.auto.util;
+package frc.team5104.auto;
 
 /**
  * A Collection of BreakerCommands (The Entire Path)

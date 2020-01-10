@@ -23,12 +23,12 @@ import frc.team5104.util.console.c;
 /**
  * Hosts the BreakerBoard (WebApp) through the RoboRIO.
  * See Tuner.java for the tuner functionality.
- * @version 2.5
+ * @version 2.6
  */
-@SuppressWarnings("restriction")
 public class Webapp {
 	private static final int port = 5804; //has to be between 5800-5810 (5800,5801 for limelight)
-	private static final double version = 2.5;
+	private static final double version = 2.6;
+	private static final boolean isLocalHost = true;
 	private static HttpServer server;
 
 	@SuppressWarnings("resource")
@@ -40,7 +40,10 @@ public class Webapp {
 				if (!scan.hasNextLine() || !scan.nextLine().equals("BreakerBots WebApp Version " + version))
 					throw new Exception();
 				scan.close();
-			} catch (Exception e) { throw new Exception("Invalid Version... Redeploy WebApp"); }
+			} catch (Exception e) { 
+				console.log(e);
+				throw new Exception("Invalid Version... Redeploy WebApp"); 
+			}
 			
 			//Setup Server
 			server = HttpServer.create(new InetSocketAddress(port), 0);
@@ -69,7 +72,9 @@ public class Webapp {
 	}
 	
 	public static String getBaseUrl() {
-		return System.getProperty("user.dir") + "\\src\\webapp\\";
+		if (isLocalHost)
+			return System.getProperty("user.dir") + "\\src\\webapp\\";
+		else return "/home/lvuser/webapp/";
 	}
 	
 	private static class RequestHandler implements HttpHandler {
@@ -178,8 +183,7 @@ public class Webapp {
 			//Get
 			if (requestType.equals("get")) {
 				//Send outputs
-				String response = Plotter.getBufferDataAsJSON();
-				Plotter.clearBuffer();
+				String response = Plotter.readBuffer();
 				
 				t.sendResponseHeaders(200, response.length());
 	            OutputStream os = t.getResponseBody();

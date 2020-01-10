@@ -11,8 +11,6 @@ public abstract class Subsystem {
 	/** Called when robots boots up; initialize devices here */
 	public abstract void init();
 	
-	/** Called whenever the robot becomes enabled */
-	public abstract void enabled();
-	/** Called whenever the robot becomes disabled; stop all devices here */
-	public abstract void disabled();
+	/** Called whenever the robot becomes enabled or disabled. Stop motors here. */
+	public abstract void reset();
 }

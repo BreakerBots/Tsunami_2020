@@ -1,7 +1,7 @@
 /* BreakerBots Robotics Team (FRC 5104) 2020 */
 package frc.team5104.auto.actions;
 
-import frc.team5104.auto.util.AutoPathAction;
+import frc.team5104.auto.AutoPathAction;
 import frc.team5104.util.console;
 import frc.team5104.util.console.c;
 

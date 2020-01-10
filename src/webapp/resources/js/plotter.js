@@ -3,40 +3,91 @@
 //Setup
 var plotterDesmos = Desmos.GraphingCalculator(document.querySelector('#plotterWindow'), {
 	keypad: false,
-	expressions: false,
-	settingsMenu: false
+	expressions: true,
+	settingsMenu: false,
+	expressionsTopbar: false,
+	trace: true,
+	expressionsCollapsed: true
 });
+var plotterColorWrapper = document.querySelector("#plotterColorWrapper");
 
 //Visuals
 function plotterReset() {
-	for (var i = 0; i < Object.keys(Desmos.Colors).length; i++) {
-		plotterDesmos.setExpression({
-			id: "table" + Object.keys(Desmos.Colors)[i],
-			type: 'table',
-			columns: [
-				{
-					latex: 'x',
-					values: [],
-					lines: true,
-					points: false,
-					color: Object.values(Desmos.Colors)[i]
-				},
-				{
-					latex: 'y',
-					values: [],
-					lines: true,
-					points: false,
-					color: Object.values(Desmos.Colors)[i]
-				}
-			]
-		});
+	plotterDesmos.setBlank();
+	plotterColorWrapper.innerHTML = "";
+}
+
+function plotterAddPointToTable(x, y, color) {
+	var exp;
+	plotterDesmos.getExpressions().forEach(function (e) {
+		if (e.id === ("table" + color.replace(/#/g, "-")))
+			exp = e;
+	});
+
+	if (!exp) {
+		plotterAddTable(x, y, color);
 	}
-} plotterReset();
-function plotterAddToTable(x, y, color) {
-	var exp = plotterDesmos.getExpressions()[Object.keys(Desmos.Colors).indexOf(color)];
-	exp.columns[0].values.push(x);
-	exp.columns[1].values.push(y);
-	plotterDesmos.setExpression(exp);
+	else {
+		exp.columns[0].values.push(x);
+		exp.columns[1].values.push(y);
+		plotterDesmos.setExpression(exp);
+	}
+}
+
+function plotterAddTable(x, y, color) {
+	plotterDesmos.setExpression({
+		id: "table" + color.replace(/#/g, "-"),
+		type: 'table',
+		columns: [
+			{
+				latex: 'x',
+				values: [x],
+				lines: true,
+				points: false,
+				color: color
+			},
+			{
+				latex: 'y',
+				values: [y],
+				lines: true,
+				points: false,
+				color: color,
+				hidden: false
+			}
+		]
+	});
+	plotterColorWrapper.innerHTML += `
+	<div class="plotter-color mdc-elevation--z2">
+		<i onclick="plotterHideShowColor('COLOR', this)" oncontextmenu="plotterRemoveTable('COLOR', this)" style="background-color: COLOR" class="plotter-color-icon mdc-icon-toggle" data-mdc-auto-init="MDCIconToggle"></i>
+	</div>
+	`.replace(/COLOR/g, color);
+}
+
+function plotterRemoveTable(color, element) {
+	plotterDesmos.getExpressions().forEach(function (e) {
+		if (e.id === ("table" + color.replace(/#/g, "-")))
+			plotterDesmos.removeExpression(e);
+	});
+	element.parentNode.remove();
+}
+
+//Hide/Show Color
+function plotterHideShowColor(color, element) {
+	var exp;
+	plotterDesmos.getExpressions().forEach(function (e) {
+		if (e.id === ("table" + color.replace(/#/g, "-")))
+			exp = e;
+	});
+	if (exp) {
+		exp.columns[1].hidden = !exp.columns[1].hidden;
+		plotterDesmos.setExpression(exp);
+		if (exp.columns[1].hidden) {
+			element.style.backgroundColor = "";
+		}
+		else {
+			element.style.backgroundColor = color;
+		}
+	}
 }
 
 //Pause/Play
@@ -116,7 +167,7 @@ function plotterUpdate() {
 				data.forEach(function (point) {
 					if (point.color == "RESET")
 						plotterReset();
-					else plotterAddToTable(point.x, point.y, point.color);
+					else plotterAddPointToTable(point.x, point.y, point.color);
 				});
 			}
 		};

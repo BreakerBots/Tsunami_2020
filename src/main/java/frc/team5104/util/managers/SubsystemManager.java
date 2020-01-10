@@ -27,20 +27,11 @@ public class SubsystemManager {
 		console.log(c.MAIN, t.INFO, message.substring(0, message.length()-2));
 	}
 	
-	/** Call when the robot becomes enabled */
-	public static void enabled() {
+	/** Call when the robot becomes enabled or disabled */
+	public static void reset() {
 		for (Subsystem subsystem : targetSubsystems) {
 			try {
-				subsystem.enabled();
-			} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
-		}
-	}
-	
-	/** Call when the robot becomes disabled */
-	public static void disabled() {
-		for (Subsystem subsystem : targetSubsystems) {
-			try {
-				subsystem.disabled();
+				subsystem.reset();
 			} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
 		}
 	}

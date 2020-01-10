@@ -14,7 +14,7 @@ import frc.team5104.util.CrashLogger.Crash;
  * Either add the annotations @tunerOutput (graphing) and @tunerInput (inputs)
  * to methods and fields and plug in the class with Tuner.init(CLASS) or 
  * use the new methods "getTunerInput()" and "setTunerOutput()"
- * @version 2.5
+ * For WebApp version 2.6
  */
 public class Tuner {
 	private static ArrayList<TunerRunnable> runnables = new ArrayList<TunerRunnable>();

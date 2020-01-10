@@ -1,13 +1,14 @@
 /* BreakerBots Robotics Team (FRC 5104) 2020 */
 package frc.team5104.util;
 
-import frc.team5104.Constants;
-
 /** Some basic unit conversions */
 public class Units {
 	//Talons
 	public static double encoderTicksToDegrees(int ticks) {
 		return ticks / 4096.0 * 360.0;
+	}
+	public static double degreesToEncoderTicks(int degrees) {
+		return degrees / 360.0 * 4090.0;
 	}
 	
 	// Feet and Inches
@@ -21,12 +22,11 @@ public class Units {
 	
 	// Meters and Feet
 	public static double metersToFeet(double meters) {
-		return meters * 3.2808;
+		return meters * 3.28084;
 	}
 	public static double feetToMeters(double feet) {
 		return feet / 3.2808;
 	}
-	
 	
 	// Radians and Degrees
 	public static double degreesToRadians(double deg) {
@@ -34,35 +34,5 @@ public class Units {
 	}
 	public static double radiansToDegress(double radians) {
 		return Math.toDegrees(radians);
-	}
-	
-	//Drive
-	public static double ticksToWheelRevolutions(double ticks) {
-		return ticks / Constants.DRIVE_TICKS_PER_REVOLUTION;
-	}
-	public static double wheelRevolutionsToTicks(double revs) {
-		return revs * Constants.DRIVE_TICKS_PER_REVOLUTION;
-	}
-	public static double feetToWheelRevolutions(double feet) {
-		return feet / (Constants.DRIVE_WHEEL_DIAMETER * Math.PI);
-	}
-	public static double wheelRevolutionsToFeet(double revs) {
-		return revs * (Constants.DRIVE_WHEEL_DIAMETER * Math.PI);
-	}
-	public static double ticksToFeet(double ticks) {
-		double r = ticksToWheelRevolutions(ticks);
-			   r = wheelRevolutionsToFeet(r);
-		return r;
-	}
-	public static double feetToTicks(double feet) {
-		double r = feetToWheelRevolutions(feet);
-			   r = wheelRevolutionsToTicks(r);
-		return r;
-	}
-	public static double talonVelToFeetPerSecond(double talonVel) {
-		return ticksToFeet(talonVel) * 10.0;
-	}
-	public static double feetPerSecondToTalonVel(double feetPerSecond) {
-		return feetToTicks(feetPerSecond) / 10.0;
 	}
 }

@@ -22,18 +22,23 @@ public class CrashLogger {
 		
 		public boolean equals(Crash otherCrash) {
 			try {
-				if (otherCrash == null) return false;
-				return this.threadName.equals(otherCrash.threadName) && 
-					   this.exception.getMessage().equals(otherCrash.exception.getMessage());
-			} catch (Exception e) { /*expected to fail*/ return false; }
+				if (otherCrash == null) 
+					return false;
+				
+				return (
+						this.threadName.equals(otherCrash.threadName) && 
+						this.exception.getMessage().equals(otherCrash.exception.getMessage())
+					);
+			} catch (Exception e) { return false; }
 		}
 	}
 	
 	private static Crash lastCrash;
+	private static long timeSinceLastCrash;
 	
 	//Main Handle Function
 	public static void logCrash(Crash crash) {
-		if (!crash.equals(lastCrash)) {
+		if (!crash.equals(lastCrash) && System.currentTimeMillis() > timeSinceLastCrash + 5000) {
 			System.out.println('\n');
 			console.error(c.MAIN, 
 					"Caught fatal error at " + crash.threadName + " thread!", 
@@ -41,6 +46,7 @@ public class CrashLogger {
 					"Robots should work, but yours is bad!" + '\n'
 				);
 			lastCrash = crash;
+			timeSinceLastCrash = System.currentTimeMillis();
 		}
 	}
 	

@@ -17,7 +17,7 @@ import frc.team5104.util.setup.RobotState.RobotMode;
 
 public class RobotController extends RobotBase {
 	//Modes
-	private RobotMode lastMode = RobotMode.Disabled;
+	private RobotMode lastMode = RobotMode.DISABLED;
 	private BreakerRobot robot;
 	private RobotState state = RobotState.getInstance();
 	private final double loopPeriod = 20;
@@ -29,7 +29,9 @@ public class RobotController extends RobotBase {
 		console.sets.create("RobotInit");
 		console.log(c.MAIN, t.INFO, "Initializing " + Constants.ROBOT_NAME + " Code...");
 		
-		robot = new Robot();
+		try {
+			robot = new Robot();
+		} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
 		
 		HAL.observeUserProgramStarting();
 		
@@ -59,23 +61,23 @@ public class RobotController extends RobotBase {
 	//Main Loop
 	private void loop() {
 		//Default to Disabled
-		if (isDisabled()) state.currentMode = RobotMode.Disabled;
+		if (isDisabled()) state.currentMode = RobotMode.DISABLED;
 		
 		//Enabled - Teleop/Test
 		else if (isEnabled()) {
-			//Forced Through Driver Station
-			if (isTest()) state.currentMode = RobotMode.Test;
+			//Test
+			if (isTest()) state.currentMode = RobotMode.TEST;
+			
+			//Auto
+			if (isAutonomous()) state.currentMode = RobotMode.AUTONOMOUS;
 			
 			//Default to Teleop
-			else state.currentMode = RobotMode.Teleop;
+			else state.currentMode = RobotMode.TELEOP;
 		}
-		
-		//Sandstorm
-		state.isSandstorm = isAutonomous();
 		
 		//Handle Modes
 		switch(state.currentMode) {
-			case Teleop: {
+			case TELEOP: {
 				try {
 					//Teleop
 					if (lastMode != state.currentMode) {
@@ -90,7 +92,22 @@ public class RobotController extends RobotBase {
 				}
 				break;
 			}
-			case Test: {
+			case AUTONOMOUS: {
+				try {
+					//Auto
+					if (lastMode != state.currentMode) {
+						console.log(c.MAIN, t.INFO, "Auto Enabled");
+						robot.autoStart();
+					}
+					
+					robot.autoLoop();
+					HAL.observeUserProgramTeleop();
+				} catch (Exception e) {
+					CrashLogger.logCrash(new Crash("main", e));
+				}
+				break;
+			}
+			case TEST: {
 				try {
 					//Test
 					if (lastMode != state.currentMode) {
@@ -105,13 +122,26 @@ public class RobotController extends RobotBase {
 				}
 				break;
 			}
-			case Disabled: {
+			case DISABLED: {
 				try {
 					//Disabled
 					if (lastMode != state.currentMode)
 						switch (lastMode) {
-							case Teleop: { robot.teleopStop(); console.log(c.MAIN, t.INFO, "Teleop Disabled"); break; }
-							case Test: 	 { robot.testStop(); console.log(c.MAIN, t.INFO, "Test Disabled"); break; }
+							case TELEOP: { 
+								robot.teleopStop(); 
+								console.log(c.MAIN, t.INFO, "Teleop Disabled"); 
+								break;
+							}
+							case AUTONOMOUS: {
+								robot.autoStop(); 
+								console.log(c.MAIN, t.INFO, "Autonomous Disabled"); 
+								break;
+							}
+							case TEST: { 
+								robot.testStop(); 
+								console.log(c.MAIN, t.INFO, "Test Disabled"); 
+								break;
+							}
 							default: break;
 						}
 					
@@ -127,11 +157,13 @@ public class RobotController extends RobotBase {
 		//Handle Main Disabling
 		try {
 			if (lastMode != state.currentMode) {
-				if (state.currentMode == RobotMode.Disabled) {
+				if (state.currentMode == RobotMode.DISABLED) {
 					console.logFile.end();
 					robot.mainDisabled();
+					state.timer.reset();
+					state.timer.start();
 				}
-				else if (lastMode == RobotMode.Disabled) {
+				else if (lastMode == RobotMode.DISABLED) {
 					console.logFile.end();
 					console.logFile.start();
 					robot.mainEnabled();
@@ -162,6 +194,9 @@ public class RobotController extends RobotBase {
 		public void mainLoop() { }
 		public void mainEnabled() { }
 		public void mainDisabled() { }
+		public void autoLoop() { }
+		public void autoStart() { }
+		public void autoStop() { }
 		public void teleopLoop() { }
 		public void teleopStart() { }
 		public void teleopStop() { }

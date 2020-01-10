@@ -37,7 +37,12 @@ function initChartLengthMSTextField() {
 } initChartLengthMSTextField();
 
 //Tuner Outputs (Graph)
-const tunerOutputColors = ['red', 'gold', 'green', 'blue', 'purple', 'orange', 'yellow', 'black', 'grey', 'pink'];
+const tunerOutputColors = [
+	'red', 'gold', 'green', 'blue', 'purple', 'orange', 'yellow', 'black', 'grey', 'pink',
+	'AntiqueWhite', 'Aqua', 'Aquamarine', 'Chartreuse', 'Brown', 'CadetBlue', 'Chocolate',
+	'Coral', 'CornflowerBlue', 'Crimson', 'Cyan', 'DarkBlue', 'DarkGreen', 'DarkKhaki', 'DarkOrchid',
+	'DeepPink', 'IndianRed', 'HotPink', 'YellowGreen'
+];
 function addTunerOutput(name, value) {
 	var nd = {
 		label: name,
@@ -95,7 +100,7 @@ function updateTunerOutputs(outputs) {
 	chart.update();
 }
 const tunerValueOutputElementUI = `
-<div id="tunerOutputValueNAME" disabled class="tuner-value-output-element mdc-text-field--disabled mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
+<div id="tunerOutputValueID" disabled class="tuner-value-output-element mdc-text-field--disabled mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
 	<input class="mdc-text-field__input">
 	<div class="mdc-notched-outline">
 		<div class="mdc-notched-outline__leading"></div>
@@ -108,7 +113,7 @@ const tunerValueOutputElementUI = `
 `;
 function addTunerValueOutputElement(name, value) {
 	var element = document.createElement("div");
-	element.innerHTML = tunerValueOutputElementUI.replace(/NAME/g, name);
+	element.innerHTML = tunerValueOutputElementUI.replace(/NAME/g, name).replace(/ID/g, name.hashCode());
 	element.className = "tuner-value-output-element-parent";
 	document.querySelector("#tunerOutputValues").appendChild(element);
 	mdc.autoInit(element);
@@ -120,7 +125,7 @@ function updateTunerValueOutputs(outputs) {
 	});
 
 	for (var i = 0; i < Object.keys(outputs).length; i++) {
-		var el = document.querySelector("#tunerOutputValue" + Object.keys(outputs)[i]);
+		var el = document.querySelector("#tunerOutputValue" + Object.keys(outputs)[i].hashCode());
 		if (el != null) {
 			el.MDCTextField.value = Object.values(outputs)[i];
 			el.parentNode.classList.remove("old");
@@ -137,9 +142,10 @@ function updateTunerValueOutputs(outputs) {
 	});
 }
 
+
 //Tuner Inputs
 const tunerInputElementUI = `
-<div id="tunerInputElementNAME" class="tuner-input-element mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
+<div id="tunerInputElementID" class="tuner-input-element mdc-text-field mdc-text-field--outlined" data-mdc-auto-init="MDCTextField">
 	<input class="mdc-text-field__input">
 	<div class="mdc-notched-outline">
 		<div class="mdc-notched-outline__leading"></div>
@@ -152,7 +158,7 @@ const tunerInputElementUI = `
 `;
 function addTunerInputElement(name, value) {
 	var element = document.createElement("div");
-	element.innerHTML = tunerInputElementUI.replace(/NAME/g, name);
+	element.innerHTML = tunerInputElementUI.replace(/NAME/g, name).replace(/ID/g, name.hashCode());
 	element.className = "tuner-input-element-parent";
 	document.querySelector("#tuner-container > #inputBox").appendChild(element);
 	mdc.autoInit(element);
@@ -164,7 +170,7 @@ function updateTunerInputs(inputs) {
 	});
 	
 	for (var i = 0; i < Object.keys(inputs).length; i++) {
-		var el = document.querySelector("#tunerInputElement" + Object.keys(inputs)[i]);
+		var el = document.querySelector("#tunerInputElement" + Object.keys(inputs)[i].hashCode());
 		if (el != null) {
 			if (Object.values(inputs)[i] != el.MDCTextField.value) {
 				tunerSet(Object.keys(inputs)[i], el.MDCTextField.value);

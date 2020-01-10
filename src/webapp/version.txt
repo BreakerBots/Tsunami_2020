@@ -1,1 +1,1 @@
-BreakerBots WebApp Version 2.5
+BreakerBots WebApp Version 2.6

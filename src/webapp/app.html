@@ -13,6 +13,9 @@
 	<link rel="stylesheet" href="resources/css/main.css" />
 	<link rel="stylesheet" href="resources/css/tuner.css" />
 	<link rel="stylesheet" href="resources/css/plotter.css" />
+
+	<style>
+	</style>
 </head>
 <body>
 	<!--Header-->
@@ -22,7 +25,7 @@
 				<img src="resources/images/icon-bg.png" style="width: 50px" />
 				<span class="mdc-top-app-bar__title">BreakerBoard</span>
 				<img id="robotConnectedIcon" src="resources/images/no_connection.png" style="margin: 0 10px 0 15px; width: 30px; filter: invert(0.8);" />
-				<span style="font-family: sans-serif" id="robotName"></span>
+				<span id="robotName"></span>
 			</section>
 			<section class="mdc-top-app-bar__section mdc-top-app-bar__section--align-end">
 				<div class="mdc-tab-bar" role="tablist" data-mdc-auto-init="MDCTabBar">
@@ -105,29 +108,30 @@
 					<!--Desmos-->
 				</div>
 				<div id="plotterInputWrapper">
-					<div>
-						<i onclick="handlePlotterPausePlay()" class="mdc-icon-toggle" data-mdc-auto-init="MDCIconToggle">
-							<img id="plotter-pause-play" src="resources/images/pause.png" style="width: 100%" />
-						</i>
-						<i onclick="handleSavePlotter()" class="mdc-icon-toggle" data-mdc-auto-init="MDCIconToggle">
-							<img src="resources/images/save.png" style="width: 100%" />
-						</i>
-						<i onclick="plotterReset()" class="mdc-icon-toggle" data-mdc-auto-init="MDCIconToggle">
-							<img src="resources/images/refresh.png" style="width: 100%" />
-						</i>
+					<i onclick="handlePlotterPausePlay()" class="mdc-icon-toggle" data-mdc-auto-init="MDCIconToggle">
+						<img id="plotter-pause-play" src="resources/images/pause.png" style="width: 100%" />
+					</i>
+					<i onclick="handleSavePlotter()" class="mdc-icon-toggle" data-mdc-auto-init="MDCIconToggle">
+						<img src="resources/images/save.png" style="width: 100%" />
+					</i>
+					<i onclick="plotterReset()" class="mdc-icon-toggle" data-mdc-auto-init="MDCIconToggle">
+						<img src="resources/images/refresh.png" style="width: 100%" />
+					</i>
+					<div id="plotterColorWrapper">
+						
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 
-	<script src="resources/other/chart.js"></script>
 
 	<!--Javascript-->
+	<script src="resources/other/desmos.js"></script>
+	<script src="resources/other/chart.js"></script>
 	<script src="resources/js/main.js"></script>
 	<script src="resources/js/tab.js"></script>
 	<script src="resources/js/tuner.js"></script>
-	<script src="resources/other/desmos.js"></script>
 	<script src="resources/js/plotter.js"></script>
 </body>
 </html>
