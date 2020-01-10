@@ -27,7 +27,13 @@ public class console {
 		VISION,
 		
 		DRIVE,
-		SUPERSTRUCTURE
+		SUPERSTRUCTURE,
+		INTAKE,
+		HOPPER,
+		SHOOTER,
+		SHOOTER_HOOD,
+		TURRET,
+		CLIMBER
 		//slap ur subsystems here
 	};
 	/** Types of Logging */
