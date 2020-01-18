@@ -29,9 +29,9 @@ public class RobotController extends RobotBase {
 		console.sets.create("RobotInit");
 		console.log(c.MAIN, t.INFO, "Initializing " + Constants.ROBOT_NAME + " Code...");
 		
-		try {
+		//try {
 			robot = new Robot();
-		} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
+		//} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
 		
 		HAL.observeUserProgramStarting();
 		
