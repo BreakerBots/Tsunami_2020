@@ -16,6 +16,7 @@ public class Controls {
 	public static final Axis DRIVE_TURN = driver.getAxis(Axis.LEFT_JOYSTICK_X, new Deadband(0.08), new BezierCurve(0.15, 0.7, 0.8, 0.225));
 	public static final Axis DRIVE_FORWARD = driver.getAxis(Axis.RIGHT_TRIGGER, new Deadband(0.01));
 	public static final Axis DRIVE_REVERSE = driver.getAxis(Axis.LEFT_TRIGGER, new Deadband(0.01));
+	public static final Button DRIVE_SHIFT = driver.getButton(Button.LEFT_JOYSTICK_PRESS);
 	public static final Button TOGGLE_VISION = driver.getButton(Button.A);
 	
 	//Compressor
