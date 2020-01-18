@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.team5104.util.managers.Subsystem;
 
-public class Intake extends Subsystem {
+public class Paneler extends Subsystem {
 	private static TalonSRX talon;
 	private static DoubleSolenoid piston;
 	
@@ -17,14 +17,22 @@ public class Intake extends Subsystem {
 	}
 
 	//Internal Functions
-	public void setPiston(boolean down) {
-		piston.set(down ? Value.kForward : Value.kReverse);
+	private void setPiston(boolean up) {
+		piston.set(up ? Value.kForward : Value.kReverse);
 	}
-	public void setPercentOutput(double percent) {
+	private void setMotionMagic(double degrees) {
+		talon.set(ControlMode.MotionMagic, degrees);
+	}
+	private void setPercentOutput(double percent) {
 		talon.set(ControlMode.PercentOutput, percent);
 	}
-	public void stop() {
-		talon.set(ControlMode.Disabled, 0);
+	
+	//External Functions
+	public static boolean atTargetPosition() {
+		return false;
+	}
+	public static void readColor() {
+		
 	}
 	
 	//Config
@@ -34,6 +42,6 @@ public class Intake extends Subsystem {
 
 	//Reset
 	public void reset() {
-		stop();
+		
 	}
 }
