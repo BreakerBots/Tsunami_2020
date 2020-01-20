@@ -1,6 +1,9 @@
 /*BreakerBots Robotics Team 2019*/
 package frc.team5104;
 
+import frc.team5104.subsystems.Paneler;
+import frc.team5104.util.console;
+
 /** 
  * The Superstructure is a massive state machine that handles the Intake, Wrist, and Elevator
  * The Superstructure only controls the states... its up the subsystems to figure out what to do
@@ -33,19 +36,33 @@ public class Superstructure {
 	protected static void update() {
 		
 		//Panel
-		if (Controls.PANEL_DEPLOY.get() && !(getMode() == Mode.PANEL_DEPLOYING))
+//		console.log(getMode());
+		if (Controls.PANEL_DEPLOY.get() && getMode() != Mode.PANEL_DEPLOYING) {
 			setMode(Mode.PANEL_DEPLOYING);
-		if (Controls.PANEL_DEPLOY.get() && getMode() == Mode.PANEL_DEPLOYING)
+			console.log("Deploying Paneller");
+		}
+		else if (Controls.PANEL_DEPLOY.get() && getMode() == Mode.PANEL_DEPLOYING) {
 			setMode(Mode.IDLE);
-		if (Controls.PANEL_SPIN.get() && !(getMode() == Mode.PANELING)) 
+			console.log("Idle");
+		}
+		if (Controls.PANEL_SPIN.get() && getMode() == Mode.PANEL_DEPLOYING) {
 			setMode(Mode.PANELING);
-		if (Controls.PANEL_SPIN.get() && getMode() == Mode.PANELING) 
-			setMode(Mode.IDLE);
+			console.log(getPanelState());
+		}
+		else if (Controls.PANEL_SPIN.get() && getMode() == Mode.PANELING) {
+			setMode(Mode.PANEL_DEPLOYING);
+			console.log("Deploying Paneller");
+		}
 		if (Controls.PANEL_TOGGLE.get()) {
 			if (getPanelState() == PanelState.ROTATION)
 				setPanelState(PanelState.POSITION);
 			else
 				setPanelState(PanelState.ROTATION);	
+			console.log(getPanelState());
+		}
+		if (getMode() == Mode.PANELING && Paneler.isFinished()) {
+			setMode(Mode.IDLE);
+			console.log("Idle");
 		}
 		
 		//Make sure flywheel is spinning while in shoot mode
