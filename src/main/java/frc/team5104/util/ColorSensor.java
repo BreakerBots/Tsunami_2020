@@ -1,6 +1,5 @@
 package frc.team5104.util;
 
-import com.revrobotics.ColorMatch;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
@@ -25,8 +24,8 @@ public class ColorSensor {
 	//Getters
 	public CoolColor getColor() {
 		Color detectedColor = m_colorSensor.getColor();
-		System.out.println(detectedColor.red + " " + detectedColor.green + " "
-				+ detectedColor.blue);
+		// System.out.println(detectedColor.red + " " + detectedColor.green + " "
+		//		+ detectedColor.blue);
 		int n = 0;
 		// Red
 		if (detectedColor.red > Red.rMin - 0.02 && detectedColor.red < Red.rMax + 0.02) {

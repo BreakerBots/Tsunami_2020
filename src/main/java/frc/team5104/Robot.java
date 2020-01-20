@@ -6,6 +6,7 @@ import frc.team5104.auto.AutoManager;
 import frc.team5104.auto.Odometry;
 import frc.team5104.auto.paths.ExamplePath;
 import frc.team5104.subsystems.Drive;
+import frc.team5104.subsystems.Paneler;
 import frc.team5104.teleop.CompressorController;
 import frc.team5104.teleop.DriveController;
 import frc.team5104.teleop.SuperstructureController;
@@ -24,18 +25,19 @@ public class Robot extends RobotController.BreakerRobot {
 		
 		//Managers
 		SubsystemManager.useSubsystems(
-			new Drive()
+			new Paneler()
+//			new Drive()
 		);
 		TeleopControllerManager.useTeleopControllers(
-			new DriveController(),
+//			new DriveController(),
 			new SuperstructureController(),
 			new CompressorController()
 		);
 		
 		//Other Initialization
-		Webapp.run();
+//		Webapp.run();
 		Plotter.reset();
-		Odometry.init();
+//		Odometry.init();
 		Limelight.init();
 		CompressorController.stop();
 		AutoManager.setTargetPath(new ExamplePath());
