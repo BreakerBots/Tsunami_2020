@@ -9,14 +9,15 @@ package frc.team5104;
 public class Superstructure {
 	//States and Variables
 	public static enum SystemState { DISABLED, CALIBRATING, MANUAL, AUTOMATIC }
-	public static enum Mode { IDLE, INTAKE, SHOOT, CLIMB, PANEL }
+	public static enum Mode { 
+		IDLE, INTAKE, SHOOTING, CLIMBING, PANELING, PANEL_DEPLOYING }
 	public static enum PanelState { ROTATION, POSITION };
-	public static enum ShooterWheelState { IDLE, SPINNING };
+	public static enum FlywheelState { STOPPED, SPINNING };
 	
 	private static SystemState systemState = SystemState.DISABLED;
 	private static Mode mode = Mode.IDLE;
 	private static PanelState panelState = PanelState.ROTATION;
-	private static ShooterWheelState shooterWheelState = ShooterWheelState.IDLE;
+	private static FlywheelState shooterWheelState = FlywheelState.STOPPED;
 	
 	//External Functions
 	public static SystemState getSystemState() { return systemState; }
@@ -25,8 +26,8 @@ public class Superstructure {
 	public static void setMode(Mode mode) { Superstructure.mode = mode; }
 	public static void setPanelState(PanelState panelState) { Superstructure.panelState = panelState; }
 	public static PanelState getPanelState() { return panelState; }
-	public static void setShooterWheelState(ShooterWheelState shooterWheelState) { Superstructure.shooterWheelState = shooterWheelState; }
-	public static ShooterWheelState getShooterWheelState() { return shooterWheelState; }
+	public static void setFlywheelState(FlywheelState shooterWheelState) { Superstructure.shooterWheelState = shooterWheelState; }
+	public static FlywheelState getFlywheelState() { return shooterWheelState; }
 	
 	//Loop
 	protected static void update() {
@@ -34,8 +35,8 @@ public class Superstructure {
 		
 		
 		//Make sure flywheel is spinning while in shoot mode
-		if (getMode() == Mode.SHOOT) {
-			setShooterWheelState(ShooterWheelState.SPINNING);
+		if (getMode() == Mode.SHOOTING) {
+			setFlywheelState(FlywheelState.SPINNING);
 		}
 	}
 	
