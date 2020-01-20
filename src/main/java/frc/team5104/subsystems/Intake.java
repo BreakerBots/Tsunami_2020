@@ -5,31 +5,42 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.team5104.Ports;
+import frc.team5104.Superstructure;
 import frc.team5104.util.managers.Subsystem;
 
 public class Intake extends Subsystem {
 	private static TalonSRX talon;
-	private static DoubleSolenoid piston;
+	private static DoubleSolenoid piston;	
+	private static final double INTAKE_TALON_SPEED = 0.6;
 	
 	//Loop
 	public void update() {
-		
+		if (Superstructure.getMode() == INTAKE) {
+			setPiston(true);
+			setPercentOutput(INTAKE_TALON_SPEED);
+		}
+		else {
+			stop();
+		}
 	}
 
 	//Internal Functions
-	public void setPiston(boolean down) {
-		piston.set(down ? Value.kForward : Value.kReverse);
+	public void setPiston(boolean position) {
+		piston.set(position ? Value.kForward : Value.kReverse);
 	}
 	public void setPercentOutput(double percent) {
 		talon.set(ControlMode.PercentOutput, percent);
 	}
 	public void stop() {
-		talon.set(ControlMode.Disabled, 0);
+		setPiston(false);
+		talon.set(ControlMode.Disabled, 0.0);
 	}
 	
 	//Config
 	public void init() {
-		
+		talon = new TalonSRX(Ports.INTAKE_TALON);
+		piston = new DoubleSolenoid(Ports.INTAKE_DEPLOYER_FORWARD, Ports.INTAKE_DEPLOYER_REVERSE);
 	}
 
 	//Reset
