@@ -32,7 +32,21 @@ public class Superstructure {
 	//Loop
 	protected static void update() {
 		
-		
+		//Panel
+		if (Controls.PANEL_DEPLOY.get() && !(getMode() == Mode.PANEL_DEPLOYING))
+			setMode(Mode.PANEL_DEPLOYING);
+		if (Controls.PANEL_DEPLOY.get() && getMode() == Mode.PANEL_DEPLOYING)
+			setMode(Mode.IDLE);
+		if (Controls.PANEL_SPIN.get() && !(getMode() == Mode.PANELING)) 
+			setMode(Mode.PANELING);
+		if (Controls.PANEL_SPIN.get() && getMode() == Mode.PANELING) 
+			setMode(Mode.IDLE);
+		if (Controls.PANEL_TOGGLE.get()) {
+			if (getPanelState() == PanelState.ROTATION)
+				setPanelState(PanelState.POSITION);
+			else
+				setPanelState(PanelState.ROTATION);	
+		}
 		
 		//Make sure flywheel is spinning while in shoot mode
 		if (getMode() == Mode.SHOOTING) {

@@ -32,6 +32,7 @@ public class Controls {
 	//Panel
 	public static final Button PANEL_DEPLOY = driver.getButton(Button.Y);
 	public static final Button PANEL_SPIN = driver.getButton(Button.A);
+	public static final Button PANEL_TOGGLE = driver.getButton(Button.RIGHT_BUMPER);
 	public static final Button PANEL_DEPLOY_OP = operator.getButton(Button.Y);
 	public static final Button PANEL_SPIN_OP = operator.getButton(Button.A);
 	
