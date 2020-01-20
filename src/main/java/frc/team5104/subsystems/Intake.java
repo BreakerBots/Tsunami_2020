@@ -7,16 +7,18 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
+import frc.team5104.Superstructure.Mode;
 import frc.team5104.util.managers.Subsystem;
 
 public class Intake extends Subsystem {
 	private static TalonSRX talon;
-	private static DoubleSolenoid piston;	
+	private static DoubleSolenoid rightPiston;
+	private static DoubleSolenoid leftPiston;
 	private static final double INTAKE_TALON_SPEED = 0.6;
-	
+
 	//Loop
 	public void update() {
-		if (Superstructure.getMode() == INTAKE) {
+		if (Superstructure.getMode() == Mode.INTAKE) {
 			setPiston(true);
 			setPercentOutput(INTAKE_TALON_SPEED);
 		}
@@ -27,7 +29,8 @@ public class Intake extends Subsystem {
 
 	//Internal Functions
 	public void setPiston(boolean position) {
-		piston.set(position ? Value.kForward : Value.kReverse);
+		leftPiston.set(position ? Value.kForward : Value.kReverse);
+		rightPiston.set(position ? Value.kForward : Value.kReverse);
 	}
 	public void setPercentOutput(double percent) {
 		talon.set(ControlMode.PercentOutput, percent);
@@ -36,11 +39,12 @@ public class Intake extends Subsystem {
 		setPiston(false);
 		talon.set(ControlMode.Disabled, 0.0);
 	}
-	
+
 	//Config
 	public void init() {
 		talon = new TalonSRX(Ports.INTAKE_TALON);
-		piston = new DoubleSolenoid(Ports.INTAKE_DEPLOYER_FORWARD, Ports.INTAKE_DEPLOYER_REVERSE);
+		leftPiston = new DoubleSolenoid(Ports.INTAKE_DEPLOYER_FORWARD, Ports.INTAKE_DEPLOYER_REVERSE);
+		rightPiston = new DoubleSolenoid(Ports.INTAKE_DEPLOYER_FORWARD, Ports.INTAKE_DEPLOYER_REVERSE);
 	}
 
 	//Reset
