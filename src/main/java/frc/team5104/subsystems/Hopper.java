@@ -28,6 +28,9 @@ public class Hopper extends Subsystem {
 		return -1;
 	}
 	
+	public static boolean isFull() {
+		return true;
+	}
 	//Config
 	public void init() {
 		

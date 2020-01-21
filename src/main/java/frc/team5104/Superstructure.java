@@ -1,11 +1,12 @@
 /*BreakerBots Robotics Team 2019*/
 package frc.team5104;
 
+import frc.team5104.subsystems.Hopper;
 import frc.team5104.subsystems.Paneler;
 import frc.team5104.util.console;
 
 /** 
- * The Superstructure is a massive state machine that handles the Intake, Wrist, and Elevator
+ * The Superstructure is a massive state machine that handles the Panel, Climb, and of course, Ballz
  * The Superstructure only controls the states... its up the subsystems to figure out what to do
  * based on the state of the Superstructure.
  */
@@ -13,7 +14,7 @@ public class Superstructure {
 	//States and Variables
 	public static enum SystemState { DISABLED, CALIBRATING, MANUAL, AUTOMATIC }
 	public static enum Mode { 
-		IDLE, INTAKE, SHOOTING, CLIMBING, PANELING, PANEL_DEPLOYING }
+		IDLE, INTAKE, SHOOTING, UNJAM, CLIMBING, PANELING, PANEL_DEPLOYING }
 	public static enum PanelState { ROTATION, POSITION };
 	public static enum FlywheelState { STOPPED, SPINNING };
 	
@@ -34,9 +35,14 @@ public class Superstructure {
 	
 	//Loop
 	protected static void update() {
+//		console.log(getMode());
+
+		if (Controls.IDLE.get()) {
+			setMode(Mode.IDLE);
+			console.log("Idle");
+		}
 		
 		//Panel
-//		console.log(getMode());
 		if (Controls.PANEL_DEPLOY.get() && getMode() != Mode.PANEL_DEPLOYING) {
 			setMode(Mode.PANEL_DEPLOYING);
 			console.log("Deploying Paneller");
@@ -61,6 +67,48 @@ public class Superstructure {
 			console.log(getPanelState());
 		}
 		if (getMode() == Mode.PANELING && Paneler.isFinished()) {
+			setMode(Mode.IDLE);
+			console.log("Idle");
+		}
+		
+		//Intake
+		if (Controls.BALL_INTAKE.get() && getMode() != Mode.INTAKE) {
+			setMode(Mode.INTAKE);
+			console.log("Intaking");
+		} 
+		else if (Controls.BALL_INTAKE.get() && getMode() == Mode.INTAKE) {
+			setMode(Mode.IDLE);
+			console.log("Idle");
+		}
+		if (getMode() == Mode.INTAKE && Hopper.isFull()) {
+			setMode(Mode.IDLE);
+			console.log("Hopper full! No mas!!");
+		}
+		
+		//Shooter
+		if (Controls.BALL_SHOOT.get() && getMode() != Mode.SHOOTING) {
+			setMode(Mode.SHOOTING);
+			console.log("Shooting, pew pew");
+		}
+		else if (Controls.BALL_SHOOT.get() && getMode() == Mode.SHOOTING) {
+			setMode(Mode.IDLE);
+			console.log("Idle");
+		}
+		if (Controls.UNJAM.isDown() && getMode() != Mode.UNJAM) {
+			setMode(Mode.UNJAM);
+			console.log("Unjam!");
+		}
+		else if (Controls.UNJAM.getAlt()) {
+			setMode(Mode.IDLE);
+			console.log("Idle");
+		}
+		
+		//Climb
+		if (Controls.CLIMBER_DEPLOY.get() && getMode() == Mode.IDLE) {
+			setMode(Mode.CLIMBING);
+			console.log("Time to fly!");
+		}
+		if (Controls.CLIMBER_FOLD.get() && getMode() == Mode.CLIMBING) {
 			setMode(Mode.IDLE);
 			console.log("Idle");
 		}

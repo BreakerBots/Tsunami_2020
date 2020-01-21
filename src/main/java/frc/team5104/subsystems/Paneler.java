@@ -19,9 +19,7 @@ import frc.team5104.util.managers.Subsystem;
 public class Paneler extends Subsystem {
 	private static ColorSensor sensor;
 	private static TalonSRX talon;
-	private static Joystick joystick;
 	private static DoubleSolenoid piston;
-	private static CoolColor color;
 
 	private static boolean complete = false;
 	private static final double ROTATION_MOTOR_SPEED = 0.75;
@@ -146,7 +144,6 @@ public class Paneler extends Subsystem {
 	public void init() {
 		sensor = new ColorSensor();
 		talon = new TalonSRX(21);
-		joystick = new Joystick(0);
 		talon.setSelectedSensorPosition(0);
 		piston = new DoubleSolenoid(Ports.PANELER_DEPLOYER_FORWARD, Ports.PANELER_DEPLOYER_REVERSE);
 	}

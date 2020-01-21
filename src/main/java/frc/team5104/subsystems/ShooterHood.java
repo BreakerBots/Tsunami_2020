@@ -26,12 +26,13 @@ public class ShooterHood extends Subsystem {
 		talon.set(ControlMode.Disabled, 0);
 	}
 	private void resetEncoder() {
-		
+		talon.setSelectedSensorPosition(0);
 	}
 
 	//External Functions
 	public double getAngle() {
-		return -1;
+		// fix
+		return talon.getSelectedSensorPosition();
 	}
 	public boolean reverseLimitHit() {
 		return true;
@@ -39,7 +40,7 @@ public class ShooterHood extends Subsystem {
 	
 	//Config
 	public void init() {
-		
+		talon = new TalonSRX(Ports.SHOOTER_HOOD_TALON);
 	}
 
 	//Reset
