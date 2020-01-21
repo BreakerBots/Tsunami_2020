@@ -1,4 +1,4 @@
-/*BreakerBots Robotics Team 2019*/
+/*BreakerBots Robotics Team 2020*/
 package frc.team5104;
 
 /** All Devices used in Code */
@@ -12,9 +12,9 @@ public class Ports {
 	public static final int DRIVE_SHIFT_REVERSE = 1;
 	
 	//Shooter
-	public static final int SHOOTER_HOOD_TALON = 15;
-	public static final int SHOOTER_WHEEL_FALCON_1 = 16;
-	public static final int SHOOTER_WHEEL_FALCON_2 = 17;
+	public static final int HOOD_TALON = 15;
+	public static final int FLYWHEEL_FALCON_1 = 16;
+	public static final int FLYWHEEL_FALCON_2 = 17;
 	
 	//Turret
 	public static final int TURRET_FALCON = 18;

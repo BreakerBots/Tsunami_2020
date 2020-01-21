@@ -34,41 +34,35 @@ public class Paneler extends Subsystem {
 			setPercentOutput(0);
 			talon.setSelectedSensorPosition(0);
 		}
-		
+
 		// Rotation Control
 		if (Superstructure.getMode() == Mode.PANELING && Superstructure.getPanelState() == PanelState.ROTATION) {
-
 			if (rotationControl() == true) {
 				setPercentOutput(0);
 				complete = true;
 				setPiston(false);
-			}
-
-			else {
+			} else {
 				setPercentOutput(ROTATION_MOTOR_SPEED);
 			}
 		}
-		
+
 		// Position Control
-				if (Superstructure.getMode() == Mode.PANELING && Superstructure.getPanelState() == PanelState.POSITION) {
-					if (atTargetPosition() == true) {
-						setPercentOutput(0);
-						complete = true;
-						setPiston(false);
-					}
-
-					else {
-						setPercentOutput(POSITION_MOTOR_SPEED);
-					}
-
-				}
+		if (Superstructure.getMode() == Mode.PANELING && Superstructure.getPanelState() == PanelState.POSITION) {
+			if (atTargetPosition() == true) {
+				setPercentOutput(0);
+				complete = true;
+				setPiston(false);
+			}
+			else {
+				setPercentOutput(POSITION_MOTOR_SPEED);
+			}
+		}
 
 		// Idle
 		if (Superstructure.getMode() == Mode.IDLE) {
 			setPercentOutput(0);
 			setPiston(false);
 		}
-
 	}
 
 	// Internal Functions
@@ -76,25 +70,17 @@ public class Paneler extends Subsystem {
 		piston.set(up ? Value.kForward : Value.kReverse);
 	}
 
-	// ---------------------------------------------
-
 	private void setMotionMagic(double degrees) {
 		talon.set(ControlMode.MotionMagic, degrees);
 	}
-
-	// ------------------------------------------------------
 
 	private void setPercentOutput(double percent) {
 		talon.set(ControlMode.PercentOutput, percent);
 	}
 
-	// ------------------------------------------------------
-
 	public static CoolColor readColor() {
 		return sensor.getColor();
 	}
-
-	// ------------------------------------------------------
 
 	public static boolean atTargetPosition() {
 		String FMS = DriverStation.getInstance().getGameSpecificMessage();
@@ -112,12 +98,10 @@ public class Paneler extends Subsystem {
 		return false;
 	}
 
-	// ------------------------------------------------------
-
 	public static boolean rotationControl() {
 		double wheelRotations = talon.getSelectedSensorPosition() / (4096);
 		double cpRotations = (wheelRotations * 1.5) / 16;
-		//console.log(wheelRotations + "   " + cpRotations);
+		// console.log(wheelRotations + " " + cpRotations);
 		// if (cpRotations >= 3 && cpRotations <= 5) {
 		if (cpRotations >= 4) {
 			return true;
@@ -131,13 +115,7 @@ public class Paneler extends Subsystem {
 	// External Functions
 
 	public static boolean isFinished() {
-		if (complete) {
-			return true;
-		}
-
-		else {
-			return false;
-		}
+		return complete;
 	}
 
 	// Config
@@ -150,6 +128,6 @@ public class Paneler extends Subsystem {
 
 	// Reset
 	public void reset() {
-
+		talon.setSelectedSensorPosition(0);
 	}
 }

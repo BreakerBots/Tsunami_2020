@@ -43,7 +43,7 @@ public class Hood extends Subsystem {
 	
 	//Config
 	public void init() {
-		talon = new TalonSRX(Ports.SHOOTER_HOOD_TALON);
+		talon = new TalonSRX(Ports.HOOD_TALON);
 	}
 
 	//Reset

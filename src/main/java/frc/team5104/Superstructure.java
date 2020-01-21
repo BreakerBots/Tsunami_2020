@@ -1,4 +1,4 @@
-/*BreakerBots Robotics Team 2019*/
+/*BreakerBots Robotics Team 2020*/
 package frc.team5104;
 
 import frc.team5104.subsystems.Hopper;
@@ -17,6 +17,7 @@ public class Superstructure {
 		IDLE, INTAKE, SHOOTING, UNJAM, CLIMBING, PANELING, PANEL_DEPLOYING }
 	public static enum PanelState { ROTATION, POSITION };
 	public static enum FlywheelState { STOPPED, SPINNING };
+	public static enum RobotState { WINNING };
 	
 	private static SystemState systemState = SystemState.DISABLED;
 	private static Mode mode = Mode.IDLE;
@@ -37,80 +38,9 @@ public class Superstructure {
 	protected static void update() {
 //		console.log(getMode());
 
-		if (Controls.IDLE.get()) {
-			setMode(Mode.IDLE);
-			console.log("Idle");
-		}
-		
-		//Panel
-		if (Controls.PANEL_DEPLOY.get() && getMode() != Mode.PANEL_DEPLOYING) {
-			setMode(Mode.PANEL_DEPLOYING);
-			console.log("Deploying Paneller");
-		}
-		else if (Controls.PANEL_DEPLOY.get() && getMode() == Mode.PANEL_DEPLOYING) {
-			setMode(Mode.IDLE);
-			console.log("Idle");
-		}
-		if (Controls.PANEL_SPIN.get() && getMode() == Mode.PANEL_DEPLOYING) {
-			setMode(Mode.PANELING);
-			console.log(getPanelState());
-		}
-		else if (Controls.PANEL_SPIN.get() && getMode() == Mode.PANELING) {
-			setMode(Mode.PANEL_DEPLOYING);
-			console.log("Deploying Paneller");
-		}
-		if (Controls.PANEL_TOGGLE.get()) {
-			if (getPanelState() == PanelState.ROTATION)
-				setPanelState(PanelState.POSITION);
-			else
-				setPanelState(PanelState.ROTATION);	
-			console.log(getPanelState());
-		}
-		if (getMode() == Mode.PANELING && Paneler.isFinished()) {
-			setMode(Mode.IDLE);
-			console.log("Idle");
-		}
-		
-		//Intake
-		if (Controls.BALL_INTAKE.get() && getMode() != Mode.INTAKE) {
-			setMode(Mode.INTAKE);
-			console.log("Intaking");
-		} 
-		else if (Controls.BALL_INTAKE.get() && getMode() == Mode.INTAKE) {
-			setMode(Mode.IDLE);
-			console.log("Idle");
-		}
 		if (getMode() == Mode.INTAKE && Hopper.isFull()) {
 			setMode(Mode.IDLE);
 			console.log("Hopper full! No mas!!");
-		}
-		
-		//Shooter
-		if (Controls.BALL_SHOOT.get() && getMode() != Mode.SHOOTING) {
-			setMode(Mode.SHOOTING);
-			console.log("Shooting, pew pew");
-		}
-		else if (Controls.BALL_SHOOT.get() && getMode() == Mode.SHOOTING) {
-			setMode(Mode.IDLE);
-			console.log("Idle");
-		}
-		if (Controls.UNJAM.isDown() && getMode() != Mode.UNJAM) {
-			setMode(Mode.UNJAM);
-			console.log("Unjam!");
-		}
-		else if (Controls.UNJAM.getAlt()) {
-			setMode(Mode.IDLE);
-			console.log("Idle");
-		}
-		
-		//Climb
-		if (Controls.CLIMBER_DEPLOY.get() && getMode() == Mode.IDLE) {
-			setMode(Mode.CLIMBING);
-			console.log("Time to fly!");
-		}
-		if (Controls.CLIMBER_FOLD.get() && getMode() == Mode.CLIMBING) {
-			setMode(Mode.IDLE);
-			console.log("Idle");
 		}
 		
 		//Make sure flywheel is spinning while in shoot mode
