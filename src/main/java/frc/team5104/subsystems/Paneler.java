@@ -24,7 +24,8 @@ public class Paneler extends Subsystem {
 	private static CoolColor color;
 
 	private static boolean complete = false;
-	private static final double PANELER_MOTOR_SPEED = 0.75;
+	private static final double ROTATION_MOTOR_SPEED = 0.75;
+	private static final double POSITION_MOTOR_SPEED = 0.3;
 
 	// Loop
 	public void update() {
@@ -35,22 +36,7 @@ public class Paneler extends Subsystem {
 			setPercentOutput(0);
 			talon.setSelectedSensorPosition(0);
 		}
-
-		// Position Control
-		if (Superstructure.getMode() == Mode.PANELING && Superstructure.getPanelState() == PanelState.POSITION) {
-			console.log(atTargetPosition() + "   " + sensor.getColor());
-			if (atTargetPosition() == true) {
-				setPercentOutput(0);
-				complete = true;
-				setPiston(false);
-			}
-
-			else {
-				setPercentOutput(PANELER_MOTOR_SPEED);
-			}
-
-		}
-
+		
 		// Rotation Control
 		if (Superstructure.getMode() == Mode.PANELING && Superstructure.getPanelState() == PanelState.ROTATION) {
 
@@ -61,9 +47,23 @@ public class Paneler extends Subsystem {
 			}
 
 			else {
-				setPercentOutput(PANELER_MOTOR_SPEED);
+				setPercentOutput(ROTATION_MOTOR_SPEED);
 			}
 		}
+		
+		// Position Control
+				if (Superstructure.getMode() == Mode.PANELING && Superstructure.getPanelState() == PanelState.POSITION) {
+					if (atTargetPosition() == true) {
+						setPercentOutput(0);
+						complete = true;
+						setPiston(false);
+					}
+
+					else {
+						setPercentOutput(POSITION_MOTOR_SPEED);
+					}
+
+				}
 
 		// Idle
 		if (Superstructure.getMode() == Mode.IDLE) {
@@ -102,7 +102,7 @@ public class Paneler extends Subsystem {
 		String FMS = DriverStation.getInstance().getGameSpecificMessage();
 		if (FMS.length() > 0) {
 			if (FMS.charAt(0) == 'R' && sensor.getColor() == CoolColor.BLUE) {
-				// return true;
+				return true;
 			} else if (FMS.charAt(0) == 'Y' && sensor.getColor() == CoolColor.GREEN) {
 				return true;
 			} else if (FMS.charAt(0) == 'B' && sensor.getColor() == CoolColor.RED) {
