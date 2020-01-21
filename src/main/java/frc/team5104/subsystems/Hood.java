@@ -7,7 +7,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.team5104.Ports;
 import frc.team5104.util.managers.Subsystem;
 
-public class ShooterHood extends Subsystem {
+public class Hood extends Subsystem {
 	private static TalonSRX talon;
 	
 	//Loop
@@ -30,6 +30,9 @@ public class ShooterHood extends Subsystem {
 	}
 
 	//External Functions
+	public boolean onTarget() {
+		return false;
+	}
 	public double getAngle() {
 		// fix
 		return talon.getSelectedSensorPosition();
