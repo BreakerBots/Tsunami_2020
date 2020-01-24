@@ -3,12 +3,10 @@ package frc.team5104;
 
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.auto.AutoManager;
-import frc.team5104.auto.Odometry;
 import frc.team5104.auto.paths.ExamplePath;
 import frc.team5104.subsystems.Drive;
 import frc.team5104.subsystems.Paneler;
 import frc.team5104.teleop.CompressorController;
-import frc.team5104.teleop.DriveController;
 import frc.team5104.teleop.SuperstructureController;
 import frc.team5104.util.XboxController;
 import frc.team5104.util.console;
@@ -22,22 +20,25 @@ import frc.team5104.util.Webapp;
 public class Robot extends RobotController.BreakerRobot {
 	public Robot() {
 		console.logFile.start();
+
+		//Win
+		this.win();
 		
 		//Managers
 		SubsystemManager.useSubsystems(
 			new Paneler()
-//			new Drive()
+			//new Drive()
 		);
 		TeleopControllerManager.useTeleopControllers(
-//			new DriveController(),
+			//new DriveController(),
 			new SuperstructureController(),
 			new CompressorController()
 		);
 		
 		//Other Initialization
-//		Webapp.run();
+		Webapp.run();
 		Plotter.reset();
-//		Odometry.init();
+		//Odometry.init();
 		Limelight.init();
 		CompressorController.stop();
 		AutoManager.setTargetPath(new ExamplePath());

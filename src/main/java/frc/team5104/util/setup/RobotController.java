@@ -203,5 +203,8 @@ public class RobotController extends RobotBase {
 		public void testLoop() { }
 		public void testStart() { }
 		public void testStop() { }
+		public void win() {
+			/* TODO: Implement this plz */
+		}
 	}
 }
