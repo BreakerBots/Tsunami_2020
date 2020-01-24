@@ -28,11 +28,8 @@ public class Ports {
 	public static final int HOPPER_TALON_START = 20;
 	public static final int HOPPER_FALCON_MID = 21;
 	public static final int HOPPER_TALON_FEEDER = 22;
-	public static final int HOPPER_SENSOR_1 = 1;
-	public static final int HOPPER_SENSOR_2 = 2;
-	public static final int HOPPER_SENSOR_3 = 3;
-	public static final int HOPPER_SENSOR_4 = 4;
-	public static final int HOPPER_SENSOR_5 = 5;
+	public static final int HOPPER_SENSOR_START = 1;
+	public static final int HOPPER_SENSOR_END = 2;
 	
 	//Climber
 	public static final int CLIMBER_TALON_1 = 23;

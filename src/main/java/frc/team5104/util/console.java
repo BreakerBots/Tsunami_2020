@@ -30,8 +30,9 @@ public class console {
 		SUPERSTRUCTURE,
 		INTAKE,
 		HOPPER,
-		SHOOTER,
-		SHOOTER_HOOD,
+		PANELER,
+		FLYWHEEL,
+		HOOD,
 		TURRET,
 		CLIMBER
 		//slap ur subsystems here

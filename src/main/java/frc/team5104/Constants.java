@@ -22,5 +22,4 @@ public class Constants {
 	public static final double AUTO_CORRECTION_FACTOR = 15; //>0
 	public static final double AUTO_DAMPENING_FACTOR  = 0.5; //0-1
 	public static final boolean AUTO_PLOT_ODOMETRY = true;
-	
 }

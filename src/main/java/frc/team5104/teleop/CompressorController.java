@@ -6,8 +6,6 @@ import frc.team5104.Controls;
 import frc.team5104.util.managers.TeleopController;
 
 public class CompressorController extends TeleopController {
-	protected String getName() { return "Compressor Controller"; }
-
 	private static Compressor compressor = new Compressor();
 	
 	protected void update() {
