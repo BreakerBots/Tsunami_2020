@@ -3,6 +3,10 @@ package frc.team5104.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import frc.team5104.Ports;
+import frc.team5104.Superstructure;
+import frc.team5104.Superstructure.Mode;
+import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
@@ -10,7 +14,18 @@ public class Turret extends Subsystem {
 	
 	//Loop
 	public void update() {
-		
+		//Manual 
+		if (Superstructure.getSystemState() == SystemState.MANUAL) {
+			
+		}
+		else {
+			if (Superstructure.getMode() == Mode.SHOOTING) {
+				//Shoot
+			}
+			else {
+				setPercentOutput(0);
+			}
+		}
 	}
 
 	//Internal Functions
@@ -24,7 +39,7 @@ public class Turret extends Subsystem {
 		falcon.set(ControlMode.Disabled, 0);
 	}
 	private void resetEncoder() {
-		
+		falcon.setSelectedSensorPosition(0);
 	}
 	
 	//External Functions
@@ -40,7 +55,7 @@ public class Turret extends Subsystem {
 	
 	//Config
 	public void init() {
-		
+		falcon = new TalonFX(Ports.TURRET_FALCON);
 	}
 
 	//Reset
