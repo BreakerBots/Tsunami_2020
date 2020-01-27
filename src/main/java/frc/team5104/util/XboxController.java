@@ -58,12 +58,36 @@ public class XboxController {
 	public static boolean isConnected(int port) { return HAL.getJoystickIsXbox((byte) port) == 1; }
 	
 	//Buttons
+//	public static Button getButton(
+//			XboxController controller1, XboxController controller2, 
+//			int slot) {
+//		
+//	}
+//	public static Button getHoldButton(
+//			XboxController controller1, XboxController controller2, 
+//			int slot) {
+//	
+//	}
+//	public static Button getHoldTimeButton(
+//			XboxController controller1, XboxController controller2, 
+//			int slot, int holdTime) {
+//	
+//	}
+//	public static Button getDoubleClickButton(
+//			XboxController controller1, XboxController controller2, 
+//			int slot, int killOffTime) {
+//
+//	}
 	public Button getButton(int slot) {
 		buttons.add(new Button(port, slot, ButtonType.NORMAL, 0));
 		return buttons.get(buttons.size()-1);
 	}
-	public Button getHoldButton(int slot, int holdTime) {
-		buttons.add(new Button(port, slot, ButtonType.HOLD, holdTime));
+	public Button getHoldButton(int slot) {
+		buttons.add(new Button(port, slot, ButtonType.HOLD, 0));
+		return buttons.get(buttons.size()-1);
+	}
+	public Button getHoldTimeButton(int slot, int holdTime) {
+		buttons.add(new Button(port, slot, ButtonType.HOLD_TIME, holdTime));
 		return buttons.get(buttons.size()-1);
 	}
 	public Button getDoubleClickButton(int slot, int killOffTime) {
@@ -71,7 +95,7 @@ public class XboxController {
 		return buttons.get(buttons.size()-1);
 	}
 	public static class Button {
-		public static enum ButtonType { NORMAL, HOLD, DOUBLE_CLICK }
+		public static enum ButtonType { NORMAL, HOLD, HOLD_TIME, DOUBLE_CLICK }
 		private ButtonType buttonType;
 		private int port, slot;
 		private boolean value, lastValue, pressed, released, heldEventReturned;
@@ -81,7 +105,7 @@ public class XboxController {
 			this.port = port;
 			this.slot = slot;
 			this.buttonType = buttonType;
-			if (buttonType == ButtonType.HOLD) heldEventLength = demand;
+			if (buttonType == ButtonType.HOLD_TIME) heldEventLength = demand;
 			if (buttonType == ButtonType.DOUBLE_CLICK) doubleClickKilloff = demand;
 		}
 		
@@ -125,11 +149,17 @@ public class XboxController {
 		}
 		
 		//Reads
-		/** Returns true on event trigger (button pressed, held event, or double click) */
+		/** Returns true on event trigger 
+		   - Normal: button pressed event
+		   - Hold: if button is down
+		   - Hold Time: held event
+		   - Double Click: double click event */
 		public boolean get() {
 			if (buttonType == ButtonType.NORMAL)
 				return pressed;
-			if (buttonType == ButtonType.HOLD) {
+			if (buttonType == ButtonType.HOLD)
+				return isDown();
+			if (buttonType == ButtonType.HOLD_TIME) {
 				boolean temp = ((value ? ((double)(System.currentTimeMillis() - heldEventTime)) : 0) > heldEventLength) && (!heldEventReturned);
 				if (temp)
 					heldEventReturned = true;
@@ -140,8 +170,9 @@ public class XboxController {
 			return false;
 		}
 		/** Returns an alternative trigger depending on button type.
-		     - Normal: returns button released action. 
-		     - Hold: returns nothing.
+		     - Normal: returns button released action.
+		     - Hold: returns nothing 
+		     - Hold Time: returns nothing.
 		     - Double Click: returns if the double click was killed off with only 1 button pressed (event).*/
 		public boolean getAlt() {
 			if (buttonType == ButtonType.NORMAL)
@@ -151,7 +182,7 @@ public class XboxController {
 			return false;
 		}
 		/** Returns true if the button is down */
-		public boolean isDown() {
+		private boolean isDown() {
 			if (isConnected(port)) {
 				if (slot > 0 && slot < 11)
 					return DriverStation.getInstance().getStickButton(port, (byte) slot);
@@ -180,6 +211,32 @@ public class XboxController {
 		DIRECTION_PAD_DOWN = 180, 
 		DIRECTION_PAD_DOWN_RIGHT = 135, 
 		DIRECTION_PAD_LEFT = 270;
+	}
+	public static class DoubleButton extends Button {
+		private Button button1, button2;
+		
+		public DoubleButton(Button button1, Button button2) {
+			super(0, 0, null, 0);
+			this.button1 = button1;
+			this.button2 = button2;
+		}
+		
+		void update() { }
+		
+		/** Ors the result of get() on both buttons
+		 * Returns true on event trigger (button pressed, held event, or double click) */
+		public boolean get() {
+			return button1.get() || button2.get();
+		}
+		
+		/** Ors the result of getAlt() on both buttons
+		 * Returns an alternative trigger depending on button type.
+	     - Normal: returns button released action. 
+	     - Hold: returns nothing.
+	     - Double Click: returns if the double click was killed off with only 1 button pressed (event).*/
+		public boolean getAlt() {
+			return button1.getAlt() || button2.getAlt();
+		}
 	}
 	
 	//Axis'

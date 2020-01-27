@@ -28,7 +28,7 @@ import frc.team5104.util.console.c;
 public class Webapp {
 	private static final int port = 5804; //has to be between 5800-5810 (5800,5801 for limelight)
 	private static final double version = 2.6;
-	private static final boolean isLocalHost = true;
+	private static final boolean isLocalHost = false;
 	private static HttpServer server;
 
 	@SuppressWarnings("resource")

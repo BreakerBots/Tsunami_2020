@@ -4,7 +4,6 @@ package frc.team5104.auto;
 import frc.team5104.Constants;
 import frc.team5104.teleop.CompressorController;
 import frc.team5104.util.Plotter;
-import frc.team5104.util.Plotter.Color;
 import frc.team5104.util.setup.RobotState;
 import frc.team5104.util.setup.RobotState.RobotMode;
 
@@ -40,9 +39,9 @@ public class AutoManager {
 			Odometry.update();
 			if (Constants.AUTO_PLOT_ODOMETRY) {
 				Plotter.plot(
-						Odometry.getPose2dMeters().getTranslation().getX(), 
-						Odometry.getPose2dMeters().getTranslation().getY(),
-						Color.ORANGE
+						Odometry.getPositionFeet().getXFeet(), 
+						Odometry.getPositionFeet().getYFeet(),
+						Plotter.Color.ORANGE
 					);
 			}
 			

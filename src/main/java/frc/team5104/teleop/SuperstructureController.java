@@ -87,7 +87,7 @@ public class SuperstructureController extends TeleopController {
 		}
 		
 		//Hopper
-		if (Controls.HOPPER_UNJAM.isDown()) {
+		if (Controls.HOPPER_UNJAM.get()) {
 			if (Superstructure.getMode() != Mode.UNJAM) {
 				Superstructure.setMode(Mode.UNJAM);
 				console.log(c.SUPERSTRUCTURE, "unjamming");

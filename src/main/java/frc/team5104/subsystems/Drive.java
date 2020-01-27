@@ -9,17 +9,17 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.team5104.Constants;
+import frc.team5104.Ports;
 import frc.team5104.util.DriveSignal;
 import frc.team5104.util.Encoder;
-import frc.team5104.util.console;
 import frc.team5104.util.managers.Subsystem;
 
 public class Drive extends Subsystem {
-	private static TalonSRX talonL, talonR;
+	private static TalonSRX talonL, talonR, talonGyro;
 	private static VictorSPX victorL, victorR;
 	private static Encoder leftEncoder, rightEncoder;
 	private static DoubleSolenoid shifter;
-//	private static PigeonIMU gyro;
+	private static PigeonIMU gyro;
 	
 	//Update
 	private static DriveSignal currentDriveSignal = new DriveSignal();
@@ -81,11 +81,10 @@ public class Drive extends Subsystem {
 	public static double getLeftGearboxOutputVoltage() { return talonL.getMotorOutputVoltage(); }
 	public static double getRightGearboxOutputVoltage() { return talonR.getMotorOutputVoltage(); }
 	public static void resetGyro() { 
-//		gyro.setFusedHeading(0);
+		gyro.setFusedHeading(0);
 	}
 	public static double getGyro() {
-		return 0;
-//		return gyro.getFusedHeading();
+		return gyro.getFusedHeading();
 	}
 	public static void resetEncoders() {
 		leftEncoder.reset();
@@ -106,14 +105,17 @@ public class Drive extends Subsystem {
 	
 	//Config
 	public void init() {
-		talonL = new TalonSRX(11);
-		victorL = new VictorSPX(12);
-		talonR = new TalonSRX(13);
-		victorR = new VictorSPX(14);
-//		gyro = new PigeonIMU(talonR2);
+		talonL = new TalonSRX(Ports.DRIVE_TALON_L1);
+		victorL = new VictorSPX(Ports.DRIVE_TALON_L2);
+		talonR = new TalonSRX(Ports.DRIVE_TALON_R1);
+		victorR = new VictorSPX(Ports.DRIVE_TALON_R2);
+		talonGyro = new TalonSRX(15);
+		gyro = new PigeonIMU(talonGyro);
 		leftEncoder = new Encoder(talonL);
 		rightEncoder = new Encoder(talonR);
 		shifter = new DoubleSolenoid(0, 1);
+		
+		talonGyro.configFactoryDefault();
 		
 		talonL.configFactoryDefault();
 		victorL.configFactoryDefault();
