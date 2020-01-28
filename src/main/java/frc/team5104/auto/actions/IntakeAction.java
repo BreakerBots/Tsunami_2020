@@ -4,6 +4,8 @@ package frc.team5104.auto.actions;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.auto.AutoPathAction;
+import frc.team5104.util.console;
+import frc.team5104.util.console.c;
 
 public class IntakeAction extends AutoPathAction {
     public IntakeAction() {
@@ -11,6 +13,7 @@ public class IntakeAction extends AutoPathAction {
     }
 
     public void init() {
+    	console.log(c.AUTO, "intaking!");
     	Superstructure.setMode(Mode.INTAKE);
     }
 

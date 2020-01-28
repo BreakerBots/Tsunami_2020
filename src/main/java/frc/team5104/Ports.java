@@ -1,7 +1,7 @@
 /*BreakerBots Robotics Team 2020*/
 package frc.team5104;
 
-/** All Devices used in Code */
+/** All port numbers on the robot */
 public class Ports {
 	//Drive
 	public static final int DRIVE_TALON_L1 = 11;
@@ -11,8 +11,10 @@ public class Ports {
 	public static final int DRIVE_SHIFT_FORWARD = 0;
 	public static final int DRIVE_SHIFT_REVERSE = 1;
 	
-	//Shooter
+	//Hood
 	public static final int HOOD_TALON = 15;
+	
+	//Flywheel
 	public static final int FLYWHEEL_FALCON_1 = 16;
 	public static final int FLYWHEEL_FALCON_2 = 17;
 	
@@ -34,7 +36,8 @@ public class Ports {
 	//Climber
 	public static final int CLIMBER_TALON_1 = 23;
 	public static final int CLIMBER_TALON_2 = 24;
-	public static final int CLIMBER_TALON_3 = 25;
+	public static final int CLIMBER_DEPLOYER_FORWARD = 6;
+	public static final int CLIMBER_DEPLOYER_REVERSE = 7;
 	
 	//Paneler
 	public static final int PANELER_TALON = 26;

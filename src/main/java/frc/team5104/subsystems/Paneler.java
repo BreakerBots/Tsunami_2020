@@ -6,61 +6,65 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Joystick;
+import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.PanelState;
+import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.ColorSensor;
 import frc.team5104.util.ColorSensor.CoolColor;
-import frc.team5104.util.console;
 import frc.team5104.util.managers.Subsystem;
 
 public class Paneler extends Subsystem {
 	private static ColorSensor sensor;
 	private static TalonSRX talon;
 	private static DoubleSolenoid piston;
-
 	private static boolean complete = false;
-	private static final double ROTATION_MOTOR_SPEED = 0.75;
-	private static final double POSITION_MOTOR_SPEED = 0.3;
-
-	// Loop
+	
+	//Loop
 	public void update() {
-		// Deploy spinner
-		if (Superstructure.getMode() == Mode.PANEL_DEPLOYING) {
-			complete = false;
-			setPiston(true);
-			setPercentOutput(0);
-			talon.setSelectedSensorPosition(0);
-		}
-
-		// Rotation Control
-		if (Superstructure.getMode() == Mode.PANELING && Superstructure.getPanelState() == PanelState.ROTATION) {
-			if (rotationControl() == true) {
+		if (Superstructure.getSystemState() == SystemState.MANUAL ||
+			Superstructure.getSystemState() == SystemState.AUTOMATIC) {
+			//deploying
+			if (Superstructure.getMode() == Mode.PANEL_DEPLOYING) {
+				complete = false;
+				setPiston(true);
 				setPercentOutput(0);
-				complete = true;
+				talon.setSelectedSensorPosition(0);
+			}
+	
+			//paneling
+			if (Superstructure.getMode() == Mode.PANELING) {
+				//rotation
+				if (Superstructure.getPanelState() == PanelState.ROTATION) {
+					if (rotationControl()) {
+						stop();
+						setPiston(false);
+						complete = true;
+					} 
+					else setPercentOutput(Constants.PANELER_ROT_SPEED);
+				}
+		
+				//position
+				else {
+					if (atTargetPosition()) {
+						stop();
+						setPiston(false);
+						complete = true;
+					}
+					else setPercentOutput(Constants.PANELER_POS_SPEED);
+				}
+			}
+	
+			//idle
+			if (Superstructure.getMode() == Mode.IDLE) {
+				stop();
 				setPiston(false);
-			} else {
-				setPercentOutput(ROTATION_MOTOR_SPEED);
 			}
 		}
-
-		// Position Control
-		if (Superstructure.getMode() == Mode.PANELING && Superstructure.getPanelState() == PanelState.POSITION) {
-			if (atTargetPosition() == true) {
-				setPercentOutput(0);
-				complete = true;
-				setPiston(false);
-			}
-			else {
-				setPercentOutput(POSITION_MOTOR_SPEED);
-			}
-		}
-
-		// Idle
-		if (Superstructure.getMode() == Mode.IDLE) {
-			setPercentOutput(0);
+		else {
+			stop();
 			setPiston(false);
 		}
 	}
@@ -69,65 +73,56 @@ public class Paneler extends Subsystem {
 	private void setPiston(boolean up) {
 		piston.set(up ? Value.kForward : Value.kReverse);
 	}
-
-	private void setMotionMagic(double degrees) {
-		talon.set(ControlMode.MotionMagic, degrees);
-	}
-
 	private void setPercentOutput(double percent) {
 		talon.set(ControlMode.PercentOutput, percent);
 	}
-
-	public static CoolColor readColor() {
+	private void stop() {
+		talon.set(ControlMode.Disabled, 0);
+	}
+	private CoolColor readColor() {
 		return sensor.getColor();
 	}
-
-	public static boolean atTargetPosition() {
+	private boolean atTargetPosition() {
 		String FMS = DriverStation.getInstance().getGameSpecificMessage();
 		if (FMS.length() > 0) {
-			if (FMS.charAt(0) == 'R' && sensor.getColor() == CoolColor.BLUE) {
+			if (FMS.charAt(0) == 'R' && readColor() == CoolColor.BLUE)
 				return true;
-			} else if (FMS.charAt(0) == 'Y' && sensor.getColor() == CoolColor.GREEN) {
+			else if (FMS.charAt(0) == 'Y' && readColor() == CoolColor.GREEN)
 				return true;
-			} else if (FMS.charAt(0) == 'B' && sensor.getColor() == CoolColor.RED) {
+			else if (FMS.charAt(0) == 'B' && readColor() == CoolColor.RED)
 				return true;
-			} else if (FMS.charAt(0) == 'G' && sensor.getColor() == CoolColor.YELLOW) {
+			else if (FMS.charAt(0) == 'G' && readColor() == CoolColor.YELLOW)
 				return true;
-			}
 		}
 		return false;
 	}
-
-	public static boolean rotationControl() {
+	private boolean rotationControl() {
 		double wheelRotations = talon.getSelectedSensorPosition() / (4096);
 		double cpRotations = (wheelRotations * 1.5) / 16;
-		// console.log(wheelRotations + " " + cpRotations);
-		// if (cpRotations >= 3 && cpRotations <= 5) {
-		if (cpRotations >= 4) {
-			return true;
-		}
-
-		else {
-			return false;
-		}
+		return cpRotations >= 4;
+	}
+	private void resetEncoder() {
+		talon.setSelectedSensorPosition(0);
 	}
 
-	// External Functions
-
+	//External Functions
 	public static boolean isFinished() {
 		return complete;
 	}
 
-	// Config
+	//Config
 	public void init() {
 		sensor = new ColorSensor();
-		talon = new TalonSRX(21);
-		talon.setSelectedSensorPosition(0);
 		piston = new DoubleSolenoid(Ports.PANELER_DEPLOYER_FORWARD, Ports.PANELER_DEPLOYER_REVERSE);
+		talon = new TalonSRX(21);
+		talon.configFactoryDefault();
+		resetEncoder();
 	}
 
-	// Reset
+	//Reset
 	public void reset() {
-		talon.setSelectedSensorPosition(0);
+		resetEncoder();
+		stop();
+		setPiston(false);
 	}
 }

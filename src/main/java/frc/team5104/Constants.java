@@ -6,8 +6,8 @@ public class Constants {
 	public static final boolean OVERWRITE_NON_MATCH_LOGS = true;
 	public static final boolean OVERWRITE_MATCH_LOGS = false;
 	public static final int MAIN_LOOP_SPEED = 50;
-	public static final boolean COMPB_BOT = false;
-	public static final String ROBOT_NAME = "Tidal-Wave";
+	public static final boolean COMP_BOT = false;
+	public static final String ROBOT_NAME = COMP_BOT ? "Tsunami" : "Tidal-Wave";
 	
 	//Drive
 	public static final double DRIVE_WHEEL_DIAMETER = 6.0/12.0; //ft
@@ -23,6 +23,44 @@ public class Constants {
 	public static final double AUTO_CORRECTION_FACTOR = 100; //>0
 	public static final double AUTO_DAMPENING_FACTOR  = 0.7; //0-1
 	public static final boolean AUTO_PLOT_ODOMETRY = true;
-	public static void main(String[] args) {
-	}
+	
+	//Flywheel
+	public static final boolean FLYWHEEL_OPEN_LOOP = false;
+	public static final double FLYWHEEL_KP = 0;
+	public static final double FLYWHEEL_KD = 0;
+	public static final double FLYWHEEL_KF = 0;
+	public static final double FLYWHEEL_RAMP_RATE = 0.5;
+	public static final double FLYWHEEL_RPM_TOL = 300;
+	
+	//Hood
+	public static final double HOOD_TOL = 0.2;
+	public static final double HOOD_CALIBRATE_SPEED = 0.1;
+	public static final double HOOD_KP = 0;
+	public static final double HOOD_KD = 0;
+	public static final double HOOD_ACC = 0;
+	public static final double HOOD_VEL = 0;
+	
+	//Hopper
+	public static final double HOPPER_KP = 0;
+	public static final double HOPPER_ACC = 0;
+	public static final double HOPPER_VEL = 0;
+	public static final double HOPPER_UNJAM_SPEED = 0.25;
+	public static final double HOPPER_FEED_SPEED = 1;
+	public static final double HOPPER_START_INTAKE_SPEED = 0.8;
+	public static final double HOPPER_FEEDER_ROLLBALL_SPEED = 0.1;
+	
+	//Intake
+	public static final double INTAKE_SPEED = 1.0;
+	
+	//Paneler
+	public static final double PANELER_ROT_SPEED = 0.75;
+	public static final double PANELER_POS_SPEED = 0.30;
+	
+	//Turret
+	public static final double TURRET_TOL = 0.2;
+	public static final double TURRET_CALIBRATE_SPEED = 0.1;
+	public static final double TURRET_KP = 0;
+	public static final double TURRET_KD = 0;
+	public static final double TURRET_ACC = 0;
+	public static final double TURRET_VEL = 0;
 }

@@ -10,7 +10,10 @@ package frc.team5104.util.setup;
 import edu.wpi.first.wpilibj.RobotBase;
 
 public final class Main {
-	private Main() { }
+	private Main() { 
+		
+	}
+	
 	public static void main(String... args) { 
 		RobotBase.startRobot(RobotController::new); 
 	}

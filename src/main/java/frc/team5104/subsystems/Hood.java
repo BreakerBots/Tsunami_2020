@@ -1,29 +1,42 @@
 package frc.team5104.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.managers.Subsystem;
-import frc.team5104.vision.Limelight;
 
 public class Hood extends Subsystem {
 	private static TalonSRX talon;
-
+	
 	//Loop
 	public void update() {
-		if(Superstructure.getSystemState() == SystemState.MANUAL) {}
-		//TODO: add code n stuff
-		else {
-			if (Superstructure.getMode() == Mode.SHOOTING && !onTarget()) {
-				//setAngle();
-			} else 
-				setPercentOutput(0);
+		//Calibrating
+		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
+			if (backLimitHit()) {
+				stop();
+			}
+			else setPercentOutput(Constants.HOOD_CALIBRATE_SPEED);
 		}
+		
+		//Automatic
+		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
+			if (Superstructure.getMode() == Mode.SHOOTING) {
+				//Vision
+				if (!onTarget()) {
+					setAngle(getTargetVisionAngle());
+				}
+				else stop();
+			}
+			else stop();
+		}
+		
+		//Disabled
+		else stop();
 	}
 
 	//Internal Functions
@@ -41,24 +54,34 @@ public class Hood extends Subsystem {
 	}
 
 	//External Functions
-	public boolean onTarget() {
-		return false;
-	}
 	public double getAngle() {
-		// fix
-		return talon.getSelectedSensorPosition();
+		//TODO!!!
+		return talon.getSelectedSensorPosition() / 4096.0;
 	}
-	public boolean reverseLimitHit() {
-		return true;
+	public boolean backLimitHit() {
+		return talon.isRevLimitSwitchClosed() == 1;
+	}
+	public boolean onTarget() {
+		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
+	}
+	public double getTargetVisionAngle() {
+		//TODO!!!
+		return 0;
 	}
 
 	//Config
 	public void init() {
 		talon = new TalonSRX(Ports.HOOD_TALON);
+		talon.configFactoryDefault();
+		talon.config_kP(0, Constants.HOOD_KP);
+		talon.config_kD(0, Constants.HOOD_KD);
+		talon.configMotionAcceleration((int) Constants.HOOD_ACC);
+		talon.configMotionCruiseVelocity((int) Constants.HOOD_VEL);
 	}
 
 	//Reset
 	public void reset() {
 		stop();
+		resetEncoder();
 	}
 }

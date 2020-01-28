@@ -58,26 +58,34 @@ public class XboxController {
 	public static boolean isConnected(int port) { return HAL.getJoystickIsXbox((byte) port) == 1; }
 	
 	//Buttons
-//	public static Button getButton(
-//			XboxController controller1, XboxController controller2, 
-//			int slot) {
-//		
-//	}
-//	public static Button getHoldButton(
-//			XboxController controller1, XboxController controller2, 
-//			int slot) {
-//	
-//	}
-//	public static Button getHoldTimeButton(
-//			XboxController controller1, XboxController controller2, 
-//			int slot, int holdTime) {
-//	
-//	}
-//	public static Button getDoubleClickButton(
-//			XboxController controller1, XboxController controller2, 
-//			int slot, int killOffTime) {
-//
-//	}
+	public static Button getButton(int slot, XboxController controller1, 
+			XboxController controller2) {
+		return new DoubleButton(
+				controller1.getButton(slot),
+				controller2.getButton(slot)
+			);
+	}
+	public static Button getHoldButton(int slot, XboxController controller1, 
+			XboxController controller2) {
+		return new DoubleButton(
+				controller1.getHoldButton(slot),
+				controller2.getHoldButton(slot)
+			);
+	}
+	public static Button getHoldTimeButton(int slot, int holdTime, XboxController controller1, 
+			XboxController controller2) {
+		return new DoubleButton(
+				controller1.getHoldTimeButton(slot, holdTime),
+				controller2.getHoldTimeButton(slot, holdTime)
+			);
+	}
+	public static Button getDoubleClickButton(int slot, int killOffTime, XboxController controller1, 
+			XboxController controller2) {
+		return new DoubleButton(
+				controller1.getDoubleClickButton(slot, killOffTime),
+				controller2.getDoubleClickButton(slot, killOffTime)
+			);
+	}
 	public Button getButton(int slot) {
 		buttons.add(new Button(port, slot, ButtonType.NORMAL, 0));
 		return buttons.get(buttons.size()-1);
@@ -212,7 +220,7 @@ public class XboxController {
 		DIRECTION_PAD_DOWN_RIGHT = 135, 
 		DIRECTION_PAD_LEFT = 270;
 	}
-	public static class DoubleButton extends Button {
+	private static class DoubleButton extends Button {
 		private Button button1, button2;
 		
 		public DoubleButton(Button button1, Button button2) {

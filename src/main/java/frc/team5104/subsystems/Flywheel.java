@@ -3,6 +3,7 @@ package frc.team5104.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
+import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.FlywheelState;
@@ -14,19 +15,14 @@ public class Flywheel extends Subsystem {
 	private static TalonFX falcon1, falcon2;
 	private static double targetRPMS = 0;
 	
-	public static final boolean FLYWHEEL_OPEN_LOOP = false;
-	public static final double FLYWHEEL_KP = 0;
-	public static final double FLYWHEEL_KD = 0;
-	public static final double FLYWHEEL_KF = 0;
-	public static final double FLYWHEEL_RAMP_RATE = 0.5;
-	public static final double FLYWHEEL_RPM_TOL = 300;
+	
 	
 	//Loop
 	public void update() {
 		if ((Superstructure.getSystemState() == SystemState.AUTOMATIC || 
 			Superstructure.getSystemState() == SystemState.MANUAL) &&
 			Superstructure.getFlywheelState() == FlywheelState.SPINNING) {
-			if (FLYWHEEL_OPEN_LOOP)
+			if (Constants.FLYWHEEL_OPEN_LOOP)
 				setPercentOutput(targetRPMS / 6380);
 			else setSpeed(targetRPMS);
 		}
@@ -51,17 +47,17 @@ public class Flywheel extends Subsystem {
 	}
 	public static boolean isSpedUp() {
 		return BreakerMath.roughlyEquals(
-				getRPMS(), targetRPMS, FLYWHEEL_RPM_TOL);
+				getRPMS(), targetRPMS, Constants.FLYWHEEL_RPM_TOL);
 	}
 	
 	//Config
 	public void init() {
 		falcon1 = new TalonFX(Ports.FLYWHEEL_FALCON_1);
 		falcon1.configFactoryDefault();
-		falcon1.config_kP(0, FLYWHEEL_KP);
-		falcon1.config_kD(0, FLYWHEEL_KD);
-		falcon1.config_kF(0, FLYWHEEL_KF);
-		falcon1.configClosedloopRamp(FLYWHEEL_RAMP_RATE);
+		falcon1.config_kP(0, Constants.FLYWHEEL_KP);
+		falcon1.config_kD(0, Constants.FLYWHEEL_KD);
+		falcon1.config_kF(0, Constants.FLYWHEEL_KF);
+		falcon1.configClosedloopRamp(Constants.FLYWHEEL_RAMP_RATE);
 		
 		falcon2 = new TalonFX(Ports.FLYWHEEL_FALCON_1);
 		falcon2.configFactoryDefault();

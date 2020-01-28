@@ -5,24 +5,33 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
+import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.managers.Subsystem;
 
 public class Intake extends Subsystem {
 	private static TalonSRX talon;
 	private static DoubleSolenoid rightPiston;
 	private static DoubleSolenoid leftPiston;
-	private static final double INTAKE_TALON_SPEED = 0.6;
-
+	
 	//Loop
 	public void update() {
-		if (Superstructure.getMode() == Mode.INTAKE) {
-			setPiston(true);
-			setPercentOutput(INTAKE_TALON_SPEED);
+		if (Superstructure.getSystemState() == SystemState.AUTOMATIC ||
+			Superstructure.getSystemState() == SystemState.MANUAL) {
+			if (Superstructure.getMode() == Mode.INTAKE) {
+				setPiston(true);
+				setPercentOutput(Constants.INTAKE_SPEED);
+			}
+			else {
+				setPiston(false);
+				stop();
+			}
 		}
 		else {
+			setPiston(false);
 			stop();
 		}
 	}
@@ -42,9 +51,11 @@ public class Intake extends Subsystem {
 
 	//Config
 	public void init() {
-		talon = new TalonSRX(Ports.INTAKE_TALON);
 		leftPiston = new DoubleSolenoid(Ports.INTAKE_DEPLOYER_FORWARD, Ports.INTAKE_DEPLOYER_REVERSE);
 		rightPiston = new DoubleSolenoid(Ports.INTAKE_DEPLOYER_FORWARD, Ports.INTAKE_DEPLOYER_REVERSE);
+		
+		talon = new TalonSRX(Ports.INTAKE_TALON);
+		talon.configFactoryDefault();
 	}
 
 	//Reset

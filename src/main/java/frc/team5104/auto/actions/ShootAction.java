@@ -4,6 +4,9 @@ package frc.team5104.auto.actions;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.auto.AutoPathAction;
+import frc.team5104.subsystems.Hopper;
+import frc.team5104.util.console;
+import frc.team5104.util.console.c;
 
 public class ShootAction extends AutoPathAction {
     public ShootAction() {
@@ -11,14 +14,16 @@ public class ShootAction extends AutoPathAction {
     }
 
     public void init() {
+    	console.log(c.AUTO, "firing!");
     	Superstructure.setMode(Mode.SHOOTING);
     }
 
     public boolean update() {
-    	return true;
+    	//exit when hopper is empty
+    	return Hopper.isEmpty();
     }
 
     public void end() {
-    	
+    	console.log(c.AUTO, "finished firing");
     }
 }
