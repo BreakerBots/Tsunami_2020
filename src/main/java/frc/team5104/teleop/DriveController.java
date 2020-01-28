@@ -9,10 +9,7 @@ import frc.team5104.util.console.c;
 import frc.team5104.util.managers.TeleopController;
 
 public class DriveController extends TeleopController {
-	protected String getName() { return "Drive-Controller"; }
-
 	boolean highGear = true;
-	
 	protected void update() {
 		if (Controls.DRIVE_SHIFT.get()) {
 			console.log(c.DRIVE, "Shifting to " + (highGear ? "high" : "low") + " gear!");

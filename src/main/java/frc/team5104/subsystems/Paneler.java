@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Joystick;
+import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
@@ -22,9 +23,7 @@ public class Paneler extends Subsystem {
 	private static DoubleSolenoid piston;
 
 	private static boolean complete = false;
-	private static final double ROTATION_MOTOR_SPEED = 0.75;
-	private static final double POSITION_MOTOR_SPEED = 0.3;
-
+	
 	// Loop
 	public void update() {
 		// Deploy spinner
@@ -42,7 +41,7 @@ public class Paneler extends Subsystem {
 				complete = true;
 				setPiston(false);
 			} else {
-				setPercentOutput(ROTATION_MOTOR_SPEED);
+				setPercentOutput(Constants.ROTATION_MOTOR_SPEED);
 			}
 		}
 
@@ -54,7 +53,7 @@ public class Paneler extends Subsystem {
 				setPiston(false);
 			}
 			else {
-				setPercentOutput(POSITION_MOTOR_SPEED);
+				setPercentOutput(Constants.POSITION_MOTOR_SPEED);
 			}
 		}
 

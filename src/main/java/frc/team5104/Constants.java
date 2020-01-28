@@ -23,4 +23,29 @@ public class Constants {
 	public static final double AUTO_DAMPENING_FACTOR  = 0.5; //0-1
 	public static final boolean AUTO_PLOT_ODOMETRY = true;
 	
+	//Turret
+	public static final double TURRET_MIN_TARGET_ERR = 0.2;
+	public static final double TURRET_KINPUT = 0.5;
+	
+	//Flywheel
+	public static final boolean FLYWHEEL_OPEN_LOOP = false;
+	public static final double FLYWHEEL_KP = 0;
+	public static final double FLYWHEEL_KD = 0;
+	public static final double FLYWHEEL_KF = 0;
+	public static final double FLYWHEEL_ACC = 0;
+	public static final double FLYWHEEL_VEL = 0;
+	
+	//Hood
+	public static final double HOOD_ANGLE = 37.0;
+	public static final double HOOD_MIN_ANGLE_ERR = 0.1;
+	public static final double HOOD_MAX_ANGLE = 40;
+	public static final double HOOD_KINPUT = 0.3;
+	
+	//Intake
+	public static final double INTAKE_TALON_SPEED = 0.6;
+	
+	//Panelers
+	public static final double ROTATION_MOTOR_SPEED = 0.75;
+	public static final double POSITION_MOTOR_SPEED = 0.3;
+
 }

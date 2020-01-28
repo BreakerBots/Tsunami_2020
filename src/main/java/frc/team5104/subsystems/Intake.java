@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
@@ -14,13 +15,12 @@ public class Intake extends Subsystem {
 	private static TalonSRX talon;
 	private static DoubleSolenoid rightPiston;
 	private static DoubleSolenoid leftPiston;
-	private static final double INTAKE_TALON_SPEED = 0.6;
 
 	//Loop
 	public void update() {
 		if (Superstructure.getMode() == Mode.INTAKE) {
 			setPiston(true);
-			setPercentOutput(INTAKE_TALON_SPEED);
+			setPercentOutput(Constants.INTAKE_TALON_SPEED);
 		}
 		else {
 			stop();

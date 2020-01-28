@@ -4,6 +4,7 @@ package frc.team5104;
 import frc.team5104.subsystems.Hopper;
 import frc.team5104.subsystems.Paneler;
 import frc.team5104.util.console;
+import frc.team5104.util.console.c;
 
 /** 
  * The Superstructure is a massive state machine that handles the Panel, Climb, and of course, Ballz
@@ -12,17 +13,22 @@ import frc.team5104.util.console;
  */
 public class Superstructure {
 	//States and Variables
-	public static enum SystemState { DISABLED, CALIBRATING, MANUAL, AUTOMATIC }
-	public static enum Mode { 
-		IDLE, INTAKE, SHOOTING, UNJAM, CLIMBING, PANELING, PANEL_DEPLOYING }
+	public static enum SystemState { 
+		DISABLED, CALIBRATING, MANUAL, AUTOMATIC 
+	}
+	public static enum Mode {
+		IDLE, INTAKE, SHOOTING, UNJAM, CLIMBING, 
+		PANELING, PANEL_DEPLOYING
+	}
 	public static enum PanelState { ROTATION, POSITION };
 	public static enum FlywheelState { STOPPED, SPINNING };
-	public static enum RobotState { WINNING };
+	public static enum Target { LOW, HIGH };
 	
 	private static SystemState systemState = SystemState.DISABLED;
 	private static Mode mode = Mode.IDLE;
 	private static PanelState panelState = PanelState.ROTATION;
 	private static FlywheelState shooterWheelState = FlywheelState.STOPPED;
+	private static Target target = Target.HIGH;
 	
 	//External Functions
 	public static SystemState getSystemState() { return systemState; }
@@ -33,17 +39,25 @@ public class Superstructure {
 	public static PanelState getPanelState() { return panelState; }
 	public static void setFlywheelState(FlywheelState shooterWheelState) { Superstructure.shooterWheelState = shooterWheelState; }
 	public static FlywheelState getFlywheelState() { return shooterWheelState; }
+	public static void setTarget(Target target) { Superstructure.target = target; }
+	public static Target getTarget() { return target; }
 	
 	//Loop
 	protected static void update() {
-//		console.log(getMode());
 
-		if (getMode() == Mode.INTAKE && Hopper.isFull()) {
-			setMode(Mode.IDLE);
-			console.log("Hopper full! No mas!!");
+		//Exit Paneling
+		if (Superstructure.getMode() == Mode.PANELING && Paneler.isFinished()) {
+			Superstructure.setMode(Mode.IDLE);
+			console.log(c.SUPERSTRUCTURE, "finished paneling... idling");
 		}
 		
-		//Make sure flywheel is spinning while in shoot mode
+		//Exit Intake
+		if (getMode() == Mode.INTAKE && Hopper.isFull()) {
+			setMode(Mode.IDLE);
+			console.log(c.SUPERSTRUCTURE, "Hopper full! No mas!!");
+		}
+		
+		//Spin Flywheel while Shooting
 		if (getMode() == Mode.SHOOTING) {
 			setFlywheelState(FlywheelState.SPINNING);
 		}
@@ -53,5 +67,8 @@ public class Superstructure {
 	protected static void reset() {
 		setSystemState(SystemState.CALIBRATING); 
 		setMode(Mode.IDLE);
+		setPanelState(PanelState.ROTATION);
+		setFlywheelState(FlywheelState.STOPPED);
+		setTarget(Target.HIGH);
 	}
 }
