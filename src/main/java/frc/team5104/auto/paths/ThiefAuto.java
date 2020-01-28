@@ -6,23 +6,23 @@ import frc.team5104.auto.Position;
 import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
 
-public class ExamplePath extends AutoPath {
-	public ExamplePath() {
+public class ThiefAuto extends AutoPath {
+	public ThiefAuto() {
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),
-				new Position(8, 0, 0),
-				new Position(10, -1, -90),
-				new Position(8, -2, -180),
-				new Position(2, -2, -180)
+				new Position(0.5, 0, 0)
 			));
-	/*	add(new DriveTrajectoryAction(true, false,
-				new Position(0, 0, 0),
-				new Position(12, 0, 0)
+		//Shooting Code
+		add(new DriveTrajectoryAction(true,false,
+				new Position(7.08, 12.08, 0),
+				new Position(16.25, 12.08, 0)
 			));
-		add(new DriveTrajectoryAction(true, true,
-				new Position(12, 0, 0),
+		//Reversing
+		add(new DriveTrajectoryAction(true,true,
+				new Position(7.08, 12.08, 0),
 				new Position(0, 0, 0)
-			)); */
+			));
+		//Shooting Code
 		add(new DriveStopAction());
 	}
 }

@@ -4,6 +4,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
@@ -18,14 +19,6 @@ public class Hopper extends Subsystem {
 	private static Sensor entrySensor, endSensor;
 	private static boolean isIndexing, wasIndexing;
 	
-	public static final double HOPPER_KP = 0;
-	public static final double HOPPER_ACC = 0;
-	public static final double HOPPER_VEL = 0;
-	public static final double HOPPER_UNJAM_SPEED = 0.25;
-	public static final double HOPPER_FEED_SPEED = 1;
-	public static final double HOPPER_START_INTAKE_SPEED = 0.8;
-	public static final double HOPPER_FEEDER_ROLLBALL_SPEED = 0.1;
-	
 	//Loop
 	public void update() {
 		//Force Stopped
@@ -39,16 +32,16 @@ public class Hopper extends Subsystem {
 		
 		//Unjam
 		else if (Superstructure.getMode() == Mode.UNJAM) {
-			setMiddlePercentOutput(-HOPPER_UNJAM_SPEED);
-			setFeeder(-HOPPER_UNJAM_SPEED);
-			setStart(-HOPPER_UNJAM_SPEED);
+			setMiddlePercentOutput(-Constants.HOPPER_UNJAM_SPEED);
+			setFeeder(-Constants.HOPPER_UNJAM_SPEED);
+			setStart(-Constants.HOPPER_UNJAM_SPEED);
 		}
 		
 		//Shooting
 		else if (Superstructure.getMode() == Mode.SHOOTING) {
-			setMiddlePercentOutput(HOPPER_FEED_SPEED);
-			setFeeder(HOPPER_FEED_SPEED);
-			setStart(HOPPER_FEED_SPEED);
+			setMiddlePercentOutput(Constants.HOPPER_FEED_SPEED);
+			setFeeder(Constants.HOPPER_FEED_SPEED);
+			setStart(Constants.HOPPER_FEED_SPEED);
 		}
 		
 		//Indexing
@@ -59,7 +52,7 @@ public class Hopper extends Subsystem {
 			
 			//Mid and Feeder
 			if (isIndexing) {
-				setFeeder(-HOPPER_FEEDER_ROLLBALL_SPEED);
+				setFeeder(-Constants.HOPPER_FEEDER_ROLLBALL_SPEED);
 				if (!wasIndexing)
 					resetMiddleEncoder();
 				setMiddleTarget(1000);
@@ -71,7 +64,7 @@ public class Hopper extends Subsystem {
 			
 			//Entry
 			if (Superstructure.getMode() == Mode.INTAKE)
-				setStart(HOPPER_START_INTAKE_SPEED);
+				setStart(Constants.HOPPER_START_INTAKE_SPEED);
 			else if (isIndexing)
 				setStart(0);
 			else setStart(0);
@@ -127,9 +120,9 @@ public class Hopper extends Subsystem {
 		
 		falconMid = new TalonFX(Ports.HOPPER_FALCON_MID);
 		falconMid.configFactoryDefault();
-		falconMid.config_kP(0, HOPPER_KP);
-		falconMid.configMotionAcceleration((int) HOPPER_ACC);
-		falconMid.configMotionCruiseVelocity((int) HOPPER_VEL);
+		falconMid.config_kP(0, Constants.HOPPER_KP);
+		falconMid.configMotionAcceleration((int) Constants.HOPPER_ACC);
+		falconMid.configMotionCruiseVelocity((int) Constants.HOPPER_VEL);
 		
 		entrySensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_START);
 		endSensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_END);

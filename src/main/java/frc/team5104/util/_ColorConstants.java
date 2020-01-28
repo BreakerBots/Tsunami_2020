@@ -8,7 +8,6 @@ public class _ColorConstants {
 		public static double rMin = 0.386;
 		public static double gMin = 0.342;
 		public static double bMin = 0.115;
-
 	}
 	
 	public static class Blue {
@@ -18,7 +17,6 @@ public class _ColorConstants {
 		public static double rMin = 0.125;
 		public static double gMin = 0.421;
 		public static double bMin = 0.346;
-
 	}
 	
 	public static class Green {
@@ -28,7 +26,6 @@ public class _ColorConstants {
 		public static double rMin = 0.174;
 		public static double gMin = 0.528;
 		public static double bMin = 0.23;
-
 	}
 	
 	public static class Yellow {
@@ -38,6 +35,5 @@ public class _ColorConstants {
 		public static double rMin = 0.31;
 		public static double gMin = 0.541;
 		public static double bMin = 0.11;
-
 	}
 }

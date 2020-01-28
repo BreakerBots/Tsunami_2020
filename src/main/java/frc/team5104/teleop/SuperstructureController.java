@@ -9,7 +9,10 @@ import frc.team5104.Superstructure.SystemState;
 import frc.team5104.Superstructure.Target;
 import frc.team5104.subsystems.Hood;
 import frc.team5104.subsystems.Turret;
+import frc.team5104.subsystems.Climber;
+import frc.team5104.util.Limelight;
 import frc.team5104.util.console;
+import frc.team5104.util.Limelight.LEDMode;
 import frc.team5104.util.console.c;
 import frc.team5104.util.managers.TeleopController;
 
@@ -18,6 +21,7 @@ public class SuperstructureController extends TeleopController {
 		// Idle
 		if (Controls.IDLE.get()) {
 			Superstructure.setMode(Mode.IDLE);
+			Limelight.setLEDMode(LEDMode.OFF);
 			console.log(c.SUPERSTRUCTURE, "idling");
 		}
 
@@ -60,28 +64,17 @@ public class SuperstructureController extends TeleopController {
 			}
 		}
 
-		// Shooter
-		if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
-			if (Controls.SHOOT.get()) {
-				if (Superstructure.getMode() == Mode.SHOOTING) {
-					Superstructure.setMode(Mode.IDLE);
-					console.log(c.SUPERSTRUCTURE, "exiting shooting... idling");
-				} else {
-					Superstructure.setMode(Mode.SHOOTING);
-					console.log(c.SUPERSTRUCTURE, "shooting");
-				}
+		//Shooter
+		if (Controls.SHOOT.get()) {
+			if (Superstructure.getMode() == Mode.SHOOTING) {
+				Superstructure.setMode(Mode.IDLE);
+				Limelight.setLEDMode(LEDMode.OFF);
+				console.log(c.SUPERSTRUCTURE, "exiting shooting... idling");
 			}
-			if (Controls.SHOOT_LOW.get()) {
-				Superstructure.setTarget(Target.LOW);
-				console.log(c.SUPERSTRUCTURE, "setting shooter target to low");
-			}
-			if (Controls.SHOOT_HIGH.get()) {
-				Superstructure.setTarget(Target.HIGH);
-				console.log(c.SUPERSTRUCTURE, "setting shooter target to high");
-			}
-			if (Controls.CHARGE_FLYWHEEL.get()) {
-				Superstructure.setFlywheelState(FlywheelState.SPINNING);
-				console.log(c.SUPERSTRUCTURE, "charging flywheel");
+			else {
+				Superstructure.setMode(Mode.SHOOTING);
+				Limelight.setLEDMode(LEDMode.ON);
+				console.log(c.SUPERSTRUCTURE, "shooting");
 			}
 		}
 		if (Superstructure.getSystemState() == SystemState.MANUAL) {
@@ -89,8 +82,8 @@ public class SuperstructureController extends TeleopController {
 //			Hood.setSpeed(Controls.HOOD_MANUAL.get());
 		}
 
-		// Hopper
-		if (Controls.HOPPER_UNJAM.isDown()) {
+		//Hopper
+		if (Controls.HOPPER_UNJAM.get()) {
 			if (Superstructure.getMode() != Mode.UNJAM) {
 				Superstructure.setMode(Mode.UNJAM);
 				console.log(c.SUPERSTRUCTURE, "unjamming");
@@ -103,8 +96,8 @@ public class SuperstructureController extends TeleopController {
 		// Climb
 		if (Controls.CLIMBER_DEPLOY.get() && Superstructure.getMode() == Mode.IDLE) {
 			Superstructure.setMode(Mode.CLIMBING);
-			console.log(c.SUPERSTRUCTURE, "Time to fly!");
+			console.log(c.SUPERSTRUCTURE, "deploying climber!!!!");
 		}
-		// Climber.climberManual = Controls.CLIMBER_WINCH.get();
+		Climber.climberManual = Controls.CLIMBER_WINCH.get() + Controls.CLIMBER_WINCH_OP.get();
 	}
 }

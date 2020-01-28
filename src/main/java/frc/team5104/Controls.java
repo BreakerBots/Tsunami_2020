@@ -13,9 +13,8 @@ public class Controls {
 	public static XboxController operator = XboxController.create(1);
 	
 	//Main
-	public static final Button IDLE = driver.getButton(Button.LIST);
-	public static final Button IDLE_OP = operator.getButton(Button.LIST);
-	public static final Button COMPRESSOR_TOGGLE = driver.getButton(Button.MENU);
+	public static final Button IDLE = XboxController.getButton(Button.LIST, operator, driver);
+	public static final Button COMPRESSOR_TOGGLE = XboxController.getButton(Button.MENU, operator, driver);
 	
 	//Drive
 	public static final Axis DRIVE_TURN = driver.getAxis(Axis.LEFT_JOYSTICK_X, new Deadband(0.08), new BezierCurve(0.15, 0.7, 0.8, 0.225));
@@ -24,36 +23,25 @@ public class Controls {
 	public static final Button DRIVE_SHIFT = driver.getButton(Button.LEFT_JOYSTICK_PRESS);
 
 	//Intake
-	public static final Button INTAKE = driver.getButton(Button.X);
-	public static final Button INTAKE_OP = operator.getButton(Button.X);
+	public static final Button INTAKE = XboxController.getButton(Button.X, operator, driver);
 	
 	//Hopper
-	public static final Button HOPPER_UNJAM = driver.getButton(Button.LEFT_BUMPER);
-	public static final Button HOPPER_UNJAM_OP = operator.getButton(Button.LEFT_BUMPER);
+	public static final Button HOPPER_UNJAM = XboxController.getButton(Button.LEFT_BUMPER, operator, driver);
 	
 	//Shooter
-	public static final Button SHOOT = driver.getButton(Button.B);
-	public static final Button CHARGE_FLYWHEEL = driver.getButton(Button.RIGHT_BUMPER);
-	public static final Button SHOOT_LOW = driver.getButton(Button.DIRECTION_PAD_LEFT);
-	public static final Button SHOOT_HIGH = driver.getButton(Button.DIRECTION_PAD_RIGHT);
-	public static final Button SHOOT_OP = operator.getButton(Button.B);
-	public static final Button CHARGE_FLYWHEEL_OP = operator.getButton(Button.RIGHT_BUMPER);
-	public static final Button SHOOT_LOW_OP = operator.getButton(Button.DIRECTION_PAD_LEFT);
-	public static final Button SHOOT_HIGH_OP = operator.getButton(Button.DIRECTION_PAD_RIGHT);
+	public static final Button SHOOT = XboxController.getButton(Button.B, operator, driver);
+	public static final Button CHARGE_FLYWHEEL = XboxController.getButton(Button.RIGHT_BUMPER, operator, driver);
+	public static final Button SHOOT_LOW = XboxController.getButton(Button.DIRECTION_PAD_LEFT, operator, driver);
+	public static final Button SHOOT_HIGH = XboxController.getButton(Button.DIRECTION_PAD_RIGHT, operator, driver);
 	
 	//Panel
-	public static final Button PANEL_DEPLOY = driver.getButton(Button.Y);
-	public static final Button PANEL_SPIN = driver.getButton(Button.A);
-	public static final Button PANEL_ROTATION = driver.getButton(Button.DIRECTION_PAD_UP);
-	public static final Button PANEL_POSITION = driver.getButton(Button.DIRECTION_PAD_DOWN);
-	public static final Button PANEL_DEPLOY_OP = operator.getButton(Button.Y);
-	public static final Button PANEL_SPIN_OP = operator.getButton(Button.A);
-	public static final Button PANEL_ROTATION_OP = operator.getButton(Button.DIRECTION_PAD_UP);
-	public static final Button PANEL_POSITION_OP = operator.getButton(Button.DIRECTION_PAD_DOWN);
+	public static final Button PANEL_DEPLOY = XboxController.getButton(Button.Y, operator, driver);
+	public static final Button PANEL_SPIN = XboxController.getButton(Button.A, operator, driver);
+	public static final Button PANEL_ROTATION = XboxController.getButton(Button.DIRECTION_PAD_UP, operator, driver);
+	public static final Button PANEL_POSITION = XboxController.getButton(Button.DIRECTION_PAD_DOWN, operator, driver);
 	
 	//Climb
-	public static final Button CLIMBER_DEPLOY = driver.getButton(Button.RIGHT_JOYSTICK_PRESS);
-	public static final Axis CLIMBER_WINCH = driver.getAxis(Axis.RIGHT_JOYSTICK_Y);
-	public static final Button CLIMBER_DEPLOY_OP = operator.getButton(Button.RIGHT_JOYSTICK_PRESS);
-	public static final Axis CLIMBER_WINCH_OP = operator.getAxis(Axis.RIGHT_JOYSTICK_Y);
+	public static final Button CLIMBER_DEPLOY = XboxController.getButton(Button.RIGHT_JOYSTICK_PRESS, operator, driver);
+	public static final Axis CLIMBER_WINCH = driver.getAxis(Axis.RIGHT_JOYSTICK_Y, new Deadband(0.01));
+	public static final Axis CLIMBER_WINCH_OP = operator.getAxis(Axis.RIGHT_JOYSTICK_Y, new Deadband(0.01));
 }
