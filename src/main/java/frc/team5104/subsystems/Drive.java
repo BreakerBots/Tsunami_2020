@@ -110,12 +110,10 @@ public class Drive extends Subsystem {
 		talonR = new TalonSRX(Ports.DRIVE_TALON_R1);
 		victorR = new VictorSPX(Ports.DRIVE_TALON_R2);
 		talonGyro = new TalonSRX(15);
-		gyro = new PigeonIMU(talonGyro);
+		gyro = new PigeonIMU(69/*IDK*/);
 		leftEncoder = new Encoder(talonL);
 		rightEncoder = new Encoder(talonR);
 		shifter = new DoubleSolenoid(0, 1);
-		
-		talonGyro.configFactoryDefault();
 		
 		talonL.configFactoryDefault();
 		victorL.configFactoryDefault();

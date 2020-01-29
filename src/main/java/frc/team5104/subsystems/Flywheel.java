@@ -13,7 +13,7 @@ import frc.team5104.util.managers.Subsystem;
 
 public class Flywheel extends Subsystem {
 	private static TalonFX falcon1, falcon2;
-	private static double targetRPMS = 0;
+	private static double targetRPMS = 4500;
 	
 	//Loop
 	public void update() {

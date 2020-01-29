@@ -2,6 +2,7 @@ package frc.team5104.teleop;
 
 import frc.team5104.Controls;
 import frc.team5104.Superstructure;
+import frc.team5104.Superstructure.FlywheelState;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.PanelState;
 import frc.team5104.Superstructure.SystemState;
@@ -17,6 +18,7 @@ public class SuperstructureController extends TeleopController {
 		// Idle
 		if (Controls.IDLE.get()) {
 			Superstructure.setMode(Mode.IDLE);
+			Superstructure.setFlywheelState(FlywheelState.STOPPED);
 			Limelight.setLEDMode(LEDMode.OFF);
 			console.log(c.SUPERSTRUCTURE, "idling");
 		}
@@ -64,6 +66,7 @@ public class SuperstructureController extends TeleopController {
 		if (Controls.SHOOT.get()) {
 			if (Superstructure.getMode() == Mode.SHOOTING) {
 				Superstructure.setMode(Mode.IDLE);
+				Superstructure.setFlywheelState(FlywheelState.STOPPED);
 				Limelight.setLEDMode(LEDMode.OFF);
 				console.log(c.SUPERSTRUCTURE, "exiting shooting... idling");
 			}

@@ -25,7 +25,7 @@ public class Constants {
 	public static final boolean AUTO_PLOT_ODOMETRY = true;
 	
 	//Flywheel
-	public static final boolean FLYWHEEL_OPEN_LOOP = false;
+	public static final boolean FLYWHEEL_OPEN_LOOP = true;
 	public static final double FLYWHEEL_RAMP_RATE = 0.5;
 	public static final double FLYWHEEL_RPM_TOL = 300;
 	public static final double FLYWHEEL_KP = 0;

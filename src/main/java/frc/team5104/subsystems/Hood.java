@@ -63,8 +63,7 @@ public class Hood extends Subsystem {
 
 	//External Functions
 	public static double getAngle() {
-		// TODO!!!
-		return talon.getSelectedSensorPosition() / 4096.0;
+		return talon.getSelectedSensorPosition() / 4096.0 * (18.0/360.0) * 360.0;
 	}
 	public static boolean backLimitHit() {
 		return talon.isRevLimitSwitchClosed() == 1;

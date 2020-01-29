@@ -66,7 +66,8 @@ public class Turret extends Subsystem {
 
 	//External Functions
 	public static double getAngle() {
-		return falcon.getSelectedSensorPosition() / 4096.0 * (8.0 / 60.0 /*gear*/) * (22.0 / 150.0 /*sprocket*/);
+		return falcon.getSelectedSensorPosition() 
+				/ 4096.0 * (8.0 / 60.0 /*gear*/) * (22.0 / 150.0 /*sprocket*/) * 360.0;
 	}
 	public static boolean leftLimitHit() {
 		return falcon.isRevLimitSwitchClosed() == 1;
