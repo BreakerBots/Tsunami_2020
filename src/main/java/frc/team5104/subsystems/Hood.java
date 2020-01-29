@@ -27,16 +27,19 @@ public class Hood extends Subsystem {
 		
 		//Automatic
 		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
-			if (Superstructure.getMode() == Mode.SHOOTING) {
-				if (Superstructure.getTarget() == Target.LOW) {
-					setAngle(Constants.HOOD_MAX_ANGLE);
+			if (Superstructure.getTarget() == Target.LOW) {
+				setAngle(Constants.HOOD_MAX_ANGLE);
+			}
+
+			else {
+				if (Superstructure.getMode() == Mode.SHOOTING && Limelight.hasTarget()) {
+					//Vision
+					if (!onTarget()) {
+						setAngle(getTargetVisionAngle());
+					}
+					else stop();
 				}
-			} else {
-			//Vision
-				if (!onTarget()) {
-					setAngle(getTargetVisionAngle());
-				}
-				else stop();
+				else setAngle(0);
 			}
 		}
 			
@@ -59,20 +62,20 @@ public class Hood extends Subsystem {
 	}
 
 	//External Functions
-	public double getAngle() {
+	public static double getAngle() {
 		// TODO!!!
 		return talon.getSelectedSensorPosition() / 4096.0;
 	}
-	public boolean backLimitHit() {
+	public static boolean backLimitHit() {
 		return talon.isRevLimitSwitchClosed() == 1;
 	}
-	public boolean onTarget() {
+	public static boolean onTarget() {
 		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
 	}
-	public double getDistance() {
+	public static double getDistance() {
 		return 80.5 / (Math.tan((Constants.HOOD_MIN_ANGLE + Limelight.getTargetY()) * (Math.PI / 180)));
 	}
-	public double getTargetVisionAngle() {
+	public static double getTargetVisionAngle() {
 		//TODO!!!
 		return 0;
 	}

@@ -2,13 +2,9 @@ package frc.team5104.teleop;
 
 import frc.team5104.Controls;
 import frc.team5104.Superstructure;
-import frc.team5104.Superstructure.FlywheelState;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.PanelState;
 import frc.team5104.Superstructure.SystemState;
-import frc.team5104.Superstructure.Target;
-import frc.team5104.subsystems.Hood;
-import frc.team5104.subsystems.Turret;
 import frc.team5104.subsystems.Climber;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.console;

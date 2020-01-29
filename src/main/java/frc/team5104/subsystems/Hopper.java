@@ -9,6 +9,7 @@ import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
+import frc.team5104.util.Limelight;
 import frc.team5104.util.Sensor;
 import frc.team5104.util.Sensor.PortType;
 import frc.team5104.util.managers.Subsystem;
@@ -38,7 +39,8 @@ public class Hopper extends Subsystem {
 		}
 		
 		//Shooting
-		else if (Superstructure.getMode() == Mode.SHOOTING) {
+		else if (Superstructure.getMode() == Mode.SHOOTING && 
+				Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
 			setMiddlePercentOutput(Constants.HOPPER_FEED_SPEED);
 			setFeeder(Constants.HOPPER_FEED_SPEED);
 			setStart(Constants.HOPPER_FEED_SPEED);

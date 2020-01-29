@@ -9,6 +9,7 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.BreakerMath;
+import frc.team5104.util.Limelight;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
@@ -28,7 +29,7 @@ public class Turret extends Subsystem {
 		//Automatic
 		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			//Vision Mode
-			if (Superstructure.getMode() == Mode.SHOOTING) {
+			if (Superstructure.getMode() == Mode.SHOOTING && Limelight.hasTarget()) {
 				if(!onTarget())
 					setAngle(getTargetVisionAngle());
 				else stop();
