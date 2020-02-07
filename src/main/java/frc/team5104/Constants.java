@@ -25,18 +25,14 @@ public class Constants {
 	public static final boolean AUTO_PLOT_ODOMETRY = true;
 	
 	//Flywheel
-	public static final boolean FLYWHEEL_OPEN_LOOP = false;
+	public static final boolean FLYWHEEL_OPEN_LOOP = true;
+	public static final double FLYWHEEL_RAMP_RATE = 0.5;
+	public static final double FLYWHEEL_RPM_TOL = 300;
 	public static final double FLYWHEEL_KP = 0;
 	public static final double FLYWHEEL_KD = 0;
 	public static final double FLYWHEEL_KF = 0;
 	public static final double FLYWHEEL_ACC = 0;
 	public static final double FLYWHEEL_VEL = 0;
-	
-	//Hood
-	public static final double HOOD_ANGLE = 37.0;
-	public static final double HOOD_MIN_ANGLE_ERR = 0.1;
-	public static final double HOOD_MAX_ANGLE = 40;
-	public static final double HOOD_KINPUT = 0.3;
 	
 	//Intake
 	public static final double INTAKE_TALON_SPEED = 0.6;
@@ -45,10 +41,10 @@ public class Constants {
 	public static final double ROTATION_MOTOR_SPEED = 0.75;
 	public static final double POSITION_MOTOR_SPEED = 0.3;
 
-	public static final double FLYWHEEL_RAMP_RATE = 0.5;
-	public static final double FLYWHEEL_RPM_TOL = 300;
-	
 	//Hood
+	public static final double HOOD_MIN_ANGLE_ERR = 0.1;
+	public static final double HOOD_MIN_ANGLE = 40.0;//37.0
+	public static final double HOOD_MAX_ANGLE = 90.0;//40.0
 	public static final double HOOD_TOL = 0.2;
 	public static final double HOOD_CALIBRATE_SPEED = 0.1;
 	public static final double HOOD_KP = 0;

@@ -159,14 +159,14 @@ public class RobotController extends RobotBase {
 			if (lastMode != state.currentMode) {
 				if (state.currentMode == RobotMode.DISABLED) {
 					console.logFile.end();
-					robot.mainDisabled();
+					robot.mainStop();
 					state.timer.reset();
 					state.timer.start();
 				}
 				else if (lastMode == RobotMode.DISABLED) {
 					console.logFile.end();
 					console.logFile.start();
-					robot.mainEnabled();
+					robot.mainStart();
 				}
 				lastMode = state.currentMode;
 			}
@@ -192,8 +192,8 @@ public class RobotController extends RobotBase {
 	 */
 	public static abstract class BreakerRobot {
 		public void mainLoop() { }
-		public void mainEnabled() { }
-		public void mainDisabled() { }
+		public void mainStart() { }
+		public void mainStop() { }
 		public void autoLoop() { }
 		public void autoStart() { }
 		public void autoStop() { }

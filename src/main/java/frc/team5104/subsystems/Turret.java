@@ -8,8 +8,8 @@ import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
-import frc.team5104.util.console;
 import frc.team5104.util.BreakerMath;
+import frc.team5104.util.Limelight;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
@@ -29,7 +29,7 @@ public class Turret extends Subsystem {
 		//Automatic
 		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			//Vision Mode
-			if (Superstructure.getMode() == Mode.SHOOTING) {
+			if (Superstructure.getMode() == Mode.SHOOTING && Limelight.hasTarget()) {
 				if(!onTarget())
 					setAngle(getTargetVisionAngle());
 				else stop();
@@ -66,7 +66,8 @@ public class Turret extends Subsystem {
 
 	//External Functions
 	public static double getAngle() {
-		return falcon.getSelectedSensorPosition() / 4096.0 * (8.0 / 60.0 /*gear*/) * (22.0 / 150.0 /*sprocket*/);
+		return falcon.getSelectedSensorPosition() 
+				/ 4096.0 * (8.0 / 60.0 /*gear*/) * (22.0 / 150.0 /*sprocket*/) * 360.0;
 	}
 	public static boolean leftLimitHit() {
 		return falcon.isRevLimitSwitchClosed() == 1;

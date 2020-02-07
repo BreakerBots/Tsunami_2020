@@ -7,8 +7,12 @@ import frc.team5104.auto.Odometry;
 import frc.team5104.auto.paths.ExamplePath;
 import frc.team5104.auto.paths.Right3BallPickup;
 import frc.team5104.subsystems.Drive;
+import frc.team5104.subsystems.Flywheel;
+import frc.team5104.subsystems.Hood;
+import frc.team5104.subsystems.Turret;
 import frc.team5104.teleop.CompressorController;
 import frc.team5104.teleop.DriveController;
+import frc.team5104.teleop.SuperstructureController;
 import frc.team5104.util.XboxController;
 import frc.team5104.util.console;
 import frc.team5104.util.managers.SubsystemManager;
@@ -28,18 +32,21 @@ public class Robot extends RobotController.BreakerRobot {
 		//Managers
 		SubsystemManager.useSubsystems(
 			//new Paneler()
-			new Drive()
+			//new Drive()
+			new Turret(),
+			new Flywheel()
+//			new Hood()
 		);
 		TeleopControllerManager.useTeleopControllers(
-			new DriveController(),
-			//new SuperstructureController(),
-			new CompressorController()
+			//new DriveController(),
+			new SuperstructureController()
+			//new CompressorController()
 		);
 		
 		//Other Initialization
 		Webapp.run();
 		Plotter.reset();
-		Odometry.init();
+//		Odometry.init();
 		Limelight.init();
 		CompressorController.stop();
 		AutoManager.setTargetPath(new ExamplePath());
@@ -53,12 +60,6 @@ public class Robot extends RobotController.BreakerRobot {
 		TeleopControllerManager.disabled();
 	}
 	public void teleopLoop() {
-		Odometry.update();
-		Plotter.plot(
-				Odometry.getPositionFeet().getXFeet(), 
-				Odometry.getPositionFeet().getYFeet(),
-				Plotter.Color.ORANGE
-			);
 		TeleopControllerManager.update();
 	}
 	

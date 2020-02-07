@@ -44,7 +44,7 @@ public class Superstructure {
 	
 	//Loop
 	protected static void update() {
-
+		//console.log(getSystemState());
 		//Exit Paneling
 		if (Superstructure.getMode() == Mode.PANELING && Paneler.isFinished()) {
 			Superstructure.setMode(Mode.IDLE);
@@ -60,6 +60,12 @@ public class Superstructure {
 		//Spin Flywheel while Shooting
 		if (getMode() == Mode.SHOOTING) {
 			setFlywheelState(FlywheelState.SPINNING);
+		}
+		
+		//Exit Calibration
+		if (getSystemState() == SystemState.CALIBRATING /*UR DUMB FIX THIS PLZ*/) {
+			setSystemState(SystemState.AUTOMATIC);
+			console.log(c.SUPERSTRUCTURE, "finished calibration");
 		}
 	}
 	

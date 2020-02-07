@@ -15,7 +15,7 @@ import frc.team5104.util.Encoder;
 import frc.team5104.util.managers.Subsystem;
 
 public class Drive extends Subsystem {
-	private static TalonSRX talonL, talonR, talonGyro;
+	private static TalonSRX talonL, talonR;
 	private static VictorSPX victorL, victorR;
 	private static Encoder leftEncoder, rightEncoder;
 	private static DoubleSolenoid shifter;
@@ -109,13 +109,10 @@ public class Drive extends Subsystem {
 		victorL = new VictorSPX(Ports.DRIVE_TALON_L2);
 		talonR = new TalonSRX(Ports.DRIVE_TALON_R1);
 		victorR = new VictorSPX(Ports.DRIVE_TALON_R2);
-		talonGyro = new TalonSRX(15);
-		gyro = new PigeonIMU(talonGyro);
+		gyro = new PigeonIMU(69/*IDK*/);
 		leftEncoder = new Encoder(talonL);
 		rightEncoder = new Encoder(talonR);
 		shifter = new DoubleSolenoid(0, 1);
-		
-		talonGyro.configFactoryDefault();
 		
 		talonL.configFactoryDefault();
 		victorL.configFactoryDefault();

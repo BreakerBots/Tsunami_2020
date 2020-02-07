@@ -14,9 +14,8 @@ import frc.team5104.util.managers.Subsystem;
 
 public class Hood extends Subsystem {
 	private static TalonSRX talon;
-	private static double targetAngle = 0;
 
-	// Loop
+	//Loop
 	public void update() {
 		//Calibrating
 		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
@@ -28,16 +27,19 @@ public class Hood extends Subsystem {
 		
 		//Automatic
 		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
-			if (Superstructure.getMode() == Mode.SHOOTING) {
-				if (Superstructure.getTarget() == Target.LOW) {
-					setAngle(Constants.HOOD_MAX_ANGLE);
+			if (Superstructure.getTarget() == Target.LOW) {
+				setAngle(Constants.HOOD_MAX_ANGLE);
+			}
+
+			else {
+				if (Superstructure.getMode() == Mode.SHOOTING && Limelight.hasTarget()) {
+					//Vision
+					if (!onTarget()) {
+						setAngle(getTargetVisionAngle());
+					}
+					else stop();
 				}
-			} else {
-			//Vision
-				if (!onTarget()) {
-					setAngle(getTargetVisionAngle());
-				}
-				else stop();
+				else setAngle(0);
 			}
 		}
 			
@@ -45,52 +47,39 @@ public class Hood extends Subsystem {
 		else stop();
 	}
 
-	// Internal Functions
+	//Internal Functions
 	private void setAngle(double degrees) {
 		talon.set(ControlMode.MotionMagic, degrees);
 	}
-
 	private void setPercentOutput(double percent) {
 		talon.set(ControlMode.PercentOutput, percent);
 	}
-
 	private void stop() {
 		talon.set(ControlMode.Disabled, 0);
 	}
-
 	private void resetEncoder() {
 		talon.setSelectedSensorPosition(0);
 	}
 
-	private double getDistance() {
-		return 80.5 / (Math.tan((Constants.HOOD_ANGLE + Limelight.getTargetY()) * (Math.PI / 180)));
+	//External Functions
+	public static double getAngle() {
+		return talon.getSelectedSensorPosition() / 4096.0 * (18.0/360.0) * 360.0;
 	}
-
-	// External Functions
-
-	public double getAngle() {
-		// TODO!!!
-		return talon.getSelectedSensorPosition() / 4096.0;
-	}
-
-	public boolean backLimitHit() {
+	public static boolean backLimitHit() {
 		return talon.isRevLimitSwitchClosed() == 1;
 	}
-
-	public boolean onTarget() {
+	public static boolean onTarget() {
 		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
 	}
-
-	public double getTargetVisionAngle() {
+	public static double getDistance() {
+		return 80.5 / (Math.tan((Constants.HOOD_MIN_ANGLE + Limelight.getTargetY()) * (Math.PI / 180)));
+	}
+	public static double getTargetVisionAngle() {
 		//TODO!!!
 		return 0;
 	}
 
-	public void setSpeed(double input) {
-		setPercentOutput(input * Constants.HOOD_KINPUT);
-	}
-
-	// Config
+	//Config
 	public void init() {
 		talon = new TalonSRX(Ports.HOOD_TALON);
 		talon.configFactoryDefault();
@@ -100,7 +89,7 @@ public class Hood extends Subsystem {
 		talon.configMotionCruiseVelocity((int) Constants.HOOD_VEL);
 	}
 
-	// Reset
+	//Reset
 	public void reset() {
 		stop();
 		resetEncoder();
