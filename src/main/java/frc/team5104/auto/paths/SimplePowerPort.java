@@ -2,16 +2,21 @@
 package frc.team5104.auto.paths;
 
 import frc.team5104.auto.AutoPath;
+
+//Rough Path Complete
+
 import frc.team5104.auto.Position;
 import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
 
-public class SimpleRight extends AutoPath {
-	public SimpleRight() {
+public class SimplePowerPort extends AutoPath {
+	public SimplePowerPort() {
 		//Robot Position - In front of the Power Port
 		add(new DriveTrajectoryAction(true, false,
-				new Position(0, 0, 0),
-				new Position(2, 0, 0)
+			/*	new Position(0, 0, 0),
+				new Position(2, 0, 0)  */
+				new Position(10, 20.17, 0),
+				new Position(11, 20.17, 0)
 			));
 		//Shooting Code
 		add(new DriveStopAction());

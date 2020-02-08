@@ -10,9 +10,10 @@ public class Right3BallPickup extends AutoPath {
 	
 	
 	public Right3BallPickup() {
-		// We changed the path!!  Robot lines up in front of power port,
-		// shoots 3 balls, gets 3 balls from our trench
-		// returns to shoot
+		// Line up on the far right.  Shoot.
+		// Get 3 balls from our trench
+		// Go in front of Power Port to shoot
+		//Good!!! Rough path compete
 		
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),
