@@ -2,7 +2,7 @@ package frc.team5104.util;
 
 import com.revrobotics.ColorSensorV3;
 
-import edu.wpi.first.wpilibj.I2C;
+import edu.wpi.first.wpilibj.I2C.Port;
 
 /**
  * A wrapper class for the REV Color Sensor V3 that rounds the color to the nearest of the constant colors.
@@ -24,12 +24,12 @@ public class ColorSensor {
 		new PercentColor(0.311, 0.543, 0.146)
 	};
 	
-	//
+	//Variables
 	private ColorSensorV3 colorSensor;
 	
 	//Constructors
-	public ColorSensor() {
-		colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
+	public ColorSensor(Port port) {
+		colorSensor = new ColorSensorV3(port);
 	}
 	
 	//Getters

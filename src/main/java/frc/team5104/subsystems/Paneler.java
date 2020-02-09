@@ -6,6 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.I2C;
 import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
@@ -96,9 +97,9 @@ public class Paneler extends Subsystem {
 
 	//Config
 	public void init() {
-		sensor = new ColorSensor();
+		sensor = new ColorSensor(I2C.Port.kOnboard);
 		piston = new DoubleSolenoid(Ports.PANELER_DEPLOYER_FORWARD, Ports.PANELER_DEPLOYER_REVERSE);
-		talon = new TalonSRX(21);
+		talon = new TalonSRX(Ports.PANELER_TALON);
 		talon.configFactoryDefault();
 		resetEncoder();
 	}
