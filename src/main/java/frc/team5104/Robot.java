@@ -3,18 +3,16 @@ package frc.team5104;
 
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.auto.AutoManager;
-import frc.team5104.auto.Odometry;
-import frc.team5104.auto.paths.ExamplePath;
-import frc.team5104.auto.paths.Right3BallPickup;
 import frc.team5104.subsystems.Drive;
 import frc.team5104.subsystems.Flywheel;
-import frc.team5104.subsystems.Hood;
-import frc.team5104.subsystems.Turret;
+import frc.team5104.subsystems.Hopper;
+import frc.team5104.subsystems.Intake;
 import frc.team5104.teleop.CompressorController;
 import frc.team5104.teleop.DriveController;
 import frc.team5104.teleop.SuperstructureController;
 import frc.team5104.util.XboxController;
 import frc.team5104.util.console;
+import frc.team5104.util.console.c;
 import frc.team5104.util.managers.SubsystemManager;
 import frc.team5104.util.managers.TeleopControllerManager;
 import frc.team5104.util.setup.RobotController;
@@ -32,13 +30,16 @@ public class Robot extends RobotController.BreakerRobot {
 		//Managers
 		SubsystemManager.useSubsystems(
 			//new Paneler()
-			//new Drive()
-			new Turret(),
-			new Flywheel()
-//			new Hood()
+			new Drive(),
+			new Intake(),
+			//new Turret(),
+			new Flywheel(),
+			new Hopper()
+			//new Paneler()
+			//new Hood()
 		);
 		TeleopControllerManager.useTeleopControllers(
-			//new DriveController(),
+			new DriveController(),
 			new SuperstructureController()
 			//new CompressorController()
 		);
@@ -46,10 +47,10 @@ public class Robot extends RobotController.BreakerRobot {
 		//Other Initialization
 		Webapp.run();
 		Plotter.reset();
-//		Odometry.init();
+		//Odometry.init();
 		Limelight.init();
 		CompressorController.stop();
-		AutoManager.setTargetPath(new ExamplePath());
+//		AutoManager.setTargetPath(new ChezyVictoryLap());
 	}
 	
 	//Teleop 
@@ -95,7 +96,7 @@ public class Robot extends RobotController.BreakerRobot {
 	public void mainLoop() { 
 		Superstructure.update();
 		SubsystemManager.update();
-		
+//		console.log(Hopper.isEmpty());
 		XboxController.update();
 	}
 }

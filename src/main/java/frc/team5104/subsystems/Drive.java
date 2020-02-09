@@ -5,7 +5,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
-import com.ctre.phoenix.sensors.PigeonIMU;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.team5104.Constants;
@@ -15,11 +14,11 @@ import frc.team5104.util.Encoder;
 import frc.team5104.util.managers.Subsystem;
 
 public class Drive extends Subsystem {
-	private static TalonSRX talonL, talonR;
-	private static VictorSPX victorL, victorR;
+	private static TalonSRX talonL1, talonL2, talonR;
+	private static VictorSPX victorR;
 	private static Encoder leftEncoder, rightEncoder;
 	private static DoubleSolenoid shifter;
-	private static PigeonIMU gyro;
+	//private static PigeonIMU gyro;
 	
 	//Update
 	private static DriveSignal currentDriveSignal = new DriveSignal();
@@ -65,26 +64,26 @@ public class Drive extends Subsystem {
 	
 	//Internal Functions
 	void setMotors(double leftSpeed, double rightSpeed, ControlMode controlMode, double leftFeedForward, double rightFeedForward) {
-		talonL.set(controlMode, leftSpeed, DemandType.ArbitraryFeedForward, leftFeedForward);
+		talonL1.set(controlMode, leftSpeed, DemandType.ArbitraryFeedForward, leftFeedForward);
 		talonR.set(controlMode, rightSpeed, DemandType.ArbitraryFeedForward, rightFeedForward);
 	}
 	void stopMotors() {
-		talonL.set(ControlMode.Disabled, 0);
+		talonL1.set(ControlMode.Disabled, 0);
 		talonR.set(ControlMode.Disabled, 0);
 	}
 	
 	//External Functions
 	public static void set(DriveSignal signal) { currentDriveSignal = signal; }
 	public static void stop() { currentDriveSignal = new DriveSignal(); }
-	public static double getLeftGearboxVoltage() { return talonL.getBusVoltage(); }
+	public static double getLeftGearboxVoltage() { return talonL1.getBusVoltage(); }
 	public static double getRightGearboxVoltage() { return talonR.getBusVoltage(); }
-	public static double getLeftGearboxOutputVoltage() { return talonL.getMotorOutputVoltage(); }
+	public static double getLeftGearboxOutputVoltage() { return talonL1.getMotorOutputVoltage(); }
 	public static double getRightGearboxOutputVoltage() { return talonR.getMotorOutputVoltage(); }
 	public static void resetGyro() { 
-		gyro.setFusedHeading(0);
+		//gyro.setFusedHeading(0);
 	}
 	public static double getGyro() {
-		return gyro.getFusedHeading();
+		return 0;//gyro.getFusedHeading();
 	}
 	public static void resetEncoders() {
 		leftEncoder.reset();
@@ -105,22 +104,22 @@ public class Drive extends Subsystem {
 	
 	//Config
 	public void init() {
-		talonL = new TalonSRX(Ports.DRIVE_TALON_L1);
-		victorL = new VictorSPX(Ports.DRIVE_TALON_L2);
+		talonL1 = new TalonSRX(Ports.DRIVE_TALON_L1);
+		talonL2 = new TalonSRX(Ports.DRIVE_TALON_L2);
 		talonR = new TalonSRX(Ports.DRIVE_TALON_R1);
-		victorR = new VictorSPX(Ports.DRIVE_TALON_R2);
-		gyro = new PigeonIMU(69/*IDK*/);
-		leftEncoder = new Encoder(talonL);
+		victorR = new VictorSPX(Ports.DRIVE_VICTOR_R2);
+		//gyro = new PigeonIMU(69/*IDK*/);
+		leftEncoder = new Encoder(talonL1);
 		rightEncoder = new Encoder(talonR);
 		shifter = new DoubleSolenoid(0, 1);
 		
-		talonL.configFactoryDefault();
-		victorL.configFactoryDefault();
-		talonL.config_kP(0, Constants.DRIVE_KP, 0);
-		talonL.config_kD(0, Constants.DRIVE_KD, 0);
-		victorL.set(ControlMode.Follower, talonL.getDeviceID());
-		talonL.setInverted(true);
-		victorL.setInverted(true);
+		talonL1.configFactoryDefault();
+		talonL2.configFactoryDefault();
+		talonL1.config_kP(0, Constants.DRIVE_KP, 0);
+		talonL1.config_kD(0, Constants.DRIVE_KD, 0);
+		talonL2.set(ControlMode.Follower, talonL1.getDeviceID());
+		talonL1.setInverted(true);
+		talonL2.setInverted(true);
 		
 		talonR.configFactoryDefault();
 		victorR.configFactoryDefault();

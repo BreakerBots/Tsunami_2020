@@ -41,11 +41,12 @@ public class Flywheel extends Subsystem {
 	
 	//External Functions
 	public static double getRPMS() {
-		return falcon1.getSelectedSensorPosition() / 4096.0 * 60.0 * 10.0;
+		return falcon1.getSelectedSensorVelocity() / 4096.0 * 60.0 * 10.0;
 	}
 	public static boolean isSpedUp() {
-		return BreakerMath.roughlyEquals(
-				getRPMS(), targetRPMS, Constants.FLYWHEEL_RPM_TOL);
+		return getRPMS() > 1000;
+//		return BreakerMath.roughlyEquals(
+//				getRPMS(), targetRPMS, Constants.FLYWHEEL_RPM_TOL);
 	}
 	
 	//Config
@@ -56,10 +57,11 @@ public class Flywheel extends Subsystem {
 		falcon1.config_kD(0, Constants.FLYWHEEL_KD);
 		falcon1.config_kF(0, Constants.FLYWHEEL_KF);
 		falcon1.configClosedloopRamp(Constants.FLYWHEEL_RAMP_RATE);
+		falcon1.setInverted(true);
 		
 		falcon2 = new TalonFX(Ports.FLYWHEEL_FALCON_1);
 		falcon2.configFactoryDefault();
-		falcon2.setInverted(true);
+		falcon2.setInverted(false);
 		falcon2.follow(falcon1);
 	}
 

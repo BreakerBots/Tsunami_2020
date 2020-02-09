@@ -27,7 +27,7 @@ public class Constants {
 	//Flywheel
 	public static final boolean FLYWHEEL_OPEN_LOOP = true;
 	public static final double FLYWHEEL_RAMP_RATE = 0.5;
-	public static final double FLYWHEEL_RPM_TOL = 300;
+	public static final double FLYWHEEL_RPM_TOL = 2000;
 	public static final double FLYWHEEL_KP = 0;
 	public static final double FLYWHEEL_KD = 0;
 	public static final double FLYWHEEL_KF = 0;
@@ -53,16 +53,17 @@ public class Constants {
 	public static final double HOOD_VEL = 0;
 	
 	//Hopper
-	public static final double HOPPER_KP = 0;
+	public static final double HOPPER_KP = 10;
 	public static final double HOPPER_ACC = 0;
 	public static final double HOPPER_VEL = 0;
+	public static final double HOPPER_MID_BALL_SIZE = 14500;
 	public static final double HOPPER_UNJAM_SPEED = 0.25;
 	public static final double HOPPER_FEED_SPEED = 1;
 	public static final double HOPPER_START_INTAKE_SPEED = 0.8;
 	public static final double HOPPER_FEEDER_ROLLBALL_SPEED = 0.1;
 	
 	//Intake
-	public static final double INTAKE_SPEED = 1.0;
+	public static final double INTAKE_SPEED = 0.4; //1.0;
 	
 	//Paneler
 	public static final double PANELER_ROT_SPEED = 0.75;

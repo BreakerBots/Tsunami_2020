@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.DigitalInput;
  */
 public class Sensor {
 	public static enum PortType { DIGITAL, ANALOG }
-	private static final double ANALOG_TRIGGER_VALUE = 0.25;
+	private static final double ANALOG_TRIGGER_VALUE = 2.5;
 
 	private AnalogInput analogInput;
 	private DigitalInput digitalInput;

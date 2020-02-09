@@ -2,23 +2,24 @@ package frc.team5104.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
 import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
-import frc.team5104.util.Limelight;
+import frc.team5104.util.LatchedBoolean;
 import frc.team5104.util.Sensor;
 import frc.team5104.util.Sensor.PortType;
 import frc.team5104.util.managers.Subsystem;
 
 public class Hopper extends Subsystem {
-	private static TalonSRX talonStart, talonFeeder;
+	private static VictorSPX intakeToHopper, hopperToShooter;
 	private static TalonFX falconMid;
 	private static Sensor entrySensor, endSensor;
-	private static boolean isIndexing, wasIndexing;
+	private static boolean isIndexing;
+	private static LatchedBoolean entrySensorLatch;
 	
 	//Loop
 	public void update() {
@@ -39,8 +40,8 @@ public class Hopper extends Subsystem {
 		}
 		
 		//Shooting
-		else if (Superstructure.getMode() == Mode.SHOOTING && 
-				Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
+		else if (Superstructure.getMode() == Mode.SHOOTING && Flywheel.isSpedUp()) {//&& 
+				// Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
 			setMiddlePercentOutput(Constants.HOPPER_FEED_SPEED);
 			setFeeder(Constants.HOPPER_FEED_SPEED);
 			setStart(Constants.HOPPER_FEED_SPEED);
@@ -49,15 +50,15 @@ public class Hopper extends Subsystem {
 		//Indexing
 		else {
 			//Indexing
-			wasIndexing = isIndexing;
-			isIndexing = !isFull() && isEntrySensorTripped();
+			isIndexing = !isFull() && (isEntrySensorTripped() || getMidPosition() < Constants.HOPPER_MID_BALL_SIZE);
+			if (entrySensorLatch.get(isEntrySensorTripped()) && isEntrySensorTripped()) {
+				resetMiddleEncoder();
+			}
 			
 			//Mid and Feeder
 			if (isIndexing) {
 				setFeeder(-Constants.HOPPER_FEEDER_ROLLBALL_SPEED);
-				if (!wasIndexing)
-					resetMiddleEncoder();
-				setMiddleTarget(1000);
+				setMiddleTarget(Constants.HOPPER_MID_BALL_SIZE);
 			}
 			else {
 				setFeeder(0);
@@ -71,6 +72,8 @@ public class Hopper extends Subsystem {
 				setStart(0);
 			else setStart(0);
 		}
+		
+//		Constants.HOPPER_MID_BALL_SIZE = Double.parseDouble(Tuner.getTunerInput("Hopper Mid Ball Size", Constants.HOPPER_MID_BALL_SIZE));
 	}
 
 	//Internal Functions
@@ -78,17 +81,17 @@ public class Hopper extends Subsystem {
 		falconMid.set(ControlMode.PercentOutput, percent);
 	}
 	private void setMiddleTarget(double encoderTarget) {
-		falconMid.set(ControlMode.MotionMagic, encoderTarget);
+		falconMid.set(ControlMode.Position, encoderTarget);
 	}
 	private void setStart(double percent) {
-		talonStart.set(ControlMode.PercentOutput, percent);
+		intakeToHopper.set(ControlMode.PercentOutput, percent);
 	}
 	private void setFeeder(double percent) {
-		talonFeeder.set(ControlMode.PercentOutput, percent);
+		hopperToShooter.set(ControlMode.PercentOutput, percent);
 	}
 	private void stopAll() {
-		talonStart.set(ControlMode.Disabled, 0);
-		talonFeeder.set(ControlMode.Disabled, 0);
+		intakeToHopper.set(ControlMode.Disabled, 0);
+		hopperToShooter.set(ControlMode.Disabled, 0);
 		falconMid.set(ControlMode.Disabled, 0);
 	}
 	private void resetMiddleEncoder() {
@@ -111,23 +114,31 @@ public class Hopper extends Subsystem {
 	public static boolean isIndexing() {
 		return isIndexing;
 	}
+	public static double getMidPosition() {
+		return falconMid.getSelectedSensorPosition();
+	}
 	
 	//Config
 	public void init() {
-		talonStart = new TalonSRX(Ports.HOPPER_TALON_START);
-		talonStart.configFactoryDefault();
-		
-		talonFeeder = new TalonSRX(Ports.HOPPER_TALON_FEEDER);
-		talonFeeder.configFactoryDefault();
+		intakeToHopper = new VictorSPX(Ports.INTAKE_TO_HOPPER_VICTOR);
+		intakeToHopper.configFactoryDefault();
+		intakeToHopper.setInverted(true);
+
+		hopperToShooter = new VictorSPX(Ports.HOPPER_TO_SHOOTER_VICTOR);
+		hopperToShooter.configFactoryDefault();
+		hopperToShooter.setInverted(true);
 		
 		falconMid = new TalonFX(Ports.HOPPER_FALCON_MID);
 		falconMid.configFactoryDefault();
 		falconMid.config_kP(0, Constants.HOPPER_KP);
 		falconMid.configMotionAcceleration((int) Constants.HOPPER_ACC);
 		falconMid.configMotionCruiseVelocity((int) Constants.HOPPER_VEL);
+		falconMid.setInverted(true);
+
+		entrySensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_START, true);
+		endSensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_END, true);
 		
-		entrySensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_START);
-		endSensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_END);
+		entrySensorLatch = new LatchedBoolean();
 	}
 
 	//Reset
