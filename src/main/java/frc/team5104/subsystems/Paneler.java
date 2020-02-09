@@ -13,14 +13,14 @@ import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.PanelState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.ColorSensor;
-import frc.team5104.util.ColorSensor.CoolColor;
+import frc.team5104.util.ColorSensor.PanelColor;
 import frc.team5104.util.managers.Subsystem;
 
 public class Paneler extends Subsystem {
 	private static ColorSensor sensor;
 	private static TalonSRX talon;
 	private static DoubleSolenoid piston;
-	private static boolean complete = false;
+	private static boolean complete;
 	
 	//Loop
 	public void update() {
@@ -38,7 +38,7 @@ public class Paneler extends Subsystem {
 			if (Superstructure.getMode() == Mode.PANELING) {
 				//rotation
 				if (Superstructure.getPanelState() == PanelState.ROTATION) {
-					if (rotationControl()) {
+					if (talon.getSelectedSensorPosition() / 4096.0 * 1.5 / 16.0 >= 4) {
 						stop();
 						setPiston(false);
 						complete = true;
@@ -48,7 +48,7 @@ public class Paneler extends Subsystem {
 		
 				//position
 				else {
-					if (atTargetPosition()) {
+					if (readFMS().length() > 0 && PanelColor.fromChar(readFMS().charAt(0)) == readColor()) {
 						stop();
 						setPiston(false);
 						complete = true;
@@ -78,30 +78,15 @@ public class Paneler extends Subsystem {
 	private void stop() {
 		talon.set(ControlMode.Disabled, 0);
 	}
-	private CoolColor readColor() {
-		return sensor.getColor();
-	}
-	private boolean atTargetPosition() {
-		String FMS = DriverStation.getInstance().getGameSpecificMessage();
-		if (FMS.length() > 0) {
-			if (FMS.charAt(0) == 'R' && readColor() == CoolColor.BLUE)
-				return true;
-			else if (FMS.charAt(0) == 'Y' && readColor() == CoolColor.GREEN)
-				return true;
-			else if (FMS.charAt(0) == 'B' && readColor() == CoolColor.RED)
-				return true;
-			else if (FMS.charAt(0) == 'G' && readColor() == CoolColor.YELLOW)
-				return true;
-		}
-		return false;
-	}
-	private boolean rotationControl() {
-		double wheelRotations = talon.getSelectedSensorPosition() / (4096);
-		double cpRotations = (wheelRotations * 1.5) / 16;
-		return cpRotations >= 4;
+	private PanelColor readColor() {
+		return sensor.getNearestColor();
 	}
 	private void resetEncoder() {
 		talon.setSelectedSensorPosition(0);
+	}
+	private String readFMS() {
+		String FMS = DriverStation.getInstance().getGameSpecificMessage();
+		return FMS;
 	}
 
 	//External Functions

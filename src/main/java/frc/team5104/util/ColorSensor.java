@@ -3,85 +3,59 @@ package frc.team5104.util;
 import com.revrobotics.ColorSensorV3;
 
 import edu.wpi.first.wpilibj.I2C;
-import edu.wpi.first.wpilibj.util.Color;
-import frc.team5104.util._ColorConstants.Green;
-import frc.team5104.util._ColorConstants.Red;
-import frc.team5104.util._ColorConstants.Yellow;
-import frc.team5104.util._ColorConstants.Blue;
 
 /**
- * Senses and returns color
+ * A wrapper class for the REV Color Sensor V3 that rounds the color to the nearest of the constant colors.
  */
 public class ColorSensor {
-	public static enum CoolColor { RED, GREEN, BLUE, YELLOW, UNDEFINED }
-	private final I2C.Port i2cPort = I2C.Port.kOnboard;
-	private final ColorSensorV3 m_colorSensor = new ColorSensorV3(i2cPort);
+	public static enum PanelColor { 
+		RED, GREEN, BLUE, YELLOW;
+		public static PanelColor fromChar(char c) {
+			if (c == 'R') return PanelColor.RED;
+			if (c == 'G') return PanelColor.GREEN;
+			if (c == 'B') return PanelColor.BLUE;
+			return PanelColor.YELLOW;
+		}
+	}
+	private static PercentColor[] colors = {
+		new PercentColor(0.418, 0.395, 0.187),
+		new PercentColor(0.211, 0.528, 0.260),
+		new PercentColor(0.173, 0.485, 0.388),
+		new PercentColor(0.311, 0.543, 0.146)
+	};
+	
+	//
+	private ColorSensorV3 colorSensor;
 	
 	//Constructors
-	public ColorSensor(/*input variables*/) {
+	public ColorSensor() {
+		colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 	}
 	
 	//Getters
-	public CoolColor getColor() {
-		Color detectedColor = m_colorSensor.getColor();
-		// System.out.println(detectedColor.red + " " + detectedColor.green + " "
-		//		+ detectedColor.blue);
-		int n = 0;
-		// Red
-		if (detectedColor.red > Red.rMin - 0.02 && detectedColor.red < Red.rMax + 0.02) {
-			n++;
+	public PanelColor getNearestColor() {
+		PercentColor color = new PercentColor(colorSensor.getRed(), colorSensor.getGreen(), colorSensor.getBlue());
+		int closestIndex = 0;
+		for (int i = 0; i < colors.length; i++) {
+			if (colors[i].distance(color) < colors[closestIndex].distance(color))
+				closestIndex = i;
 		}
-		if (detectedColor.green > Red.gMin - 0.02 && detectedColor.green < Red.gMax + 0.02) {
-			n++;
+		return PanelColor.values()[closestIndex];
+	}
+	
+	//Percent Color
+	private static class PercentColor {
+		double r, g, b;
+		public PercentColor(double r, double g, double b) {
+			this.r = r;
+			this.g = g;
+			this.b = b;
 		}
-		if (detectedColor.blue > Red.bMin - 0.02 && detectedColor.blue < Red.bMax + 0.02) {
-			n++;
+		public double distance(PercentColor other) {
+			return Math.abs(r - other.r) + Math.abs(g - other.g) + Math.abs(b - other.b);
 		}
-		if (n == 3) {
-			return CoolColor.RED;
+		public String toString() {
+			return "color: (r: " + r + ", g: " + g + ", b: " + b + ")";
 		}
-		// Green
-		n = 0;
-		if (detectedColor.red > Green.rMin - 0.02 && detectedColor.red < Green.rMax + 0.02) {
-			n++;
-		}
-		if (detectedColor.green > Green.gMin - 0.02 && detectedColor.green < Green.gMax + 0.02) {
-			n++;
-		}
-		if (detectedColor.blue > Green.bMin - 0.02 && detectedColor.blue < Green.bMax + 0.02) {
-			n++;
-		}
-		if (n == 3) {
-			return CoolColor.GREEN;
-		}
-		// Blue
-		n = 0;
-		if (detectedColor.red > Blue.rMin - 0.02 && detectedColor.red < Blue.rMax + 0.02) {
-			n++;
-		}
-		if (detectedColor.green > Blue.gMin - 0.02 && detectedColor.green < Blue.gMax + 0.02) {
-			n++;
-		}
-		if (detectedColor.blue > Blue.bMin - 0.02 && detectedColor.blue < Blue.bMax + 0.02) {
-			n++;
-		}
-		if (n == 3) {
-			return CoolColor.BLUE;
-		}
-		// Yellow
-		n = 0;
-		if (detectedColor.red > Yellow.rMin - 0.02 && detectedColor.red < Yellow.rMax + 0.02) {
-			n++;
-		}
-		if (detectedColor.green > Yellow.gMin - 0.02 && detectedColor.green < Yellow.gMax + 0.02) {
-			n++;
-		}
-		if (detectedColor.blue > Yellow.bMin - 0.02 && detectedColor.blue < Yellow.bMax + 0.02) {
-			n++;
-		}
-		if (n == 3) {
-			return CoolColor.YELLOW;
-		}
-		return CoolColor.UNDEFINED;
 	}
 }
