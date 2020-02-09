@@ -18,21 +18,15 @@ public class Intake extends Subsystem {
 	
 	//Loop
 	public void update() {
+		setPiston(true);
 		if (Superstructure.getSystemState() == SystemState.AUTOMATIC ||
 			Superstructure.getSystemState() == SystemState.MANUAL) {
 			if (Superstructure.getMode() == Mode.INTAKE) {
-				setPiston(true);
 				setPercentOutput(Constants.INTAKE_SPEED);
 			}
-			else {
-				setPiston(false);
-				stop();
-			}
+			else stop();
 		}
-		else {
-			setPiston(false);
-			stop();
-		}
+		else stop();
 	}
 
 	//Internal Functions

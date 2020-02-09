@@ -37,8 +37,8 @@ public class Turret extends Subsystem {
 			
 			//Field Oriented Mode
 			else {
-				//TODO!!! - wrap around
-				setAngle(fieldOrientedOffset + Drive.getGyro());
+				//TODO!!! - check wrap around
+				setAngle(fieldOrientedOffset + (Drive.getGyro() % 360));
 			}
 		}
 		

@@ -12,7 +12,6 @@ import frc.team5104.teleop.DriveController;
 import frc.team5104.teleop.SuperstructureController;
 import frc.team5104.util.XboxController;
 import frc.team5104.util.console;
-import frc.team5104.util.console.c;
 import frc.team5104.util.managers.SubsystemManager;
 import frc.team5104.util.managers.TeleopControllerManager;
 import frc.team5104.util.setup.RobotController;
