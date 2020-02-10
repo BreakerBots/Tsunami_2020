@@ -8,6 +8,7 @@ public class Constants {
 	public static final int MAIN_LOOP_SPEED = 50;
 	public static final boolean COMP_BOT = false;
 	public static final String ROBOT_NAME = COMP_BOT ? "Tsunami" : "Tidal-Wave";
+	public static final double LIMELIGHT_ANGLE = 50.0;
 	
 	//Drive
 	public static final double DRIVE_WHEEL_DIAMETER = 6.0/12.0; //ft
@@ -42,9 +43,9 @@ public class Constants {
 	public static final double POSITION_MOTOR_SPEED = 0.3;
 
 	//Hood
-	public static final double HOOD_MIN_ANGLE_ERR = 0.1;
-	public static final double HOOD_MIN_ANGLE = 40.0;//37.0
-	public static final double HOOD_MAX_ANGLE = 90.0;//40.0
+	public static final double HOOD_MIN_ANGLE = 50.0;
+	public static final double HOOD_MAX_ANGLE = 90.0;
+	public static final double HOOD_RAMP_RATE = 0.25;
 	public static final double HOOD_TOL = 0.2;
 	public static final double HOOD_CALIBRATE_SPEED = 0.1;
 	public static final double HOOD_KP = 0;
@@ -70,10 +71,11 @@ public class Constants {
 	public static final double PANELER_POS_SPEED = 0.30;
 	
 	//Turret
-	public static final double TURRET_TOL = 0.2;
 	public static final double TURRET_CALIBRATE_SPEED = 0.1;
-	public static final double TURRET_KP = 0;
-	public static final double TURRET_KD = 0;
-	public static final double TURRET_ACC = 0;
-	public static final double TURRET_VEL = 0;
+	public static final double TURRET_RAMP_RATE = 0.25;
+	public static final double TURRET_NORMAL_KP = 0;
+	public static final double TURRET_NORMAL_KD = 0;
+	public static final double TURRET_VISION_KP = 0;
+	public static final double TURRET_VISION_KD = 0;
+	public static final double TURRET_VISION_TOL = 20;
 }

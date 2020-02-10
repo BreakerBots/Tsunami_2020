@@ -4,11 +4,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.team5104.Constants;
 
-public class Encoder {
+public class DriveEncoder {
 	private TalonSRX talon;
 	
 	//Constructor
-	public Encoder(TalonSRX talon) {
+	public DriveEncoder(TalonSRX talon) {
 		this.talon = talon;
 	}
 

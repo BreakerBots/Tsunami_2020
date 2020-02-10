@@ -72,7 +72,7 @@ public class Hood extends Subsystem {
 		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
 	}
 	public static double getDistance() {
-		return 80.5 / (Math.tan((Constants.HOOD_MIN_ANGLE + Limelight.getTargetY()) * (Math.PI / 180)));
+		return 80.5 / (Math.tan((Constants.LIMELIGHT_ANGLE + Limelight.getTargetY()) * (Math.PI / 180)));
 	}
 	public static double getTargetVisionAngle() {
 		//TODO!!!
@@ -83,6 +83,8 @@ public class Hood extends Subsystem {
 	public void init() {
 		talon = new TalonSRX(Ports.HOOD_TALON);
 		talon.configFactoryDefault();
+		talon.configClosedloopRamp(Constants.HOOD_RAMP_RATE);
+		talon.configOpenloopRamp(Constants.HOOD_RAMP_RATE);
 		talon.config_kP(0, Constants.HOOD_KP);
 		talon.config_kD(0, Constants.HOOD_KD);
 		talon.configMotionAcceleration((int) Constants.HOOD_ACC);

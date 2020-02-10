@@ -10,13 +10,13 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.util.DriveSignal;
-import frc.team5104.util.Encoder;
+import frc.team5104.util.DriveEncoder;
 import frc.team5104.util.managers.Subsystem;
 
 public class Drive extends Subsystem {
 	private static TalonSRX talonL1, talonL2, talonR;
 	private static VictorSPX victorR;
-	private static Encoder leftEncoder, rightEncoder;
+	private static DriveEncoder leftEncoder, rightEncoder;
 	private static DoubleSolenoid shifter;
 	//private static PigeonIMU gyro;
 	
@@ -37,8 +37,8 @@ public class Drive extends Subsystem {
 			}
 			case FEET_PER_SECOND: {
 				setMotors(
-						Encoder.feetPerSecondToTalonVel(currentDriveSignal.leftSpeed), 
-						Encoder.feetPerSecondToTalonVel(currentDriveSignal.rightSpeed), 
+						DriveEncoder.feetPerSecondToTalonVel(currentDriveSignal.leftSpeed), 
+						DriveEncoder.feetPerSecondToTalonVel(currentDriveSignal.rightSpeed), 
 						ControlMode.Velocity,
 						currentDriveSignal.leftFeedForward,
 						currentDriveSignal.rightFeedForward
@@ -89,10 +89,10 @@ public class Drive extends Subsystem {
 		leftEncoder.reset();
 		rightEncoder.reset();
 	}
-	public static Encoder getLeftEncoder() {
+	public static DriveEncoder getLeftEncoder() {
 		return leftEncoder;
 	}
-	public static Encoder getRightEncoder() {
+	public static DriveEncoder getRightEncoder() {
 		return rightEncoder;
 	}
 	public static boolean getShifter() {
@@ -109,8 +109,8 @@ public class Drive extends Subsystem {
 		talonR = new TalonSRX(Ports.DRIVE_TALON_R1);
 		victorR = new VictorSPX(Ports.DRIVE_VICTOR_R2);
 		//gyro = new PigeonIMU(69/*IDK*/);
-		leftEncoder = new Encoder(talonL1);
-		rightEncoder = new Encoder(talonR);
+		leftEncoder = new DriveEncoder(talonL1);
+		rightEncoder = new DriveEncoder(talonR);
 		shifter = new DoubleSolenoid(0, 1);
 		
 		talonL1.configFactoryDefault();
