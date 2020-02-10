@@ -10,10 +10,12 @@ import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.Superstructure.Target;
 import frc.team5104.util.Limelight;
+import frc.team5104.util.MovingAverage;
 import frc.team5104.util.managers.Subsystem;
 
 public class Hood extends Subsystem {
 	private static TalonSRX talon;
+	private static MovingAverage visionFilterY;
 
 	//Loop
 	public void update() {
@@ -35,7 +37,8 @@ public class Hood extends Subsystem {
 				if (Superstructure.getMode() == Mode.SHOOTING && Limelight.hasTarget()) {
 					//Vision
 					if (!onTarget()) {
-						setAngle(getTargetVisionAngle());
+						visionFilterY.update(Limelight.getTargetY());
+						setAngle(getTargetVisionAngle(visionFilterY.getDoubleOutput()));
 					}
 					else stop();
 				}
@@ -69,12 +72,12 @@ public class Hood extends Subsystem {
 		return talon.isRevLimitSwitchClosed() == 1;
 	}
 	public static boolean onTarget() {
-		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
+		return Math.abs(getAngle() - getTargetVisionAngle(visionFilterY.getDoubleOutput())) < Constants.HOOD_TOL;
 	}
-	public static double getDistance() {
-		return 80.5 / (Math.tan((Constants.LIMELIGHT_ANGLE + Limelight.getTargetY()) * (Math.PI / 180)));
+	public static double getDistance(double limelightY) {
+		return 80.5 / (Math.tan((Constants.LIMELIGHT_ANGLE + limelightY) * (Math.PI / 180)));
 	}
-	public static double getTargetVisionAngle() {
+	public static double getTargetVisionAngle(double limelightY) {
 		//TODO!!!
 		return 0;
 	}
@@ -89,6 +92,8 @@ public class Hood extends Subsystem {
 		talon.config_kD(0, Constants.HOOD_KD);
 		talon.configMotionAcceleration((int) Constants.HOOD_ACC);
 		talon.configMotionCruiseVelocity((int) Constants.HOOD_VEL);
+		
+		visionFilterY = new MovingAverage(5, 0);
 	}
 
 	//Reset
