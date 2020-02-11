@@ -6,22 +6,22 @@ public class Constants {
 	public static final boolean OVERWRITE_NON_MATCH_LOGS = true;
 	public static final boolean OVERWRITE_MATCH_LOGS = false;
 	public static final int MAIN_LOOP_SPEED = 50;
-	public static final boolean COMP_BOT = false;
+	public static final boolean COMP_BOT = true;
 	public static final String ROBOT_NAME = COMP_BOT ? "Tsunami" : "Tidal-Wave";
 	
 	//Drive
 	public static final double DRIVE_WHEEL_DIAMETER = 6.0/12.0; //ft
-	public static final double DRIVE_TICKS_PER_REVOLUTION = 4096.0;
+	public static final double DRIVE_TICKS_PER_REVOLUTION = 2048.0 * (50.0/8.0) * (46.0 / 24.0);
 	public static final double DRIVE_WHEEL_BASE_WIDTH = 25.25 / 12.0; //ft
-	public static final double DRIVE_KP = 0.5;
+	public static final double DRIVE_KP = 1;
 	public static final double DRIVE_KD = 0;
-	public static final double DRIVE_KS = 0.806;
-	public static final double DRIVE_KV = 0.624;
-	public static final double DRIVE_KA = 0.163;
-	public static final double AUTO_MAX_VELOCITY = 4; //ft/s
-	public static final double AUTO_MAX_ACCEL = 2;
-	public static final double AUTO_CORRECTION_FACTOR = 100; //>0
-	public static final double AUTO_DAMPENING_FACTOR  = 0.7; //0-1
+	public static final double DRIVE_KS = 0.0551;
+	public static final double DRIVE_KV = 1.69;
+	public static final double DRIVE_KA = 0.131;
+	public static final double AUTO_MAX_VELOCITY = 8; //ft/s
+	public static final double AUTO_MAX_ACCEL = 6;
+	public static final double AUTO_CORRECTION_FACTOR = 1; //>0
+	public static final double AUTO_DAMPENING_FACTOR  = 0.5; //0-1
 	public static final boolean AUTO_PLOT_ODOMETRY = true;
 	
 	//Flywheel

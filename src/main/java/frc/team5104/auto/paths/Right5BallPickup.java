@@ -9,11 +9,13 @@ import frc.team5104.auto.actions.DriveTrajectoryAction;
 // Collect 5 balls from our trench
 // Go to Power Port to shoot
 // Rough Path complete! it's good (enough)
+import frc.team5104.auto.actions.ZeroOdometry;
 
 
 public class Right5BallPickup extends AutoPath {
 	public Right5BallPickup() {
 		
+		/*
 		//Shooting Code
 		
 		//Pick up 5 balls in our trench
@@ -32,7 +34,30 @@ public class Right5BallPickup extends AutoPath {
 				new Position(0, -5, 90)
 				
 			));
-		//Shooting Code
+		//Shooting Code  */
+		
+		
+		
+		add(new ZeroOdometry(new Position(10, 24.25, 0)));
+		
+		add(new DriveTrajectoryAction(true, false,
+				new Position(10, 24.25, 0),
+				new Position(12, 24.25, 0)
+			));
+		
+		// shoot first three balls
+		
+		// pick up five balls
+		add(new DriveTrajectoryAction(true, false,
+				new Position(12, 24.25, 0),
+				new Position(34, 24.25, 0)
+			));
+		
+		// reverse to PowerPort
+		add(new DriveTrajectoryAction(true, true,
+				new Position(34, 24.25, 0),
+				new Position(10, 19.25, 90)
+			));
 		add(new DriveStopAction());
 	}
 }

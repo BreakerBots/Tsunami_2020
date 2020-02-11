@@ -5,6 +5,7 @@ import frc.team5104.auto.AutoPath;
 import frc.team5104.auto.Position;
 import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
+import frc.team5104.auto.actions.ZeroOdometry;
 
 // Rough Path Complete
 //Robot Position - Center of Initiation Line
@@ -14,6 +15,8 @@ import frc.team5104.auto.actions.DriveTrajectoryAction;
 public class SimpleCenter extends AutoPath {
 	
 	public SimpleCenter() {
+		add(new ZeroOdometry(new Position(10, 13.5, 0)));
+		
 		add(new DriveTrajectoryAction(true, false,
 				/*new Position(0, 0, 0),
 				new Position(1, 1, 90),

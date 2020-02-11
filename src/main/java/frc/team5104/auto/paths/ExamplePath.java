@@ -10,10 +10,7 @@ public class ExamplePath extends AutoPath {
 	public ExamplePath() {
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),
-				new Position(8, 0, 0),
-				new Position(10, -1, -90),
-				new Position(8, -2, -180),
-				new Position(2, -2, -180)
+				new Position(1, 0, 0)
 			));
 	/*	add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),

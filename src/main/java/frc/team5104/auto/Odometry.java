@@ -52,9 +52,13 @@ public class Odometry {
 	}
 	
 	public static void reset() {
+		reset(new Position(0, 0, 0));
+	}
+	
+	public static void reset(Position pos) {
 		Drive.resetEncoders();
 		Drive.resetGyro();
-		m_odometry.resetPosition(new Pose2d(), new Rotation2d());
-	   console.log(c.AUTO, "Reset Odometry at " + getPose2dMeters());
+		m_odometry.resetPosition(pos.toPose2dMeters(), new Rotation2d());
+		console.log(c.AUTO, "Reset Odometry at " + getPose2dMeters());
 	}
 }

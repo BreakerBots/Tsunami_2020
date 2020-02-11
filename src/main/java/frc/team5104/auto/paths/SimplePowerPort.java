@@ -8,10 +8,14 @@ import frc.team5104.auto.AutoPath;
 import frc.team5104.auto.Position;
 import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
+import frc.team5104.auto.actions.ZeroOdometry;
 
 public class SimplePowerPort extends AutoPath {
 	public SimplePowerPort() {
 		//Robot Position - In front of the Power Port
+		
+		add(new ZeroOdometry(new Position(10, 20.17, 0)));
+		
 		add(new DriveTrajectoryAction(true, false,
 			/*	new Position(0, 0, 0),
 				new Position(2, 0, 0)  */

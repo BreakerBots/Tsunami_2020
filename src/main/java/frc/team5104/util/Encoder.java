@@ -1,14 +1,14 @@
 package frc.team5104.util;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
 import frc.team5104.Constants;
 
 public class Encoder {
-	private TalonSRX talon;
+	private BaseTalon talon;
 	
 	//Constructor
-	public Encoder(TalonSRX talon) {
+	public Encoder(BaseTalon talon) {
 		this.talon = talon;
 	}
 
@@ -63,5 +63,10 @@ public class Encoder {
 	}
 	public static double feetPerSecondToTalonVel(double feetPerSecond) {
 		return feetToTicks(feetPerSecond) / 10.0;
+	}
+	
+	//To String
+	public String toString() {
+		return "encoder: (position_raw:" + getPositionRaw() + ")";
 	}
 }
