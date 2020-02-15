@@ -13,7 +13,6 @@ import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
 import frc.team5104.util.PDFController;
 import frc.team5104.util.Tuner;
-import frc.team5104.util.console;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
@@ -28,7 +27,6 @@ public class Turret extends Subsystem {
 	public void update() {
 		Constants.TURRET_VISION_KP = Tuner.getTunerInputDouble("Vision P", Constants.TURRET_VISION_KP);
 		Constants.TURRET_VISION_KD = Tuner.getTunerInputDouble("Vision D", Constants.TURRET_VISION_KD);
-		Constants.TURRET_VISION_TOL = Tuner.getTunerInputDouble("Vision Tol", Constants.TURRET_VISION_TOL);
 		Tuner.setTunerOutput("Turret Position", getAngle());
 		Tuner.setTunerOutput("Vision Target", visionFilterX.getDoubleOutput());
 		
@@ -45,17 +43,18 @@ public class Turret extends Subsystem {
 		
 		//Automatic
 		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
-			//stop();
-//			setPercentOutput(Climber.climberManual / 5.0);
-//			console.log("out: " + Climber.climberManual / 5.0, "angle: " + getAngle());
-			//Vision Mode
-			if (Superstructure.getMode() == Mode.SHOOTING && Limelight.hasTarget()) {
-//				if(!onTarget()) {
+			//Vision
+			if (Superstructure.getMode() == Mode.AIMING && Limelight.hasTarget()) {
+				if(Limelight.hasTarget()) {
 					visionFilterX.update(Limelight.getTargetX());
 					setVoltage(visionController.get(visionFilterX.getDoubleOutput()));
-//				}
-//				else stop();
+				}
+				else stop();
 			}
+			
+			//Stopped
+			else if (Superstructure.getMode() == Mode.SHOOTING)
+				stop();
 			
 			//Field Oriented Mode
 			else {
@@ -111,7 +110,7 @@ public class Turret extends Subsystem {
 	public static boolean onTarget() {
 		if (falcon == null)
 			return true;
-		return visionController.onTarget();
+		return Math.abs(visionFilterX.getDoubleOutput()) < Constants.TURRET_VISION_TOL;
 	}
 	public static void setFieldOrientedTarget(double angle) {
 		fieldOrientedOffset = angle;
@@ -139,7 +138,7 @@ public class Turret extends Subsystem {
 			Constants.TURRET_VISION_KP, Constants.TURRET_VISION_KD, 0, 
 			-4, 4, Constants.TURRET_VISION_TOL
 		);
-		visionFilterX = new MovingAverage(5, 0);
+		visionFilterX = new MovingAverage(2, 0);
 	}
 
 	//Reset

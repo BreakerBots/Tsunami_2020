@@ -29,7 +29,7 @@ public class Constants {
 	//Flywheel
 	public static final boolean FLYWHEEL_OPEN_LOOP = false;
 	public static final double FLYWHEEL_RAMP_RATE = 0.5;
-	public static final double FLYWHEEL_RPM_TOL = 2000;
+	public static final double FLYWHEEL_RPM_TOL = 200;
 	public static final double FLYWHEEL_KP = 0.2;
 	public static final double FLYWHEEL_KF = 0.05;
 	
@@ -40,11 +40,11 @@ public class Constants {
 	//Hood
 	public static final double HOOD_MIN_ANGLE = 50.0;
 	public static final double HOOD_MAX_ANGLE = 90.0;
-	public static final double HOOD_RAMP_RATE = 0.25;
-	public static final double HOOD_TOL = 0.2;
+	public static final double HOOD_RAMP_RATE = 0.5;
+	public static final double HOOD_TOL = 3;
 	public static final double HOOD_CALIBRATE_SPEED = 0.1;
-	public static final double HOOD_KP = 0.15;
-	public static final double HOOD_KD = 0;
+	public static double HOOD_KP = 0.15;
+	public static double HOOD_KD = 0;
 	
 	//Hopper
 	public static final double HOPPER_KP = 10;
@@ -66,10 +66,10 @@ public class Constants {
 	
 	//Turret
 	public static final double TURRET_CALIBRATE_SPEED = 0.1;
-	public static final double TURRET_RAMP_RATE = 0.25;
+	public static final double TURRET_RAMP_RATE = 0.05;
 	public static final double TURRET_NORMAL_KP = 0;
 	public static final double TURRET_NORMAL_KD = 0;
-	public static double TURRET_VISION_KP = 0.25;
-	public static double TURRET_VISION_KD = 0.2;
-	public static double TURRET_VISION_TOL = 0;
+	public static double TURRET_VISION_KP = 0.33;
+	public static double TURRET_VISION_KD = 5;
+	public static final double TURRET_VISION_TOL = 2;
 }

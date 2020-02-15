@@ -9,10 +9,12 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.FlywheelState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.BreakerMath;
+import frc.team5104.util.MovingAverage;
 import frc.team5104.util.managers.Subsystem;
 
 public class Flywheel extends Subsystem {
 	private static TalonFX falcon1, falcon2;
+	private static MovingAverage avgRPMS;
 	private static final double targetRPMS = 5000;
 	
 	//Loop
@@ -25,6 +27,8 @@ public class Flywheel extends Subsystem {
 			else setSpeed(targetRPMS);
 		}
 		else stop();
+		
+		avgRPMS.update(getRPMS());
 		
 //		try {
 //			Constants.FLYWHEEL_KP = Double.parseDouble(Tuner.getTunerInput("KP", Constants.FLYWHEEL_KP));
@@ -56,11 +60,22 @@ public class Flywheel extends Subsystem {
 			return 0;
 		return falcon1.getSelectedSensorVelocity() / 2048.0 * 60.0 * 10.0;
 	}
+	public static double getAvgRPMS() {
+		if (falcon1 == null)
+			return 0;
+		return avgRPMS.getDoubleOutput();
+	}
 	public static boolean isSpedUp() {
 		if (falcon1 == null)
 			return true;
 		return BreakerMath.roughlyEquals(
 				getRPMS(), targetRPMS, Constants.FLYWHEEL_RPM_TOL);
+	}
+	public static boolean isAvgSpedUp() {
+		if (falcon1 == null)
+			return true;
+		return BreakerMath.roughlyEquals(
+				getAvgRPMS(), targetRPMS, Constants.FLYWHEEL_RPM_TOL);
 	}
 	
 	//Config
@@ -79,6 +94,8 @@ public class Flywheel extends Subsystem {
 		falcon2.configClosedloopRamp(Constants.FLYWHEEL_RAMP_RATE);
 		falcon2.follow(falcon1);
 		falcon2.setInverted(true);
+		
+		avgRPMS = new MovingAverage(50, 0);
 	}
 
 	//Reset

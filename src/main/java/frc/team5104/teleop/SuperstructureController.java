@@ -66,7 +66,7 @@ public class SuperstructureController extends TeleopController {
 
 		//Shooter
 		if (Controls.SHOOT.get()) {
-			if (Superstructure.getMode() == Mode.SHOOTING) {
+			if (Superstructure.getMode() == Mode.SHOOTING || Superstructure.getMode() == Mode.AIMING) {
 				Superstructure.setMode(Mode.IDLE);
 				Superstructure.setFlywheelState(FlywheelState.STOPPED);
 				if (Constants.LIMELIGHT_DEFAULT_OFF)
@@ -74,9 +74,9 @@ public class SuperstructureController extends TeleopController {
 				console.log(c.SUPERSTRUCTURE, "exiting shooting... idling");
 			}
 			else {
-				Superstructure.setMode(Mode.SHOOTING);
+				Superstructure.setMode(Mode.AIMING);
 				Limelight.setLEDMode(LEDMode.ON);
-				console.log(c.SUPERSTRUCTURE, "shooting");
+				console.log(c.SUPERSTRUCTURE, "aiming");
 			}
 		}
 		if (Controls.CHARGE_FLYWHEEL.get()) {

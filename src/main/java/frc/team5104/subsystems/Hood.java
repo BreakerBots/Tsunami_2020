@@ -21,6 +21,7 @@ public class Hood extends Subsystem {
 	private static TalonSRX talon;
 	private static MovingAverage visionFilterY;
 	private static double ticksPerRev = 4096.0 * (360.0 / 18.0);
+	private static double targetAngle = 10;
 
 	//Loop
 	public void update() {
@@ -39,16 +40,21 @@ public class Hood extends Subsystem {
 			}
 			
 			else {
-				if (Superstructure.getMode() == Mode.SHOOTING) { //&& Limelight.hasTarget()) {
-					setAngle(BreakerMath.clamp(Tuner.getTunerInputDouble("Hood Target Angle", 0), 0, 40));
-//					setAngle(30);
-//					//Vision
-//					if (!onTarget()) {
-//						visionFilterY.update(Limelight.getTargetY());
-//						setAngle(getTargetVisionAngle(visionFilterY.getDoubleOutput()));
-//					}
-//					else stop();
+				//Vision
+				if (Superstructure.getMode() == Mode.AIMING && Limelight.hasTarget()) {
+					//Vision
+					if (Limelight.hasTarget()) {
+						visionFilterY.update(Limelight.getTargetY());
+						setAngle(getTargetVisionAngle());
+					}
+					else stop();
 				}
+				
+				//Stop
+				else if (Superstructure.getMode() == Mode.SHOOTING)
+					stop();
+				
+				//Pull Back
 				else setAngle(0);
 			}
 		}
@@ -61,18 +67,27 @@ public class Hood extends Subsystem {
 			resetEncoder();
 			talon.configForwardSoftLimitEnable(true);
 		}
-		Tuner.setTunerOutput("Hood angle", getAngle());
-//		Tuner.setTunerOutput("Hood Position", getAngle());
-//		Tuner.setTunerOutput("Hood Output", talon.getMotorOutputPercent());
-//		Constants.HOOD_KP = Tuner.getTunerInputDouble("Hood KP", Constants.HOOD_KP);
-//		Constants.HOOD_KD = Tuner.getTunerInputDouble("Hood KD", Constants.HOOD_KD);
-//		talon.config_kP(0, Constants.HOOD_KP);
-//		talon.config_kD(0, Constants.HOOD_KD);
+		
+		visionFilterY.update(Limelight.getTargetY());
+		
+		Tuner.setTunerOutput("Hood Position", getAngle());
+		Tuner.setTunerOutput("Hood Output", talon.getMotorOutputPercent());
+		Tuner.setTunerOutput("Hood Y", Limelight.getTargetY());
+		
+//		kA = Tuner.getTunerInputDouble("kA", kA);
+//		kB = Tuner.getTunerInputDouble("kB", kB);
+//		kC = Tuner.getTunerInputDouble("kC", kC);
+		targetAngle = Tuner.getTunerInputDouble("targetAngle", targetAngle);
+		
+		Constants.HOOD_KP = Tuner.getTunerInputDouble("Hood KP", Constants.HOOD_KP);
+		Constants.HOOD_KD = Tuner.getTunerInputDouble("Hood KD", Constants.HOOD_KD);
+		talon.config_kP(0, Constants.HOOD_KP);
+		talon.config_kD(0, Constants.HOOD_KD);
 	}
 
 	//Internal Functions
 	private void setAngle(double degrees) {
-		talon.set(ControlMode.Position, degrees / 360.0 * ticksPerRev);
+		talon.set(ControlMode.Position, BreakerMath.clamp(degrees, 0, 40) / 360.0 * ticksPerRev);
 	}
 	private void setPercentOutput(double percent) {
 		talon.set(ControlMode.PercentOutput, percent);
@@ -107,8 +122,9 @@ public class Hood extends Subsystem {
 				);
 	}
 	public static double getTargetVisionAngle() {
-		
-		return 0;
+//		return targetAngle;
+		double x = visionFilterY.getDoubleOutput();
+		return -0.00643 * x * x * x - 0.122 * x * x - 0.934 * x + 7.715;
 	}
 
 	//Config

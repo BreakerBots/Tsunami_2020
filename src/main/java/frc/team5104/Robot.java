@@ -26,14 +26,13 @@ public class Robot extends RobotController.BreakerRobot {
 		
 		//Managers
 		SubsystemManager.useSubsystems(
-			//new Paneler(),
 			new Drive(),
 			new Intake(),
-			new Turret(),
-			new Flywheel(),
-			new Hopper(),
+			new Turret()
+//			new Flywheel(),
+//			new Hopper(),
 			//new Paneler()
-			new Hood()
+//			new Hood()
 		);
 		TeleopControllerManager.useTeleopControllers(
 			new DriveController(),
@@ -93,10 +92,10 @@ public class Robot extends RobotController.BreakerRobot {
 	public void mainLoop() {
 		if (RobotState.isDisabled())
 			Superstructure.setSystemState(SystemState.DISABLED);
+//		console.log("Turret: " + Turret.onTarget() + " Hood: " + Hood.onTarget() + " Fly: " + Flywheel.isSpedUp());
 		Superstructure.update();
 		SubsystemManager.update();
 		XboxController.update();
 		
-		console.log(Flywheel.getRPMS());
 	}
 }

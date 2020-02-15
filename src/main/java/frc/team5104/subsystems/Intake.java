@@ -10,6 +10,7 @@ import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
+import frc.team5104.util.Limelight;
 import frc.team5104.util.managers.Subsystem;
 
 public class Intake extends Subsystem {
@@ -24,8 +25,7 @@ public class Intake extends Subsystem {
 			if (Superstructure.getMode() == Mode.INTAKE) {
 				setPercentOutput(Constants.INTAKE_SPEED);
 			}
-			else if (Superstructure.getMode() == Mode.SHOOTING && Flywheel.isSpedUp()) {//&& 
-				// Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
+			else if (Superstructure.getMode() == Mode.SHOOTING) {
 				setPercentOutput(Constants.INTAKE_FIRE_SPEED);
 			}
 			else setPercentOutput(-Constants.INTAKE_REJECT_SPEED);

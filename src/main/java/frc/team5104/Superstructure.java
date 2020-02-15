@@ -1,6 +1,7 @@
 /*BreakerBots Robotics Team 2020*/
 package frc.team5104;
 
+import frc.team5104.subsystems.Flywheel;
 import frc.team5104.subsystems.Hood;
 import frc.team5104.subsystems.Hopper;
 import frc.team5104.subsystems.Paneler;
@@ -21,7 +22,7 @@ public class Superstructure {
 		DISABLED, CALIBRATING, MANUAL, AUTOMATIC 
 	}
 	public static enum Mode {
-		IDLE, INTAKE, SHOOTING, UNJAM, CLIMBING, 
+		IDLE, INTAKE, AIMING, SHOOTING, UNJAM, CLIMBING, 
 		PANELING, PANEL_DEPLOYING
 	}
 	public static enum PanelState { ROTATION, POSITION };
@@ -70,8 +71,14 @@ public class Superstructure {
 			console.log(c.SUPERSTRUCTURE, "done shooting... idling");
 		}
 		
+		//Started Shooting
+		if (getMode() == Mode.AIMING && Flywheel.isAvgSpedUp() && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
+//			setMode(Mode.SHOOTING);
+//			console.log(c.SUPERSTRUCTURE, "finished aiming... shooting");
+		}
+		
 		//Spin Flywheel while Shooting
-		if (getMode() == Mode.SHOOTING) {
+		if (getMode() == Mode.SHOOTING || getMode() == Mode.AIMING) {
 			setFlywheelState(FlywheelState.SPINNING);
 		}
 		
