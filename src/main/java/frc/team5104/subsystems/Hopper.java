@@ -10,7 +10,6 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.LatchedBoolean;
-import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
 import frc.team5104.util.Sensor;
 import frc.team5104.util.Sensor.PortType;

@@ -41,10 +41,10 @@ public class DriveEncoder {
 	
 	//Conversions
 	public static double ticksToWheelRevolutions(double ticks) {
-		return ticks / Constants.DRIVE_TICKS_PER_REVOLUTION;
+		return ticks / Constants.DRIVE_TICKS_PER_REV;
 	}
 	public static double wheelRevolutionsToTicks(double revs) {
-		return revs * Constants.DRIVE_TICKS_PER_REVOLUTION;
+		return revs * Constants.DRIVE_TICKS_PER_REV;
 	}
 	public static double feetToWheelRevolutions(double feet) {
 		return feet / (Constants.DRIVE_WHEEL_DIAMETER * Math.PI);

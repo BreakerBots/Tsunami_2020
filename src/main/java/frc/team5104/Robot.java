@@ -27,12 +27,12 @@ public class Robot extends RobotController.BreakerRobot {
 		//Managers
 		SubsystemManager.useSubsystems(
 			new Drive(),
-			new Intake(),
-			new Turret()
+//			new Intake()
+//			new Turret()
 //			new Flywheel(),
 //			new Hopper(),
-			//new Paneler()
-//			new Hood()
+//			new Paneler()
+			new Hood()
 		);
 		TeleopControllerManager.useTeleopControllers(
 			new DriveController(),

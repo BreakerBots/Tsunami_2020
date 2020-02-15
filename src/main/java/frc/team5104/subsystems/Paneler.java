@@ -22,7 +22,6 @@ public class Paneler extends Subsystem {
 	private static TalonSRX talon;
 	private static DoubleSolenoid piston;
 	private static boolean complete;
-	private static double ticksPerRev = 4096.0 * (/*belt*/30.0 / 24.0) * (/*control panel*/16.0 / 1.5);
 	
 	//Loop
 	public void update() {
@@ -40,7 +39,7 @@ public class Paneler extends Subsystem {
 			if (Superstructure.getMode() == Mode.PANELING) {
 				//rotation
 				if (Superstructure.getPanelState() == PanelState.ROTATION) {
-					if (talon.getSelectedSensorPosition() / ticksPerRev >= 4) {
+					if (getPanelRotations() >= 4) {
 						stop();
 						setPiston(false);
 						complete = true;
@@ -94,6 +93,9 @@ public class Paneler extends Subsystem {
 	//External Functions
 	public static boolean isFinished() {
 		return complete;
+	}
+	public static double getPanelRotations() {
+		return talon.getSelectedSensorPosition() / Constants.PANELER_TICKS_PER_REV;
 	}
 
 	//Config

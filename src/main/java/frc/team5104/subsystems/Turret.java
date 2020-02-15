@@ -8,78 +8,61 @@ import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
+import frc.team5104.util.ArmController;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
-import frc.team5104.util.PDFController;
 import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
 	private static TalonFX falcon;
+	@SuppressWarnings("unused")
 	private static double fieldOrientedOffset = 0;
-	private static PDFController visionController;
-	private static MovingAverage visionFilterX;
-	private static double ticksPerRev = 
-			2048.0 / (8.0 / 60.0 /*gear*/) / (22.0 / 150.0 /*sprocket*/);
+	private static ArmController controller;
+	private static MovingAverage visionFilter;
+	private static double targetAngle = 0;
+	
 	
 	//Loop
 	public void update() {
-		Constants.TURRET_VISION_KP = Tuner.getTunerInputDouble("Vision P", Constants.TURRET_VISION_KP);
-		Constants.TURRET_VISION_KD = Tuner.getTunerInputDouble("Vision D", Constants.TURRET_VISION_KD);
-		Tuner.setTunerOutput("Turret Position", getAngle());
-		Tuner.setTunerOutput("Vision Target", visionFilterX.getDoubleOutput());
-		
-		visionController.setPDF(Constants.TURRET_VISION_KP, Constants.TURRET_VISION_KD, 0);
-		visionController.setTolerance(Constants.TURRET_VISION_TOL);
+		//Debugging
+		Tuner.setTunerOutput("Turret Angle", getAngle());
 		
 		//Calibrating
 		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
-			//if (leftLimitHit()) {
-				stop();
-			//}
-			//else setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
+			//TODO: Slowly drive
+			stop();
 		}
 		
 		//Automatic
 		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			//Vision
-			if (Superstructure.getMode() == Mode.AIMING && Limelight.hasTarget()) {
-				if(Limelight.hasTarget()) {
-					visionFilterX.update(Limelight.getTargetX());
-					setVoltage(visionController.get(visionFilterX.getDoubleOutput()));
+			if (Superstructure.getMode() == Mode.AIMING) {
+				if (Limelight.hasTarget()) {
+					visionFilter.update(Limelight.getTargetX());
+					setTargetAngle(getAngle() + visionFilter.getDoubleOutput());
 				}
-				else stop();
 			}
-			
-			//Stopped
-			else if (Superstructure.getMode() == Mode.SHOOTING)
-				stop();
 			
 			//Field Oriented Mode
-			else {
-				stop();
-				//setAngle(fieldOrientedOffset + (-Drive.getGyro() % 360));
+			else if (Superstructure.getMode() != Mode.SHOOTING) {
+				setTargetAngle(180);
+				//TODO: setTargetAngle(fieldOrientedOffset + (-Drive.getGyro() % 360));
 			}
+			
+			setVoltage(controller.get(getAngle(), targetAngle));
 		}
 		
 		//Disabled
 		else stop();
 		
-		//Zero Encoder
-//		if (leftLimitHit()) {
-//			resetEncoder((int) (ticksPerRev * (240.0 / 360.0)));
-//			//falcon.configForwardSoftLimitEnable(true);
-//			//falcon.configReverseSoftLimitEnable(true);
-//		}
+		//TODO: Zero Encoder
 	}
 
 	//Internal Functions
-	private void setAngle(double angle) {
-		falcon.set(ControlMode.Position, 
-				BreakerMath.clamp(angle, 0, 240) 
-				/ 360.0 * ticksPerRev
-		);
+	private void setTargetAngle(double angle) {
+		targetAngle = BreakerMath.clamp(angle, 0, 240);
 	}
 	private void setVoltage(double voltage) {
 		setPercentOutput(voltage / falcon.getBusVoltage());
@@ -90,27 +73,24 @@ public class Turret extends Subsystem {
 	private void stop() {
 		falcon.set(ControlMode.Disabled, 0);
 	}
+	@SuppressWarnings("unused")
 	private void resetEncoder() {
 		falcon.setSelectedSensorPosition(0);
 	}
 
 	//External Functions
 	public static double getAngle() {
-		if (falcon == null)
-			return 0;
-		return falcon.getSelectedSensorPosition() 
-				/ ticksPerRev * 360.0;
+		if (falcon == null) return 0;
+		return falcon.getSelectedSensorPosition() / Constants.TURRET_TICKS_PER_REV * 360.0;
 	}
 	public static boolean leftLimitHit() {
+		if (falcon == null) return true;
 		return false;
-//		if (falcon == null)
-//			return true;
-//		return falcon.isRevLimitSwitchClosed() == 1;
+		//return falcon.isRevLimitSwitchClosed() == 1;
 	}
 	public static boolean onTarget() {
-		if (falcon == null)
-			return true;
-		return Math.abs(visionFilterX.getDoubleOutput()) < Constants.TURRET_VISION_TOL;
+		if (falcon == null) return true;
+		return Math.abs(visionFilter.getDoubleOutput()) < Constants.TURRET_VISION_TOL;
 	}
 	public static void setFieldOrientedTarget(double angle) {
 		fieldOrientedOffset = angle;
@@ -120,25 +100,27 @@ public class Turret extends Subsystem {
 	public void init() {
 		falcon = new TalonFX(Ports.TURRET_FALCON);
 		falcon.configFactoryDefault();
-		falcon.config_kP(0, Constants.TURRET_NORMAL_KP);
-		falcon.config_kD(0, Constants.TURRET_NORMAL_KD);
-		falcon.configOpenloopRamp(Constants.TURRET_RAMP_RATE);
-		falcon.configClosedloopRamp(Constants.TURRET_RAMP_RATE);
 		falcon.setInverted(true);
 		
-		falcon.configForwardSoftLimitThreshold((int) (ticksPerRev * (220.0 / 360.0)));
-		falcon.configReverseSoftLimitThreshold((int) (ticksPerRev * (20.0 / 360.0)));
+		falcon.configForwardSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (220.0 / 360.0)));
+		falcon.configReverseSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (20.0 / 360.0)));
 		falcon.configForwardSoftLimitEnable(true);
 		falcon.configReverseSoftLimitEnable(true);
 		
 //		resetEncoder();
 
-		
-		visionController = new PDFController(
-			Constants.TURRET_VISION_KP, Constants.TURRET_VISION_KD, 0, 
-			-4, 4, Constants.TURRET_VISION_TOL
-		);
-		visionFilterX = new MovingAverage(2, 0);
+		controller = new ArmController(
+				Constants.TURRET_KP,
+				0,
+				Constants.TURRET_KD,
+				Constants.TURRET_MAX_VEL,
+				Constants.TURRET_MAX_ACC,
+				Constants.TURRET_KS,
+				Constants.TURRET_KC,
+				Constants.TURRET_KV,
+				Constants.TURRET_KA
+			);
+		visionFilter = new MovingAverage(3, 0);
 	}
 
 	//Reset

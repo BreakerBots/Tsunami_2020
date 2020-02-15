@@ -13,7 +13,7 @@ public class Constants {
 	
 	//Drive
 	public static final double DRIVE_WHEEL_DIAMETER = 6.0/12.0; //ft
-	public static final double DRIVE_TICKS_PER_REVOLUTION = 4096.0;
+	public static final double DRIVE_TICKS_PER_REV = 4096.0;
 	public static final double DRIVE_WHEEL_BASE_WIDTH = 25.25 / 12.0; //ft
 	public static final double DRIVE_KP = 0.5;
 	public static final double DRIVE_KD = 0;
@@ -38,13 +38,17 @@ public class Constants {
 	public static final double POSITION_MOTOR_SPEED = 0.3;
 
 	//Hood
-	public static final double HOOD_MIN_ANGLE = 50.0;
-	public static final double HOOD_MAX_ANGLE = 90.0;
-	public static final double HOOD_RAMP_RATE = 0.5;
 	public static final double HOOD_TOL = 3;
 	public static final double HOOD_CALIBRATE_SPEED = 0.1;
-	public static double HOOD_KP = 0.15;
-	public static double HOOD_KD = 0;
+	public static final double HOOD_TICKS_PER_REV = 4096.0 * (360.0 / 18.0);
+	public static final double HOOD_KP = 0;
+	public static final double HOOD_KD = 0;
+	public static final double HOOD_KS = 0;
+	public static final double HOOD_KC = 0;
+	public static final double HOOD_KV = 0;
+	public static final double HOOD_KA = 0;
+	public static final double HOOD_MAX_VEL = 0;
+	public static final double HOOD_MAX_ACC = 0;
 	
 	//Hopper
 	public static final double HOPPER_KP = 10;
@@ -63,13 +67,18 @@ public class Constants {
 	//Paneler
 	public static final double PANELER_ROT_SPEED = 1;
 	public static final double PANELER_POS_SPEED = 0.3;
+	public static final double PANELER_TICKS_PER_REV = 4096.0 * (/*belt*/30.0 / 24.0) * (/*control panel*/16.0 / 1.5);
 	
 	//Turret
 	public static final double TURRET_CALIBRATE_SPEED = 0.1;
-	public static final double TURRET_RAMP_RATE = 0.05;
-	public static final double TURRET_NORMAL_KP = 0;
-	public static final double TURRET_NORMAL_KD = 0;
-	public static double TURRET_VISION_KP = 0.33;
-	public static double TURRET_VISION_KD = 5;
+	public static final double TURRET_TICKS_PER_REV = 2048.0 / (8.0 / 60.0 /*gear*/) / (22.0 / 150.0 /*sprocket*/);
+	public static final double TURRET_KP = 0;
+	public static final double TURRET_KD = 0;
+	public static final double TURRET_KS = 0;
+	public static final double TURRET_KC = 0;
+	public static final double TURRET_KV = 0;
+	public static final double TURRET_KA = 0;
+	public static final double TURRET_MAX_VEL = 0;
+	public static final double TURRET_MAX_ACC = 0;
 	public static final double TURRET_VISION_TOL = 2;
 }
