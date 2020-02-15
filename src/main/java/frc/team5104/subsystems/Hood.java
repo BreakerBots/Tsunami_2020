@@ -127,7 +127,6 @@ public class Hood extends Subsystem {
 				Constants.HOOD_MAX_VEL,
 				Constants.HOOD_MAX_ACC,
 				Constants.HOOD_KS,
-				0,
 				Constants.HOOD_KV,
 				Constants.HOOD_KA
 			);

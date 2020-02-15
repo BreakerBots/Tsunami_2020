@@ -1,29 +1,42 @@
 package frc.team5104.util;
 
-import edu.wpi.first.wpilibj.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
+import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 
 public class CharacterizedController {
 	private ProfiledPIDController pid;
-	private ArmFeedforward ff;
+	private SimpleMotorFeedforward ff;
 	
 	/**
-	 * Creates a Arm Controller
+	 * Creates a CharacterizedController
+	 * @param kP Proportional value for PID
+	 * @param kI Integral value for PID
+	 * @param kD Derivative value for PID
+	 * @param kS The static gain for feedforward (from characterization)
+	 * @param kV The velocity gain for feedforward (from characterization)
+	 * @param kA The acceleration gain for feedforward (from characterization)
+	 */
+	public CharacterizedController(double kP, double kI, double kD, 
+			double kS, double kV, double kA) {
+		this(kP, kI, kD, Double.MAX_VALUE, Double.MAX_VALUE, kS, kV, kA);
+	}
+	
+	/**
+	 * Creates a CharacterizedController
 	 * @param kP Proportional value for PID
 	 * @param kI Integral value for PID
 	 * @param kD Derivative value for PID
 	 * @param maxVel Max velocity for profiling
 	 * @param maxAccel Max acceleration for profiling
 	 * @param kS The static gain for feedforward (from characterization)
-	 * @param kC The gravity gain for feedforward (from characterization)
 	 * @param kV The velocity gain for feedforward (from characterization)
 	 * @param kA The acceleration gain for feedforward (from characterization)
 	 */
 	public CharacterizedController(double kP, double kI, double kD, double maxVel, 
-			double maxAccel, double kS, double kC, double kV, double kA) {
+			double maxAccel, double kS, double kV, double kA) {
 		pid = new ProfiledPIDController(kP, kI, kD, new Constraints(maxVel, maxAccel));
-		ff = new ArmFeedforward(kS, kC, kV, kA);
+		ff = new SimpleMotorFeedforward(kS, kV, kA);
 	}
 	
 	/**

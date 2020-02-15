@@ -30,8 +30,13 @@ public class Constants {
 	public static final boolean FLYWHEEL_OPEN_LOOP = false;
 	public static final double FLYWHEEL_RAMP_RATE = 0.5;
 	public static final double FLYWHEEL_RPM_TOL = 200;
-	public static final double FLYWHEEL_KP = 0.2;
+//	public static final double FLYWHEEL_KP = 0.2;
 	public static final double FLYWHEEL_KF = 0.05;
+	public static final double FLYWHEEL_KP = 0;
+	public static final double FLYWHEEL_KD = 0;
+	public static final double FLYWHEEL_KS = 0;
+	public static final double FLYWHEEL_KV = 0;
+	public static final double FLYWHEEL_KA = 0;
 	
 	//Panelers
 	public static final double ROTATION_MOTOR_SPEED = 0.75;

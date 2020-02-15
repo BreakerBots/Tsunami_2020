@@ -116,7 +116,6 @@ public class Turret extends Subsystem {
 				Constants.TURRET_MAX_VEL,
 				Constants.TURRET_MAX_ACC,
 				Constants.TURRET_KS,
-				0,
 				Constants.TURRET_KV,
 				Constants.TURRET_KA
 			);
