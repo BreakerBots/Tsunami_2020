@@ -22,7 +22,7 @@ public class Superstructure {
 		DISABLED, CALIBRATING, MANUAL, AUTOMATIC 
 	}
 	public static enum Mode {
-		IDLE, INTAKE, AIMING, SHOOTING, UNJAM, CLIMBING, 
+		IDLE, INTAKE, AIMING, SHOOTING, CLIMBING, 
 		PANELING, PANEL_DEPLOYING
 	}
 	public static enum PanelState { ROTATION, POSITION };

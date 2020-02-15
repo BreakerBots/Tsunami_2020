@@ -11,7 +11,7 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.Superstructure.Target;
-import frc.team5104.util.ArmController;
+import frc.team5104.util.CharacterizedController;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
@@ -19,9 +19,9 @@ import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
 public class Hood extends Subsystem {
-	private static TalonSRX talon;
+	private static TalonSRX motor;
 	private static MovingAverage visionFilterY;
-	private static ArmController controller;
+	private static CharacterizedController controller;
 	private static double targetAngle = 0;
 	private static double visionTargetAngle = 10; //TODO: take out
 
@@ -29,7 +29,7 @@ public class Hood extends Subsystem {
 	public void update() {
 		//Debugging
 		Tuner.setTunerOutput("Hood Angle", getAngle());
-		Tuner.setTunerOutput("Hood Output", talon.getMotorOutputPercent());
+		Tuner.setTunerOutput("Hood Output", motor.getMotorOutputPercent());
 		visionTargetAngle = Tuner.getTunerInputDouble("Hood Target Vision Angle", visionTargetAngle);
 		
 		//Calibrating
@@ -69,7 +69,7 @@ public class Hood extends Subsystem {
 		//Zero
 		if (backLimitHit()) {
 			resetEncoder();
-			talon.configForwardSoftLimitEnable(true);
+			motor.configForwardSoftLimitEnable(true);
 		}
 	}
 
@@ -78,29 +78,29 @@ public class Hood extends Subsystem {
 		targetAngle = BreakerMath.clamp(degrees, 0, 40);
 	}
 	private void setVoltage(double volts) {
-		setPercentOutput(volts / talon.getBusVoltage());
+		setPercentOutput(volts / motor.getBusVoltage());
 	}
 	private void setPercentOutput(double percent) {
-		talon.set(ControlMode.PercentOutput, percent);
+		motor.set(ControlMode.PercentOutput, percent);
 	}
 	private void stop() {
-		talon.set(ControlMode.Disabled, 0);
+		motor.set(ControlMode.Disabled, 0);
 	}
 	private void resetEncoder() {
-		talon.setSelectedSensorPosition(0);
+		motor.setSelectedSensorPosition(0);
 	}
 
 	//External Functions
 	public static double getAngle() {
-		if (talon == null) return 0;
-		return talon.getSelectedSensorPosition() / Constants.HOOD_TICKS_PER_REV * 360.0;
+		if (motor == null) return 0;
+		return motor.getSelectedSensorPosition() / Constants.HOOD_TICKS_PER_REV * 360.0;
 	}
 	public static boolean backLimitHit() {
-		if (talon == null) return true;
-		return !talon.getSensorCollection().isRevLimitSwitchClosed();
+		if (motor == null) return true;
+		return !motor.getSensorCollection().isRevLimitSwitchClosed();
 	}
 	public static boolean onTarget() {
-		if (talon == null) return true;
+		if (motor == null) return true;
 		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
 	}
 	public static double getTargetVisionAngle() {
@@ -111,23 +111,23 @@ public class Hood extends Subsystem {
 
 	//Config
 	public void init() {
-		talon = new TalonSRX(Ports.HOOD_TALON);
-		talon.configFactoryDefault();
-		talon.setInverted(false);
-		talon.setSensorPhase(true);
+		motor = new TalonSRX(Ports.HOOD_MOTOR);
+		motor.configFactoryDefault();
+		motor.setInverted(false);
+		motor.setSensorPhase(true);
 		
-		talon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
-		talon.configForwardSoftLimitThreshold((int) (Constants.HOOD_TICKS_PER_REV * (38.0 / 360.0)));
-		talon.configForwardSoftLimitEnable(false);
+		motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
+		motor.configForwardSoftLimitThreshold((int) (Constants.HOOD_TICKS_PER_REV * (38.0 / 360.0)));
+		motor.configForwardSoftLimitEnable(false);
 		
-		controller = new ArmController(
+		controller = new CharacterizedController(
 				Constants.HOOD_KP,
 				0,
 				Constants.HOOD_KD,
 				Constants.HOOD_MAX_VEL,
 				Constants.HOOD_MAX_ACC,
 				Constants.HOOD_KS,
-				Constants.HOOD_KC,
+				0,
 				Constants.HOOD_KV,
 				Constants.HOOD_KA
 			);

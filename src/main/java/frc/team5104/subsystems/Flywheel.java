@@ -13,7 +13,7 @@ import frc.team5104.util.MovingAverage;
 import frc.team5104.util.managers.Subsystem;
 
 public class Flywheel extends Subsystem {
-	private static TalonFX falcon1, falcon2;
+	private static TalonFX motor1, motor2;
 	private static MovingAverage avgRPMS;
 	private static final double targetRPMS = 5000;
 	
@@ -45,34 +45,34 @@ public class Flywheel extends Subsystem {
 	//Internal Functions
 	private void setSpeed(double rpms) {
 		//rev/min -> ticks/100ms
-		falcon1.set(ControlMode.Velocity, rpms * 2048.0 / 60.0 / 10.0);
+		motor1.set(ControlMode.Velocity, rpms * 2048.0 / 60.0 / 10.0);
 	}
 	private void setPercentOutput(double percent) {
-		falcon1.set(ControlMode.PercentOutput, percent);
+		motor1.set(ControlMode.PercentOutput, percent);
 	}
 	private void stop() {
-		falcon1.set(ControlMode.Disabled, 0);
+		motor1.set(ControlMode.Disabled, 0);
 	}
 	
 	//External Functions
 	public static double getRPMS() {
-		if (falcon1 == null)
+		if (motor1 == null)
 			return 0;
-		return falcon1.getSelectedSensorVelocity() / 2048.0 * 60.0 * 10.0;
+		return motor1.getSelectedSensorVelocity() / 2048.0 * 60.0 * 10.0;
 	}
 	public static double getAvgRPMS() {
-		if (falcon1 == null)
+		if (motor1 == null)
 			return 0;
 		return avgRPMS.getDoubleOutput();
 	}
 	public static boolean isSpedUp() {
-		if (falcon1 == null)
+		if (motor1 == null)
 			return true;
 		return BreakerMath.roughlyEquals(
 				getRPMS(), targetRPMS, Constants.FLYWHEEL_RPM_TOL);
 	}
 	public static boolean isAvgSpedUp() {
-		if (falcon1 == null)
+		if (motor1 == null)
 			return true;
 		return BreakerMath.roughlyEquals(
 				getAvgRPMS(), targetRPMS, Constants.FLYWHEEL_RPM_TOL);
@@ -80,20 +80,20 @@ public class Flywheel extends Subsystem {
 	
 	//Config
 	public void init() {
-		falcon1 = new TalonFX(Ports.FLYWHEEL_FALCON_1);
-		falcon1.configFactoryDefault();
-		falcon1.config_kP(0, Constants.FLYWHEEL_KP);
-		falcon1.config_kF(0, Constants.FLYWHEEL_KF);
-		falcon1.configClosedloopRamp(Constants.FLYWHEEL_RAMP_RATE);
-		falcon1.setInverted(false);
+		motor1 = new TalonFX(Ports.FLYWHEEL_MOTOR_1);
+		motor1.configFactoryDefault();
+		motor1.config_kP(0, Constants.FLYWHEEL_KP);
+		motor1.config_kF(0, Constants.FLYWHEEL_KF);
+		motor1.configClosedloopRamp(Constants.FLYWHEEL_RAMP_RATE);
+		motor1.setInverted(false);
 		
-		falcon2 = new TalonFX(Ports.FLYWHEEL_FALCON_2);
-		falcon2.configFactoryDefault();
-		falcon2.config_kP(0, Constants.FLYWHEEL_KP);
-		falcon2.config_kF(0, Constants.FLYWHEEL_KF);
-		falcon2.configClosedloopRamp(Constants.FLYWHEEL_RAMP_RATE);
-		falcon2.follow(falcon1);
-		falcon2.setInverted(true);
+		motor2 = new TalonFX(Ports.FLYWHEEL_MOTOR_2);
+		motor2.configFactoryDefault();
+		motor2.config_kP(0, Constants.FLYWHEEL_KP);
+		motor2.config_kF(0, Constants.FLYWHEEL_KF);
+		motor2.configClosedloopRamp(Constants.FLYWHEEL_RAMP_RATE);
+		motor2.follow(motor1);
+		motor2.setInverted(true);
 		
 		avgRPMS = new MovingAverage(50, 0);
 	}

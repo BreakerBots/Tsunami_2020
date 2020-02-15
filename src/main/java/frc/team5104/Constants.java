@@ -44,20 +44,17 @@ public class Constants {
 	public static final double HOOD_KP = 0;
 	public static final double HOOD_KD = 0;
 	public static final double HOOD_KS = 0;
-	public static final double HOOD_KC = 0;
 	public static final double HOOD_KV = 0;
 	public static final double HOOD_KA = 0;
 	public static final double HOOD_MAX_VEL = 0;
 	public static final double HOOD_MAX_ACC = 0;
 	
 	//Hopper
-	public static final double HOPPER_KP = 10;
-	public static final double HOPPER_ACC = 0;
-	public static final double HOPPER_VEL = 0;
-	public static final double HOPPER_MID_BALL_SIZE = 17000;//17000;
-	public static final double HOPPER_UNJAM_SPEED = 0.25;
-	public static final double HOPPER_FEED_SPEED = 1;
-	public static final double HOPPER_START_INTAKE_SPEED = 0.8;
+	public static final double HOPPER_START_INTAKE_SPEED = 7;
+	public static final double HOPPER_MIDDLE_BALL_SIZE = 17000;//17000;
+	public static final double HOPPER_MIDDLE_INDEX_SPEED = 12;
+	public static final double HOPPER_FEED_SPEED = 12;
+	public static final double HOPPER_FEED_INDEX_SPEED = 2;
 	
 	//Intake
 	public static final double INTAKE_SPEED = 1.0;
@@ -75,7 +72,6 @@ public class Constants {
 	public static final double TURRET_KP = 0;
 	public static final double TURRET_KD = 0;
 	public static final double TURRET_KS = 0;
-	public static final double TURRET_KC = 0;
 	public static final double TURRET_KV = 0;
 	public static final double TURRET_KA = 0;
 	public static final double TURRET_MAX_VEL = 0;

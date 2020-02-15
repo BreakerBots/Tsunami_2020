@@ -25,9 +25,6 @@ public class Controls {
 	//Intake
 	public static final Button INTAKE = XboxController.getButton(Button.X, operator, driver);
 	
-	//Hopper
-	public static final Button HOPPER_UNJAM = XboxController.getButton(Button.LEFT_BUMPER, operator, driver);
-	
 	//Shooter
 	public static final Button SHOOT = XboxController.getButton(Button.B, operator, driver);
 	public static final Button CHARGE_FLYWHEEL = XboxController.getButton(Button.RIGHT_BUMPER, operator, driver);

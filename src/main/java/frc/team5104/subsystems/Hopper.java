@@ -16,12 +16,12 @@ import frc.team5104.util.Sensor.PortType;
 import frc.team5104.util.managers.Subsystem;
 
 public class Hopper extends Subsystem {
-	private static VictorSPX intakeToHopper, hopperToShooter;
-	private static TalonFX falconMid;
+	private static VictorSPX startMotor, feederMotor;
+	private static TalonFX middleMotor;
 	private static Sensor entrySensor, endSensor;
-	private static boolean isIndexing;
 	private static LatchedBoolean entrySensorLatch;
 	private static MovingAverage isFullAverage, hasFed;
+	private static boolean isIndexing;
 	private static double targetMidPosition = 0;
 	
 	//Loop
@@ -33,13 +33,6 @@ public class Hopper extends Subsystem {
 			Superstructure.getSystemState() == SystemState.CALIBRATING ||
 			Superstructure.getSystemState() == SystemState.DISABLED) {
 			stopAll();
-		}
-		
-		//Unjam
-		else if (Superstructure.getMode() == Mode.UNJAM) {
-			setMiddle(-Constants.HOPPER_UNJAM_SPEED);
-			setFeeder(-Constants.HOPPER_UNJAM_SPEED);
-			setStart(-Constants.HOPPER_UNJAM_SPEED);
 		}
 		
 		//Shooting
@@ -55,17 +48,17 @@ public class Hopper extends Subsystem {
 			hasFed.update(false);
 			
 			//Indexing
-			isIndexing = !isFull() && (isEntrySensorTripped() || getMidPosition() < Constants.HOPPER_MID_BALL_SIZE);
+			isIndexing = !isFull() && (isEntrySensorTripped() || getMidPosition() < Constants.HOPPER_MIDDLE_BALL_SIZE);
 			if (entrySensorLatch.get(isEntrySensorTripped()) && isEntrySensorTripped()) {
-				targetMidPosition = Constants.HOPPER_MID_BALL_SIZE;
+				targetMidPosition = Constants.HOPPER_MIDDLE_BALL_SIZE;
 				resetMidEncoder();
 			}
 			
 			//Mid and Feeder
 			if (isIndexing) {
 				if (getMidPosition() < targetMidPosition) {
-					setMiddle(1);
-					setFeeder(0.1);
+					setMiddle(Constants.HOPPER_MIDDLE_INDEX_SPEED);
+					setFeeder(Constants.HOPPER_FEED_INDEX_SPEED);
 				}
 			}
 			else {
@@ -86,22 +79,22 @@ public class Hopper extends Subsystem {
 	}
 
 	//Internal Functions
-	private void setMiddle(double percent) {
-		falconMid.set(ControlMode.PercentOutput, percent);
+	private void setMiddle(double volts) {
+		middleMotor.set(ControlMode.PercentOutput, volts / middleMotor.getBusVoltage());
 	}
-	private void setStart(double percent) {
-		intakeToHopper.set(ControlMode.PercentOutput, percent);
+	private void setStart(double volts) {
+		startMotor.set(ControlMode.PercentOutput, volts / startMotor.getBusVoltage());
 	}
-	private void setFeeder(double percent) {
-		hopperToShooter.set(ControlMode.PercentOutput, percent);
+	private void setFeeder(double volts) {
+		feederMotor.set(ControlMode.PercentOutput, volts / feederMotor.getBusVoltage());
 	}
 	private void stopAll() {
-		intakeToHopper.set(ControlMode.Disabled, 0);
-		hopperToShooter.set(ControlMode.Disabled, 0);
-		falconMid.set(ControlMode.Disabled, 0);
+		startMotor.set(ControlMode.Disabled, 0);
+		feederMotor.set(ControlMode.Disabled, 0);
+		middleMotor.set(ControlMode.Disabled, 0);
 	}
 	private void resetMidEncoder() {
-		falconMid.setSelectedSensorPosition(0);
+		middleMotor.setSelectedSensorPosition(0);
 	}
 	private static boolean isEntrySensorTripped() {
 		return entrySensor.get();
@@ -112,53 +105,49 @@ public class Hopper extends Subsystem {
 	
 	//External Functions
 	public static boolean isEmpty() {
-		if (falconMid == null)
+		if (middleMotor == null)
 			return false;
 		return !isEndSensorTripped() && !isEntrySensorTripped();
 	}
 	public static boolean isFull() {
-		if (falconMid == null)
+		if (middleMotor == null)
 			return false;
 		return isEndSensorTripped();
 	}
 	public static boolean isFullAverage() {
-		if (falconMid == null)
+		if (middleMotor == null)
 			return false;
 		return isFullAverage.getBooleanOutput();
 	}
 	public static boolean isIndexing() {
-		if (falconMid == null)
+		if (middleMotor == null)
 			return false;
 		return isIndexing;
 	}
 	public static boolean hasFedAverage() {
-		if (falconMid == null)
+		if (middleMotor == null)
 			return false;
 		return hasFed.getBooleanOutput();
 	}
 	public static double getMidPosition() {
-		if (falconMid == null)
+		if (middleMotor == null)
 			return 0;
-		return falconMid.getSelectedSensorPosition();
+		return middleMotor.getSelectedSensorPosition();
 	}
 	
 	//Config
 	public void init() {
-		intakeToHopper = new VictorSPX(Ports.INTAKE_TO_HOPPER_VICTOR);
-		intakeToHopper.configFactoryDefault();
-		intakeToHopper.setInverted(true);
+		startMotor = new VictorSPX(Ports.HOPPER_START_MOTOR);
+		startMotor.configFactoryDefault();
+		startMotor.setInverted(true);
 
-		hopperToShooter = new VictorSPX(Ports.HOPPER_TO_SHOOTER_VICTOR);
-		hopperToShooter.configFactoryDefault();
-		hopperToShooter.setInverted(true);
+		feederMotor = new VictorSPX(Ports.HOPPER_FEEDER_MOTOR);
+		feederMotor.configFactoryDefault();
+		feederMotor.setInverted(true);
 		
-		falconMid = new TalonFX(Ports.HOPPER_FALCON_MID);
-		falconMid.configFactoryDefault();
-		falconMid.config_kP(0, Constants.HOPPER_KP);
-		falconMid.configMotionAcceleration((int) Constants.HOPPER_ACC);
-		falconMid.configMotionCruiseVelocity((int) Constants.HOPPER_VEL);
-		falconMid.setInverted(true);
-		//falconMid.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 20, 0.05));
+		middleMotor = new TalonFX(Ports.HOPPER_MIDDLE_MOTOR);
+		middleMotor.configFactoryDefault();
+		middleMotor.setInverted(true);
 
 		entrySensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_START, true);
 		endSensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_END, true);

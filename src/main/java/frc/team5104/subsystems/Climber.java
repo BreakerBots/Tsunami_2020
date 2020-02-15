@@ -46,10 +46,10 @@ public class Climber extends Subsystem {
 	public void init() {
 		piston = new DoubleSolenoid(Ports.CLIMBER_DEPLOYER_FORWARD, Ports.CLIMBER_DEPLOYER_REVERSE);
 		
-		talon1 = new TalonSRX(Ports.CLIMBER_TALON_1);
+		talon1 = new TalonSRX(Ports.CLIMBER_MOTOR_1);
 		talon1.configFactoryDefault();
 		
-		talon2 = new TalonSRX(Ports.CLIMBER_TALON_2);
+		talon2 = new TalonSRX(Ports.CLIMBER_MOTOR_2);
 		talon2.configFactoryDefault();
 		talon2.follow(talon1);
 	}

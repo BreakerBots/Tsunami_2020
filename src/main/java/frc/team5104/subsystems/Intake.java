@@ -13,7 +13,7 @@ import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.managers.Subsystem;
 
 public class Intake extends Subsystem {
-	private static VictorSPX victor;
+	private static VictorSPX motor;
 	private static DoubleSolenoid piston;
 	
 	//Loop
@@ -38,19 +38,19 @@ public class Intake extends Subsystem {
 //		console.log(piston.get());
 	}
 	public void setPercentOutput(double percent) {
-		victor.set(ControlMode.PercentOutput, percent);
+		motor.set(ControlMode.PercentOutput, percent);
 	}
 	public void stop() {
 		setPiston(false);
-		victor.set(ControlMode.Disabled, 0.0);
+		motor.set(ControlMode.Disabled, 0.0);
 	}
 
 	//Config
 	public void init() {
 		piston = new DoubleSolenoid(Ports.INTAKE_DEPLOYER_FORWARD, Ports.INTAKE_DEPLOYER_REVERSE);
 		
-		victor = new VictorSPX(Ports.INTAKE_VICTOR);
-		victor.configFactoryDefault();
+		motor = new VictorSPX(Ports.INTAKE_MOTOR);
+		motor.configFactoryDefault();
 	}
 
 	//Reset

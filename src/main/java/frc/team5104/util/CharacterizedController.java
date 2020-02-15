@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.controller.ArmFeedforward;
 import edu.wpi.first.wpilibj.controller.ProfiledPIDController;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 
-public class ArmController {
+public class CharacterizedController {
 	private ProfiledPIDController pid;
 	private ArmFeedforward ff;
 	
@@ -20,7 +20,7 @@ public class ArmController {
 	 * @param kV The velocity gain for feedforward (from characterization)
 	 * @param kA The acceleration gain for feedforward (from characterization)
 	 */
-	public ArmController(double kP, double kI, double kD, double maxVel, 
+	public CharacterizedController(double kP, double kI, double kD, double maxVel, 
 			double maxAccel, double kS, double kC, double kV, double kA) {
 		pid = new ProfiledPIDController(kP, kI, kD, new Constraints(maxVel, maxAccel));
 		ff = new ArmFeedforward(kS, kC, kV, kA);

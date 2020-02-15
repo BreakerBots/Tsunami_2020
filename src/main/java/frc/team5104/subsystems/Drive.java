@@ -6,7 +6,6 @@ import com.ctre.phoenix.motorcontrol.DemandType;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
-import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.util.DriveSignal;
@@ -17,13 +16,11 @@ public class Drive extends Subsystem {
 	private static TalonSRX talonL1, talonL2, talonR;
 	private static VictorSPX victorR;
 	private static DriveEncoder leftEncoder, rightEncoder;
-	private static DoubleSolenoid shifter;
 	//private static PigeonIMU gyro;
 	
 	//Update
 	private static DriveSignal currentDriveSignal = new DriveSignal();
 	public void update() {
-		setShifter(currentDriveSignal.isHighGear);
 		switch (currentDriveSignal.unit) {
 			case PERCENT_OUTPUT: {
 				setMotors(
@@ -95,12 +92,6 @@ public class Drive extends Subsystem {
 	public static DriveEncoder getRightEncoder() {
 		return rightEncoder;
 	}
-	public static boolean getShifter() {
-		return shifter.get() == DoubleSolenoid.Value.kForward;
-	}
-	public static void setShifter(boolean high) {
-		shifter.set(high ? DoubleSolenoid.Value.kForward : DoubleSolenoid.Value.kReverse);
-	}
 	
 	//Config
 	public void init() {
@@ -111,7 +102,6 @@ public class Drive extends Subsystem {
 		//gyro = new PigeonIMU(69/*IDK*/);
 		leftEncoder = new DriveEncoder(talonL1);
 		rightEncoder = new DriveEncoder(talonR);
-		shifter = new DoubleSolenoid(Ports.DRIVE_SHIFT_FORWARD, Ports.DRIVE_SHIFT_REVERSE);
 		
 		talonL1.configFactoryDefault();
 		talonL2.configFactoryDefault();

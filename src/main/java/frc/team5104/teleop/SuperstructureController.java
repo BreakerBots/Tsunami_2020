@@ -98,17 +98,6 @@ public class SuperstructureController extends TeleopController {
 			Superstructure.setTarget(Target.HIGH);
 		}
 
-		//Hopper
-		if (Controls.HOPPER_UNJAM.get()) {
-			if (Superstructure.getMode() != Mode.UNJAM) {
-				Superstructure.setMode(Mode.UNJAM);
-				console.log(c.SUPERSTRUCTURE, "unjamming");
-			}
-		} else if (Superstructure.getMode() == Mode.UNJAM) {
-			Superstructure.setMode(Mode.IDLE);
-			console.log(c.SUPERSTRUCTURE, "exiting unjamming... idling");
-		}
-
 		// Climb
 		if (Controls.CLIMBER_DEPLOY.get() && Superstructure.getMode() == Mode.IDLE) {
 			Superstructure.setMode(Mode.CLIMBING);

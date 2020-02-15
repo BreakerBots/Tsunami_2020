@@ -19,7 +19,7 @@ import frc.team5104.util.managers.Subsystem;
 
 public class Paneler extends Subsystem {
 	private static ColorSensor sensor;
-	private static TalonSRX talon;
+	private static TalonSRX motor;
 	private static DoubleSolenoid piston;
 	private static boolean complete;
 	
@@ -74,16 +74,16 @@ public class Paneler extends Subsystem {
 		piston.set(up ? Value.kForward : Value.kReverse);
 	}
 	private void setPercentOutput(double percent) {
-		talon.set(ControlMode.PercentOutput, percent);
+		motor.set(ControlMode.PercentOutput, percent);
 	}
 	private void stop() {
-		talon.set(ControlMode.Disabled, 0);
+		motor.set(ControlMode.Disabled, 0);
 	}
 	private PanelColor readColor() {
 		return sensor.getNearestColor();
 	}
 	private void resetEncoder() {
-		talon.setSelectedSensorPosition(0);
+		motor.setSelectedSensorPosition(0);
 	}
 	private String readFMS() {
 		String FMS = DriverStation.getInstance().getGameSpecificMessage();
@@ -95,16 +95,16 @@ public class Paneler extends Subsystem {
 		return complete;
 	}
 	public static double getPanelRotations() {
-		return talon.getSelectedSensorPosition() / Constants.PANELER_TICKS_PER_REV;
+		return motor.getSelectedSensorPosition() / Constants.PANELER_TICKS_PER_REV;
 	}
 
 	//Config
 	public void init() {
 		sensor = new ColorSensor(I2C.Port.kOnboard);
 		piston = new DoubleSolenoid(Ports.PANELER_DEPLOYER_FORWARD, Ports.PANELER_DEPLOYER_REVERSE);
-		talon = new TalonSRX(Ports.PANELER_TALON);
-		talon.configOpenloopRamp(0.25);
-		talon.configFactoryDefault();
+		motor = new TalonSRX(Ports.PANELER_MOTOR);
+		motor.configOpenloopRamp(0.25);
+		motor.configFactoryDefault();
 		resetEncoder();
 	}
 
