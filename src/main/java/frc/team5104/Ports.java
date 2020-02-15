@@ -8,8 +8,8 @@ public class Ports {
 	public static final int DRIVE_TALON_L2 = 12;
 	public static final int DRIVE_TALON_R1 = 13;
 	public static final int DRIVE_VICTOR_R2 = 14; 
-	public static final int DRIVE_SHIFT_FORWARD = 0;
-	public static final int DRIVE_SHIFT_REVERSE = 1;
+	public static final int DRIVE_SHIFT_FORWARD = 4;
+	public static final int DRIVE_SHIFT_REVERSE = 5;
 	
 	//Hood
 	public static final int HOOD_TALON = 15;
@@ -23,8 +23,8 @@ public class Ports {
 	
 	//Intake
 	public static final int INTAKE_VICTOR = 19;
-	public static final int INTAKE_DEPLOYER_FORWARD = 2;
-	public static final int INTAKE_DEPLOYER_REVERSE = 3;
+	public static final int INTAKE_DEPLOYER_FORWARD = 7;
+	public static final int INTAKE_DEPLOYER_REVERSE = 6;
 	
 	//Hopper
 	public static final int INTAKE_TO_HOPPER_VICTOR = 20;  
@@ -36,11 +36,11 @@ public class Ports {
 	//Climber
 	public static final int CLIMBER_TALON_1 = 23;
 	public static final int CLIMBER_TALON_2 = 24;
-	public static final int CLIMBER_DEPLOYER_FORWARD = 6;
-	public static final int CLIMBER_DEPLOYER_REVERSE = 7;
+	public static final int CLIMBER_DEPLOYER_FORWARD = 0;
+	public static final int CLIMBER_DEPLOYER_REVERSE = 1;
 	
 	//Paneler
 	public static final int PANELER_TALON = 26;
-	public static final int PANELER_DEPLOYER_FORWARD = 4;
-	public static final int PANELER_DEPLOYER_REVERSE = 5;
+	public static final int PANELER_DEPLOYER_FORWARD = 6;
+	public static final int PANELER_DEPLOYER_REVERSE = 7;
 }

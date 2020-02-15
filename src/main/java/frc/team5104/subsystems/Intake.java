@@ -24,14 +24,19 @@ public class Intake extends Subsystem {
 			if (Superstructure.getMode() == Mode.INTAKE) {
 				setPercentOutput(Constants.INTAKE_SPEED);
 			}
-			else stop();
+			else if (Superstructure.getMode() == Mode.SHOOTING && Flywheel.isSpedUp()) {//&& 
+				// Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
+				setPercentOutput(Constants.INTAKE_FIRE_SPEED);
+			}
+			else setPercentOutput(-Constants.INTAKE_REJECT_SPEED);
 		}
 		else stop();
 	}
 
 	//Internal Functions
 	public void setPiston(boolean position) {
-		piston.set(position ? Value.kForward : Value.kReverse);
+		piston.set(position ? Value.kReverse : Value.kForward);
+//		console.log(piston.get());
 	}
 	public void setPercentOutput(double percent) {
 		victor.set(ControlMode.PercentOutput, percent);

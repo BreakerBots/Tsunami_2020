@@ -3,6 +3,7 @@ package frc.team5104.teleop;
 
 import edu.wpi.first.wpilibj.Compressor;
 import frc.team5104.Controls;
+import frc.team5104.util.console;
 import frc.team5104.util.managers.TeleopController;
 
 public class CompressorController extends TeleopController {
@@ -10,9 +11,14 @@ public class CompressorController extends TeleopController {
 	
 	protected void update() {
 		if (Controls.COMPRESSOR_TOGGLE.get()) {
-			if (compressor.enabled())
+			if (compressor.enabled()) {
+				console.log("Stop compressing");
 				stop();
-			else start();
+			}
+			else {
+				console.log("Start compressing");
+				start();
+			}
 		}
 	}
 	

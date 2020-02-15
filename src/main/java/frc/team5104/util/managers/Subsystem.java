@@ -5,6 +5,8 @@ package frc.team5104.util.managers;
  * A snickers rapper of all the requirements of a subsystem. 
  */
 public abstract class Subsystem {
+	protected boolean isAttached = false;
+	
 	/** Called periodically from the robot loop */
 	public abstract void update();
 	

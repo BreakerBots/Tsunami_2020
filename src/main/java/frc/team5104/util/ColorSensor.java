@@ -11,10 +11,10 @@ public class ColorSensor {
 	public static enum PanelColor { 
 		RED, GREEN, BLUE, YELLOW;
 		public static PanelColor fromChar(char c) {
-			if (c == 'R') return PanelColor.RED;
-			if (c == 'G') return PanelColor.GREEN;
-			if (c == 'B') return PanelColor.BLUE;
-			return PanelColor.YELLOW;
+			if (c == 'R') return PanelColor.BLUE;
+			if (c == 'G') return PanelColor.YELLOW;
+			if (c == 'B') return PanelColor.RED;
+			return PanelColor.GREEN;
 		}
 	}
 	private static PercentColor[] colors = {
@@ -34,13 +34,20 @@ public class ColorSensor {
 	
 	//Getters
 	public PanelColor getNearestColor() {
-		PercentColor color = new PercentColor(colorSensor.getRed(), colorSensor.getGreen(), colorSensor.getBlue());
+		PercentColor color = getRawColor();
 		int closestIndex = 0;
 		for (int i = 0; i < colors.length; i++) {
 			if (colors[i].distance(color) < colors[closestIndex].distance(color))
 				closestIndex = i;
 		}
 		return PanelColor.values()[closestIndex];
+	}
+	public PercentColor getRawColor() {
+		return new PercentColor(
+				colorSensor.getColor().red, 
+				colorSensor.getColor().green, 
+				colorSensor.getColor().blue
+			);
 	}
 	
 	//Percent Color

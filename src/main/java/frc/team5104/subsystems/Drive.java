@@ -111,7 +111,7 @@ public class Drive extends Subsystem {
 		//gyro = new PigeonIMU(69/*IDK*/);
 		leftEncoder = new DriveEncoder(talonL1);
 		rightEncoder = new DriveEncoder(talonR);
-		shifter = new DoubleSolenoid(0, 1);
+		shifter = new DoubleSolenoid(Ports.DRIVE_SHIFT_FORWARD, Ports.DRIVE_SHIFT_REVERSE);
 		
 		talonL1.configFactoryDefault();
 		talonL2.configFactoryDefault();

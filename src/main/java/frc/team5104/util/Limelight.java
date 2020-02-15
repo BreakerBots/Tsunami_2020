@@ -3,6 +3,7 @@ package frc.team5104.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import frc.team5104.Constants;
 import frc.team5104.util.CrashLogger.Crash;
 import frc.team5104.util.console.c;
 
@@ -36,7 +37,7 @@ public class Limelight {
 	}
 
 	public static enum CamMode { VISION(0), DRIVE(1); int value; private CamMode(int value) { this.value = value; } }
-	public static void setcamMode(CamMode cMode) { 
+	public static void setCamMode(CamMode cMode) { 
 		if (isConnected())
 			setEntry("camMode", cMode.value);  
 		else console.warn(c.VISION, "limelight is not connected");
@@ -48,8 +49,10 @@ public class Limelight {
 				while (!Thread.interrupted()) { try { 
 					table = NetworkTableInstance.getDefault().getTable("limelight");
 					if (isConnected()) {
-						setLEDMode(LEDMode.OFF);
-						setEntry("camMode", 1);
+						if (Constants.LIMELIGHT_DEFAULT_OFF)
+							setLEDMode(LEDMode.OFF);
+						else setLEDMode(LEDMode.ON);
+						setCamMode(CamMode.VISION);
 						setEntry("pipeline", 0);
 						setEntry("stream", 0);
 						setEntry("snapshot", 0);

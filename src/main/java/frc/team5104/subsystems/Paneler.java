@@ -22,6 +22,7 @@ public class Paneler extends Subsystem {
 	private static TalonSRX talon;
 	private static DoubleSolenoid piston;
 	private static boolean complete;
+	private static double ticksPerRev = 4096.0 * (/*belt*/30.0 / 24.0) * (/*control panel*/16.0 / 1.5);
 	
 	//Loop
 	public void update() {
@@ -31,15 +32,15 @@ public class Paneler extends Subsystem {
 			if (Superstructure.getMode() == Mode.PANEL_DEPLOYING) {
 				complete = false;
 				setPiston(true);
-				setPercentOutput(0);
-				talon.setSelectedSensorPosition(0);
+				stop();
+				resetEncoder();
 			}
 	
 			//paneling
 			if (Superstructure.getMode() == Mode.PANELING) {
 				//rotation
 				if (Superstructure.getPanelState() == PanelState.ROTATION) {
-					if (talon.getSelectedSensorPosition() / 4096.0 * 1.5 / 16.0 >= 4) {
+					if (talon.getSelectedSensorPosition() / ticksPerRev >= 4) {
 						stop();
 						setPiston(false);
 						complete = true;
@@ -100,6 +101,7 @@ public class Paneler extends Subsystem {
 		sensor = new ColorSensor(I2C.Port.kOnboard);
 		piston = new DoubleSolenoid(Ports.PANELER_DEPLOYER_FORWARD, Ports.PANELER_DEPLOYER_REVERSE);
 		talon = new TalonSRX(Ports.PANELER_TALON);
+		talon.configOpenloopRamp(0.25);
 		talon.configFactoryDefault();
 		resetEncoder();
 	}

@@ -1,6 +1,8 @@
 package frc.team5104.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.team5104.Constants;
@@ -9,13 +11,16 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.Superstructure.Target;
+import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
+import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
 public class Hood extends Subsystem {
 	private static TalonSRX talon;
 	private static MovingAverage visionFilterY;
+	private static double ticksPerRev = 4096.0 * (360.0 / 18.0);
 
 	//Loop
 	public void update() {
@@ -24,23 +29,25 @@ public class Hood extends Subsystem {
 			if (backLimitHit()) {
 				stop();
 			}
-			else setPercentOutput(Constants.HOOD_CALIBRATE_SPEED);
+			else setPercentOutput(-Constants.HOOD_CALIBRATE_SPEED);
 		}
 		
 		//Automatic
 		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			if (Superstructure.getTarget() == Target.LOW) {
-				setAngle(Constants.HOOD_MAX_ANGLE);
+				setAngle(40);
 			}
-
+			
 			else {
-				if (Superstructure.getMode() == Mode.SHOOTING && Limelight.hasTarget()) {
-					//Vision
-					if (!onTarget()) {
-						visionFilterY.update(Limelight.getTargetY());
-						setAngle(getTargetVisionAngle(visionFilterY.getDoubleOutput()));
-					}
-					else stop();
+				if (Superstructure.getMode() == Mode.SHOOTING) { //&& Limelight.hasTarget()) {
+					setAngle(BreakerMath.clamp(Tuner.getTunerInputDouble("Hood Target Angle", 0), 0, 40));
+//					setAngle(30);
+//					//Vision
+//					if (!onTarget()) {
+//						visionFilterY.update(Limelight.getTargetY());
+//						setAngle(getTargetVisionAngle(visionFilterY.getDoubleOutput()));
+//					}
+//					else stop();
 				}
 				else setAngle(0);
 			}
@@ -48,11 +55,24 @@ public class Hood extends Subsystem {
 			
 		//Disabled
 		else stop();
+		
+		//Zero
+		if (backLimitHit()) {
+			resetEncoder();
+			talon.configForwardSoftLimitEnable(true);
+		}
+		Tuner.setTunerOutput("Hood angle", getAngle());
+//		Tuner.setTunerOutput("Hood Position", getAngle());
+//		Tuner.setTunerOutput("Hood Output", talon.getMotorOutputPercent());
+//		Constants.HOOD_KP = Tuner.getTunerInputDouble("Hood KP", Constants.HOOD_KP);
+//		Constants.HOOD_KD = Tuner.getTunerInputDouble("Hood KD", Constants.HOOD_KD);
+//		talon.config_kP(0, Constants.HOOD_KP);
+//		talon.config_kD(0, Constants.HOOD_KD);
 	}
 
 	//Internal Functions
 	private void setAngle(double degrees) {
-		talon.set(ControlMode.MotionMagic, degrees);
+		talon.set(ControlMode.Position, degrees / 360.0 * ticksPerRev);
 	}
 	private void setPercentOutput(double percent) {
 		talon.set(ControlMode.PercentOutput, percent);
@@ -66,19 +86,28 @@ public class Hood extends Subsystem {
 
 	//External Functions
 	public static double getAngle() {
-		return talon.getSelectedSensorPosition() / 4096.0 * (18.0/360.0) * 360.0;
+		if (talon == null)
+			return 0;
+		return talon.getSelectedSensorPosition() / ticksPerRev * 360.0;
 	}
 	public static boolean backLimitHit() {
-		return talon.isRevLimitSwitchClosed() == 1;
+		if (talon == null)
+			return true;
+		return !talon.getSensorCollection().isRevLimitSwitchClosed();
 	}
 	public static boolean onTarget() {
-		return Math.abs(getAngle() - getTargetVisionAngle(visionFilterY.getDoubleOutput())) < Constants.HOOD_TOL;
+		if (talon == null)
+			return true;
+		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
 	}
-	public static double getDistance(double limelightY) {
-		return 80.5 / (Math.tan((Constants.LIMELIGHT_ANGLE + limelightY) * (Math.PI / 180)));
+	public static double getDistance() {
+		return 81.5 /* Limelight to Powerport Height */ / 
+				Math.tan(
+					(Constants.LIMELIGHT_ANGLE + Limelight.getTargetY()) * (Math.PI / 180)
+				);
 	}
-	public static double getTargetVisionAngle(double limelightY) {
-		//TODO!!!
+	public static double getTargetVisionAngle() {
+		
 		return 0;
 	}
 
@@ -90,8 +119,12 @@ public class Hood extends Subsystem {
 		talon.configOpenloopRamp(Constants.HOOD_RAMP_RATE);
 		talon.config_kP(0, Constants.HOOD_KP);
 		talon.config_kD(0, Constants.HOOD_KD);
-		talon.configMotionAcceleration((int) Constants.HOOD_ACC);
-		talon.configMotionCruiseVelocity((int) Constants.HOOD_VEL);
+		talon.setInverted(false);
+		talon.setSensorPhase(true);
+		
+		talon.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
+		talon.configForwardSoftLimitThreshold((int) (ticksPerRev * (38.0 / 360.0)));
+		talon.configForwardSoftLimitEnable(false);
 		
 		visionFilterY = new MovingAverage(5, 0);
 	}

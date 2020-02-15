@@ -20,6 +20,7 @@ public class SubsystemManager {
 		String message = "Running Subsystems: ";
 		for (Subsystem subsystem : targetSubsystems) {
 			try {
+				subsystem.isAttached = true;
 				subsystem.init();
 				message += subsystem.getClass().getSimpleName() + ", ";
 			} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }

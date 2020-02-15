@@ -10,6 +10,7 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.LatchedBoolean;
+import frc.team5104.util.MovingAverage;
 import frc.team5104.util.Sensor;
 import frc.team5104.util.Sensor.PortType;
 import frc.team5104.util.managers.Subsystem;
@@ -20,6 +21,8 @@ public class Hopper extends Subsystem {
 	private static Sensor entrySensor, endSensor;
 	private static boolean isIndexing;
 	private static LatchedBoolean entrySensorLatch;
+	private static MovingAverage isFullAverage, hasFed;
+	private static double targetMidPosition = 0;
 	
 	//Loop
 	public void update() {
@@ -34,7 +37,7 @@ public class Hopper extends Subsystem {
 		
 		//Unjam
 		else if (Superstructure.getMode() == Mode.UNJAM) {
-			setMiddlePercentOutput(-Constants.HOPPER_UNJAM_SPEED);
+			setMiddle(-Constants.HOPPER_UNJAM_SPEED);
 			setFeeder(-Constants.HOPPER_UNJAM_SPEED);
 			setStart(-Constants.HOPPER_UNJAM_SPEED);
 		}
@@ -42,27 +45,33 @@ public class Hopper extends Subsystem {
 		//Shooting
 		else if (Superstructure.getMode() == Mode.SHOOTING && Flywheel.isSpedUp()) {//&& 
 				// Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
-			setMiddlePercentOutput(Constants.HOPPER_FEED_SPEED);
+			setMiddle(Constants.HOPPER_FEED_SPEED);
 			setFeeder(Constants.HOPPER_FEED_SPEED);
 			setStart(Constants.HOPPER_FEED_SPEED);
+			hasFed.update(true);
 		}
 		
 		//Indexing
 		else {
+			hasFed.update(false);
+			
 			//Indexing
 			isIndexing = !isFull() && (isEntrySensorTripped() || getMidPosition() < Constants.HOPPER_MID_BALL_SIZE);
 			if (entrySensorLatch.get(isEntrySensorTripped()) && isEntrySensorTripped()) {
-				resetMiddleEncoder();
+				targetMidPosition = Constants.HOPPER_MID_BALL_SIZE;
+				resetMidEncoder();
 			}
 			
 			//Mid and Feeder
 			if (isIndexing) {
-				setFeeder(-Constants.HOPPER_FEEDER_ROLLBALL_SPEED);
-				setMiddleTarget(Constants.HOPPER_MID_BALL_SIZE);
+				if (getMidPosition() < targetMidPosition) {
+					setMiddle(1);
+					setFeeder(0.1);
+				}
 			}
 			else {
 				setFeeder(0);
-				setMiddlePercentOutput(0);
+				setMiddle(0);
 			}
 			
 			//Entry
@@ -73,15 +82,13 @@ public class Hopper extends Subsystem {
 			else setStart(0);
 		}
 		
-//		Constants.HOPPER_MID_BALL_SIZE = Double.parseDouble(Tuner.getTunerInput("Hopper Mid Ball Size", Constants.HOPPER_MID_BALL_SIZE));
+		isFullAverage.update(isFull());
+		//Constants.HOPPER_MID_BALL_SIZE = Double.parseDouble(Tuner.getTunerInput("Hopper Mid Ball Size", Constants.HOPPER_MID_BALL_SIZE));
 	}
 
 	//Internal Functions
-	private void setMiddlePercentOutput(double percent) {
+	private void setMiddle(double percent) {
 		falconMid.set(ControlMode.PercentOutput, percent);
-	}
-	private void setMiddleTarget(double encoderTarget) {
-		falconMid.set(ControlMode.Position, encoderTarget);
 	}
 	private void setStart(double percent) {
 		intakeToHopper.set(ControlMode.PercentOutput, percent);
@@ -94,7 +101,7 @@ public class Hopper extends Subsystem {
 		hopperToShooter.set(ControlMode.Disabled, 0);
 		falconMid.set(ControlMode.Disabled, 0);
 	}
-	private void resetMiddleEncoder() {
+	private void resetMidEncoder() {
 		falconMid.setSelectedSensorPosition(0);
 	}
 	private static boolean isEntrySensorTripped() {
@@ -106,15 +113,33 @@ public class Hopper extends Subsystem {
 	
 	//External Functions
 	public static boolean isEmpty() {
+		if (falconMid == null)
+			return false;
 		return !isEndSensorTripped() && !isEntrySensorTripped();
 	}
 	public static boolean isFull() {
-		return isEndSensorTripped() && isEntrySensorTripped();
+		if (falconMid == null)
+			return false;
+		return isEndSensorTripped();
+	}
+	public static boolean isFullAverage() {
+		if (falconMid == null)
+			return false;
+		return isFullAverage.getBooleanOutput();
 	}
 	public static boolean isIndexing() {
+		if (falconMid == null)
+			return false;
 		return isIndexing;
 	}
+	public static boolean hasFedAverage() {
+		if (falconMid == null)
+			return false;
+		return hasFed.getBooleanOutput();
+	}
 	public static double getMidPosition() {
+		if (falconMid == null)
+			return 0;
 		return falconMid.getSelectedSensorPosition();
 	}
 	
@@ -134,11 +159,14 @@ public class Hopper extends Subsystem {
 		falconMid.configMotionAcceleration((int) Constants.HOPPER_ACC);
 		falconMid.configMotionCruiseVelocity((int) Constants.HOPPER_VEL);
 		falconMid.setInverted(true);
+		//falconMid.configSupplyCurrentLimit(new SupplyCurrentLimitConfiguration(true, 20, 20, 0.05));
 
 		entrySensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_START, true);
 		endSensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_END, true);
 		
 		entrySensorLatch = new LatchedBoolean();
+		isFullAverage = new MovingAverage(100, 0);
+		hasFed = new MovingAverage(100, 0);
 	}
 
 	//Reset

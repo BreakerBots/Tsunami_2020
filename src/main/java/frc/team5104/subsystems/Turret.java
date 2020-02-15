@@ -12,6 +12,8 @@ import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
 import frc.team5104.util.PDFController;
+import frc.team5104.util.Tuner;
+import frc.team5104.util.console;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
@@ -19,31 +21,46 @@ public class Turret extends Subsystem {
 	private static double fieldOrientedOffset = 0;
 	private static PDFController visionController;
 	private static MovingAverage visionFilterX;
+	private static double ticksPerRev = 
+			2048.0 / (8.0 / 60.0 /*gear*/) / (22.0 / 150.0 /*sprocket*/);
 	
 	//Loop
 	public void update() {
+		Constants.TURRET_VISION_KP = Tuner.getTunerInputDouble("Vision P", Constants.TURRET_VISION_KP);
+		Constants.TURRET_VISION_KD = Tuner.getTunerInputDouble("Vision D", Constants.TURRET_VISION_KD);
+		Constants.TURRET_VISION_TOL = Tuner.getTunerInputDouble("Vision Tol", Constants.TURRET_VISION_TOL);
+		Tuner.setTunerOutput("Turret Position", getAngle());
+		Tuner.setTunerOutput("Vision Target", visionFilterX.getDoubleOutput());
+		
+		visionController.setPDF(Constants.TURRET_VISION_KP, Constants.TURRET_VISION_KD, 0);
+		visionController.setTolerance(Constants.TURRET_VISION_TOL);
+		
 		//Calibrating
 		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
-			if (rightLimitHit()) {
+			//if (leftLimitHit()) {
 				stop();
-			}
-			else setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
+			//}
+			//else setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
 		}
 		
 		//Automatic
 		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
+			//stop();
+//			setPercentOutput(Climber.climberManual / 5.0);
+//			console.log("out: " + Climber.climberManual / 5.0, "angle: " + getAngle());
 			//Vision Mode
 			if (Superstructure.getMode() == Mode.SHOOTING && Limelight.hasTarget()) {
-				if(!onTarget()) {
+//				if(!onTarget()) {
 					visionFilterX.update(Limelight.getTargetX());
 					setVoltage(visionController.get(visionFilterX.getDoubleOutput()));
-				}
-				else stop();
+//				}
+//				else stop();
 			}
 			
 			//Field Oriented Mode
 			else {
-				setAngle(fieldOrientedOffset + (-Drive.getGyro() % 360));
+				stop();
+				//setAngle(fieldOrientedOffset + (-Drive.getGyro() % 360));
 			}
 		}
 		
@@ -51,13 +68,19 @@ public class Turret extends Subsystem {
 		else stop();
 		
 		//Zero Encoder
-		if (rightLimitHit())
-			resetEncoder();
+//		if (leftLimitHit()) {
+//			resetEncoder((int) (ticksPerRev * (240.0 / 360.0)));
+//			//falcon.configForwardSoftLimitEnable(true);
+//			//falcon.configReverseSoftLimitEnable(true);
+//		}
 	}
 
 	//Internal Functions
 	private void setAngle(double angle) {
-		falcon.set(ControlMode.Position, BreakerMath.clamp(angle, 0, 240));
+		falcon.set(ControlMode.Position, 
+				BreakerMath.clamp(angle, 0, 240) 
+				/ 360.0 * ticksPerRev
+		);
 	}
 	private void setVoltage(double voltage) {
 		setPercentOutput(voltage / falcon.getBusVoltage());
@@ -74,16 +97,20 @@ public class Turret extends Subsystem {
 
 	//External Functions
 	public static double getAngle() {
+		if (falcon == null)
+			return 0;
 		return falcon.getSelectedSensorPosition() 
-				/ 4096.0 * (8.0 / 60.0 /*gear*/) * (22.0 / 150.0 /*sprocket*/) * 360.0;
+				/ ticksPerRev * 360.0;
 	}
 	public static boolean leftLimitHit() {
-		return falcon.isRevLimitSwitchClosed() == 1;
-	}
-	public static boolean rightLimitHit() {
-		return falcon.isFwdLimitSwitchClosed() == 1;
+		return false;
+//		if (falcon == null)
+//			return true;
+//		return falcon.isRevLimitSwitchClosed() == 1;
 	}
 	public static boolean onTarget() {
+		if (falcon == null)
+			return true;
 		return visionController.onTarget();
 	}
 	public static void setFieldOrientedTarget(double angle) {
@@ -98,6 +125,15 @@ public class Turret extends Subsystem {
 		falcon.config_kD(0, Constants.TURRET_NORMAL_KD);
 		falcon.configOpenloopRamp(Constants.TURRET_RAMP_RATE);
 		falcon.configClosedloopRamp(Constants.TURRET_RAMP_RATE);
+		falcon.setInverted(true);
+		
+		falcon.configForwardSoftLimitThreshold((int) (ticksPerRev * (220.0 / 360.0)));
+		falcon.configReverseSoftLimitThreshold((int) (ticksPerRev * (20.0 / 360.0)));
+		falcon.configForwardSoftLimitEnable(true);
+		falcon.configReverseSoftLimitEnable(true);
+		
+//		resetEncoder();
+
 		
 		visionController = new PDFController(
 			Constants.TURRET_VISION_KP, Constants.TURRET_VISION_KD, 0, 
@@ -109,6 +145,5 @@ public class Turret extends Subsystem {
 	//Reset
 	public void reset() {
 		stop();
-		resetEncoder();
 	}
 }

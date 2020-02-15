@@ -33,6 +33,16 @@ public class Tuner {
 		}
 		return defaultValue.toString();
 	}
+	
+	public static double getTunerInputDouble(String name, double defaultValue) {
+		String value = getTunerInput(name, defaultValue);
+		try {
+			return Double.parseDouble(value);
+		} catch(Exception e) { 
+			return defaultValue;
+		}
+	}
+	
 	public static void setTunerOutput(String name, Object output) {
 		boolean found = false;
 		for (TunerRunnable runnable : runnables) {

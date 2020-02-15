@@ -1,8 +1,12 @@
 /*BreakerBots Robotics Team 2020*/
 package frc.team5104;
 
+import frc.team5104.subsystems.Hood;
 import frc.team5104.subsystems.Hopper;
 import frc.team5104.subsystems.Paneler;
+import frc.team5104.subsystems.Turret;
+import frc.team5104.util.Limelight;
+import frc.team5104.util.Limelight.LEDMode;
 import frc.team5104.util.console;
 import frc.team5104.util.console.c;
 
@@ -44,7 +48,7 @@ public class Superstructure {
 	
 	//Loop
 	protected static void update() {
-		//console.log(getSystemState());
+//		console.log(getSystemState() + " Mode: " + getMode());
 		//Exit Paneling
 		if (Superstructure.getMode() == Mode.PANELING && Paneler.isFinished()) {
 			Superstructure.setMode(Mode.IDLE);
@@ -54,7 +58,16 @@ public class Superstructure {
 		//Exit Intake
 		if (getMode() == Mode.INTAKE && Hopper.isFull()) {
 			setMode(Mode.IDLE);
-			console.log(c.SUPERSTRUCTURE, "Hopper full! No mas!!");
+			console.log(c.SUPERSTRUCTURE, "hopper full... idling");
+		}
+		
+		//Exit Shooting
+		if (getMode() == Mode.SHOOTING && !Hopper.isFullAverage() && Hopper.hasFedAverage()) {
+			setMode(Mode.IDLE);
+			setFlywheelState(FlywheelState.STOPPED);
+			if (Constants.LIMELIGHT_DEFAULT_OFF)
+				Limelight.setLEDMode(LEDMode.OFF);
+			console.log(c.SUPERSTRUCTURE, "done shooting... idling");
 		}
 		
 		//Spin Flywheel while Shooting
@@ -63,7 +76,7 @@ public class Superstructure {
 		}
 		
 		//Exit Calibration
-		if (getSystemState() == SystemState.CALIBRATING /*UR DUMB FIX THIS PLZ*/) {
+		if (getSystemState() == SystemState.CALIBRATING && /*Turret.leftLimitHit() &&*/ Hood.backLimitHit()) {
 			setSystemState(SystemState.AUTOMATIC);
 			console.log(c.SUPERSTRUCTURE, "finished calibration");
 		}
