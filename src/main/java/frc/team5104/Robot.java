@@ -4,6 +4,9 @@ package frc.team5104;
 import edu.wpi.first.wpilibj.RobotState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.auto.AutoManager;
+import frc.team5104.auto.Odometry;
+import frc.team5104.auto.paths.ExamplePath;
+import frc.team5104.auto.paths.*;
 import frc.team5104.subsystems.*;
 import frc.team5104.teleop.CompressorController;
 import frc.team5104.teleop.DriveController;
@@ -27,12 +30,12 @@ public class Robot extends RobotController.BreakerRobot {
 		//Managers
 		SubsystemManager.useSubsystems(
 			new Drive(),
-//			new Intake()
-//			new Turret()
-//			new Flywheel(),
-//			new Hopper(),
-//			new Paneler()
+			new Intake(),
+			new Turret(),
+			new Flywheel(),
+			new Hopper(),
 			new Hood()
+//			new Paneler()
 		);
 		TeleopControllerManager.useTeleopControllers(
 			new DriveController(),
@@ -43,10 +46,10 @@ public class Robot extends RobotController.BreakerRobot {
 		//Other Initialization
 		Webapp.run();
 		Plotter.reset();
-		//Odometry.init();
+		Odometry.init();
 		Limelight.init();
 		CompressorController.stop();
-//		AutoManager.setTargetPath(new ChezyVictoryLap());
+		AutoManager.setTargetPath(new Center2BallPickup());
 	}
 	
 	//Teleop 
@@ -92,6 +95,7 @@ public class Robot extends RobotController.BreakerRobot {
 	public void mainLoop() {
 		if (RobotState.isDisabled())
 			Superstructure.setSystemState(SystemState.DISABLED);
+//		console.log(-Drive.getGyro() % 360);
 //		console.log("Turret: " + Turret.onTarget() + " Hood: " + Hood.onTarget() + " Fly: " + Flywheel.isSpedUp());
 		Superstructure.update();
 		SubsystemManager.update();

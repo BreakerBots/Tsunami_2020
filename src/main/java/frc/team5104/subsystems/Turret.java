@@ -13,21 +13,27 @@ import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
 import frc.team5104.util.Tuner;
+import frc.team5104.util.console;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
 	private static TalonFX motor;
 	@SuppressWarnings("unused")
-	private static double fieldOrientedOffset = 0;
+	private static double fieldOrientedOffset = 120;
 	private static CharacterizedController controller;
 	private static MovingAverage visionFilter;
-	private static double targetAngle = 0;
+	private static double targetAngle = getAngle();
 	
 	
 	//Loop
 	public void update() {
 		//Debugging
-		Tuner.setTunerOutput("Turret Angle", getAngle());
+//		Tuner.setTunerOutput("Turret Angle", getAngle());
+//		Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
+//		Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
+//		controller.setPID(Constants.TURRET_KP,
+//				0,
+//				Constants.TURRET_KD);
 		
 		//Calibrating
 		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
@@ -41,17 +47,23 @@ public class Turret extends Subsystem {
 			if (Superstructure.getMode() == Mode.AIMING) {
 				if (Limelight.hasTarget()) {
 					visionFilter.update(Limelight.getTargetX());
-					setTargetAngle(getAngle() + visionFilter.getDoubleOutput());
+					setTargetAngle(getAngle() - visionFilter.getDoubleOutput());
 				}
 			}
-			
+
 			//Field Oriented Mode
 			else if (Superstructure.getMode() != Mode.SHOOTING) {
-				setTargetAngle(180);
-				//TODO: setTargetAngle(fieldOrientedOffset + (-Drive.getGyro() % 360));
+//				setTargetAngle(120);
+				setTargetAngle(fieldOrientedOffset + (-Drive.getGyro() % 360));
 			}
 			
-			setVoltage(controller.get(getAngle(), targetAngle));
+			double pid = controller.getPID(getAngle(), targetAngle);
+			double ff = controller.getFF() * ((getAngle() > targetAngle) ? -1 : 1);
+			setVoltage(BreakerMath.clamp(pid + ff, -4, 4));
+//			stop();
+			
+//			Tuner.setTunerOutput("turret ff", ff);
+//			Tuner.setTunerOutput("turret pid", pid);
 		}
 		
 		//Disabled
@@ -107,7 +119,7 @@ public class Turret extends Subsystem {
 		motor.configForwardSoftLimitEnable(true);
 		motor.configReverseSoftLimitEnable(true);
 		
-//		resetEncoder();
+		//resetEncoder();
 
 		controller = new CharacterizedController(
 				Constants.TURRET_KP,

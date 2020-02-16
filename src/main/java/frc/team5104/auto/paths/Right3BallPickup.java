@@ -5,6 +5,8 @@ import frc.team5104.auto.AutoPath;
 import frc.team5104.auto.Position;
 import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
+import frc.team5104.auto.actions.IntakeAction;
+import frc.team5104.auto.actions.ShootAction;
 
 public class Right3BallPickup extends AutoPath {
 	
@@ -18,20 +20,21 @@ public class Right3BallPickup extends AutoPath {
 				new Position(0, 0, 0),
 				new Position(2, 0, 0)
 			));
-		//Shooting Code
-		
+		add(new ShootAction());
+		add(new IntakeAction());
 		add(new DriveTrajectoryAction(true, false,
 				new Position(2, 0, 0),
-				new Position(3, 6.5, 0),
-				new Position(16.67, 6.5, 0)
+				new Position(3, 5.5, 0),
+				new Position(16.67, 5.5, 0)
 				//new Position(-0.42, 6.75, 180)
 			));
-		//Shooting Code
 		
 		add(new DriveTrajectoryAction(true, true,
-				new Position (16.67, 6.5, 0),
-				new Position (0, 0, 0)
+				new Position (16.67, 5.5, 0),
+				//new Position (0, 0, 0)
+				new Position (0, 0, 90)
 				));
 		add(new DriveStopAction());
+		add(new ShootAction());
 	}
 }

@@ -10,6 +10,7 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.LatchedBoolean;
+import frc.team5104.util.LatchedBoolean.LatchedBooleanMode;
 import frc.team5104.util.MovingAverage;
 import frc.team5104.util.Sensor;
 import frc.team5104.util.Sensor.PortType;
@@ -48,18 +49,16 @@ public class Hopper extends Subsystem {
 			hasFed.update(false);
 			
 			//Indexing
-			isIndexing = !isFull() && (isEntrySensorTripped() || getMidPosition() < Constants.HOPPER_MIDDLE_BALL_SIZE);
-			if (entrySensorLatch.get(isEntrySensorTripped()) && isEntrySensorTripped()) {
+			isIndexing = !isFull() && (isEntrySensorTripped() || getMidPosition() < targetMidPosition);
+			if (entrySensorLatch.get(isEntrySensorTripped())) {
 				targetMidPosition = Constants.HOPPER_MIDDLE_BALL_SIZE;
 				resetMidEncoder();
 			}
 			
 			//Mid and Feeder
 			if (isIndexing) {
-				if (getMidPosition() < targetMidPosition) {
-					setMiddle(Constants.HOPPER_MIDDLE_INDEX_SPEED);
-					setFeeder(Constants.HOPPER_FEED_INDEX_SPEED);
-				}
+				setMiddle(Constants.HOPPER_MIDDLE_INDEX_SPEED);
+				setFeeder(Constants.HOPPER_FEED_INDEX_SPEED);
 			}
 			else {
 				setFeeder(0);
@@ -70,7 +69,7 @@ public class Hopper extends Subsystem {
 			if (Superstructure.getMode() == Mode.INTAKE)
 				setStart(Constants.HOPPER_START_INTAKE_SPEED);
 			else if (isIndexing)
-				setStart(0);
+				setStart(Constants.HOPPER_START_INDEX_SPEED);
 			else setStart(0);
 		}
 		
@@ -152,7 +151,7 @@ public class Hopper extends Subsystem {
 		entrySensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_START, true);
 		endSensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_END, true);
 		
-		entrySensorLatch = new LatchedBoolean();
+		entrySensorLatch = new LatchedBoolean(LatchedBooleanMode.RISING);
 		isFullAverage = new MovingAverage(100, 0);
 		hasFed = new MovingAverage(100, 0);
 	}

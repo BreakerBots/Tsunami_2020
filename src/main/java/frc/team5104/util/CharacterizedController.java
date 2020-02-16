@@ -44,10 +44,16 @@ public class CharacterizedController {
 	 * @return The output of the motors in volts
 	 */
 	public double get(double position, double target) {
-		double a = pid.calculate(position, target);
-		double b = ff.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
-		return a + b;
+		return getFF() + getPID(position, target);
 	}
+	
+	public double getFF() {
+		return ff.calculate(pid.getSetpoint().position, pid.getSetpoint().velocity);
+	}
+	
+	public double getPID(double position, double target) {
+		return pid.calculate(position, target);
+	} 
 	
 	public void setPID(double kP, double kI, double kD) {
 		pid.setPID(kP, kI, kD);

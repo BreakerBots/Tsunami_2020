@@ -15,7 +15,6 @@ import frc.team5104.util.CharacterizedController;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
-import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
 public class Hood extends Subsystem {
@@ -28,9 +27,14 @@ public class Hood extends Subsystem {
 	//Loop
 	public void update() {
 		//Debugging
-		Tuner.setTunerOutput("Hood Angle", getAngle());
-		Tuner.setTunerOutput("Hood Output", motor.getMotorOutputPercent());
-		visionTargetAngle = Tuner.getTunerInputDouble("Hood Target Vision Angle", visionTargetAngle);
+//		Tuner.setTunerOutput("Hood Angle", getAngle());
+//		Tuner.setTunerOutput("Hood Output", motor.getMotorOutputPercent());
+//		Tuner.setTunerOutput("Hood P", getkP());
+//		visionTargetAngle = Tuner.getTunerInputDouble("Hood Target Vision Angle", visionTargetAngle);
+//		Constants.HOOD_KD = Tuner.getTunerInputDouble("Hood KD", Constants.HOOD_KD);
+		controller.setPID(getkP(),
+				0,
+				Constants.HOOD_KD);
 		
 		//Calibrating
 		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
@@ -89,6 +93,11 @@ public class Hood extends Subsystem {
 	private void resetEncoder() {
 		motor.setSelectedSensorPosition(0);
 	}
+	
+	private double getkP() {
+		double x = getAngle();
+		return -0.000250 * x * x * x + 0.0136 * x * x - 0.209 * x + 1.3;// + 1.21;
+	}
 
 	//External Functions
 	public static double getAngle() {
@@ -104,9 +113,9 @@ public class Hood extends Subsystem {
 		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
 	}
 	public static double getTargetVisionAngle() {
-		return visionTargetAngle;
-		//double x = visionFilterY.getDoubleOutput();
-		//return -0.00643 * x * x * x - 0.122 * x * x - 0.934 * x + 7.715;
+//		return visionTargetAngle;
+		double x = visionFilterY.getDoubleOutput();
+		return -0.00643 * x * x * x - 0.122 * x * x - 0.934 * x + 7.715;
 	}
 
 	//Config
@@ -121,7 +130,7 @@ public class Hood extends Subsystem {
 		motor.configForwardSoftLimitEnable(false);
 		
 		controller = new CharacterizedController(
-				Constants.HOOD_KP,
+				getkP(),
 				0,
 				Constants.HOOD_KD,
 				Constants.HOOD_MAX_VEL,
@@ -136,6 +145,5 @@ public class Hood extends Subsystem {
 	//Reset
 	public void reset() {
 		stop();
-		resetEncoder();
 	}
 }

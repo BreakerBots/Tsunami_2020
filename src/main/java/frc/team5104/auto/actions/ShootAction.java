@@ -15,12 +15,12 @@ public class ShootAction extends AutoPathAction {
 
     public void init() {
     	console.log(c.AUTO, "firing!");
-    	Superstructure.setMode(Mode.SHOOTING);
+    	Superstructure.setMode(Mode.AIMING);
     }
 
     public boolean update() {
     	//exit when hopper is empty
-    	return Hopper.isEmpty();
+    	return Superstructure.getMode() == Mode.IDLE;
     }
 
     public void end() {

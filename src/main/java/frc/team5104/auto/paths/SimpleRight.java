@@ -5,6 +5,7 @@ import frc.team5104.auto.AutoPath;
 import frc.team5104.auto.Position;
 import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
+import frc.team5104.auto.actions.ShootAction;
 
 public class SimpleRight extends AutoPath {
 	public SimpleRight() {
@@ -13,8 +14,8 @@ public class SimpleRight extends AutoPath {
 				new Position(0, 0, 0),
 				new Position(2, 0, 0)
 			));
-		//Shooting Code
 		add(new DriveStopAction());
+		add(new ShootAction());
 		//Changed x from 0.5 to 2 to get the robot to move forward
 		// about 1 foot.  With the 0.5 value, the robot tried to move,
 		// but didn't actually move forward

@@ -22,6 +22,5 @@ public class IntakeAction extends AutoPathAction {
     }
 
     public void end() {
-    	
     }
 }

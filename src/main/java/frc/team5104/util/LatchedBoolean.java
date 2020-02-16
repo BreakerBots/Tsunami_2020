@@ -14,9 +14,9 @@ public class LatchedBoolean {
 	 *  - falling: only True->False activation
 	 */
 	public static enum LatchedBooleanMode {
-		always,
-		rising,
-		falling
+		ALWAYS,
+		RISING,
+		FALLING
 	}
 	
 	//Class Values
@@ -28,7 +28,7 @@ public class LatchedBoolean {
 	 * Creates a latched boolean with the mode "Always" in which between False->True and True->False it will be activated.
 	 */
 	public LatchedBoolean() {
-		this(LatchedBooleanMode.always);
+		this(LatchedBooleanMode.ALWAYS);
 	}
 	/**
 	 * Creates a latched boolean with the specified mode.
@@ -56,11 +56,11 @@ public class LatchedBoolean {
 	 */
 	public boolean get(boolean currentValue) {
 		if (currentValue != lastValue) {
-			if (mode == LatchedBooleanMode.always)
+			if (mode == LatchedBooleanMode.ALWAYS)
 				return true;
-			if (mode == LatchedBooleanMode.rising && currentValue == true)
+			if (mode == LatchedBooleanMode.RISING && currentValue == true)
 				return true;
-			if (mode == LatchedBooleanMode.falling && currentValue == false)
+			if (mode == LatchedBooleanMode.FALLING && currentValue == false)
 				return true;
 			lastValue = currentValue;
 		}

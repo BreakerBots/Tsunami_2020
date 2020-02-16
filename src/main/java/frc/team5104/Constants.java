@@ -20,23 +20,19 @@ public class Constants {
 	public static final double DRIVE_KS = 0.806;
 	public static final double DRIVE_KV = 0.624;
 	public static final double DRIVE_KA = 0.163;
-	public static final double AUTO_MAX_VELOCITY = 4; //ft/s
-	public static final double AUTO_MAX_ACCEL = 2;
+	public static final double AUTO_MAX_VELOCITY = 5; //ft/s
+	public static final double AUTO_MAX_ACCEL = 3;
 	public static final double AUTO_CORRECTION_FACTOR = 100; //>0
 	public static final double AUTO_DAMPENING_FACTOR  = 0.7; //0-1
 	public static final boolean AUTO_PLOT_ODOMETRY = true;
 	
 	//Flywheel
 	public static final boolean FLYWHEEL_OPEN_LOOP = false;
-	public static final double FLYWHEEL_RAMP_RATE = 0.5;
+	public static final double FLYWHEEL_RAMP_RATE_UP = 0.7;
+	public static final double FLYWHEEL_RAMP_RATE_DOWN = 3;
 	public static final double FLYWHEEL_RPM_TOL = 200;
-//	public static final double FLYWHEEL_KP = 0.2;
+	public static final double FLYWHEEL_KP = 0.2;
 	public static final double FLYWHEEL_KF = 0.05;
-	public static final double FLYWHEEL_KP = 0;
-	public static final double FLYWHEEL_KD = 0;
-	public static final double FLYWHEEL_KS = 0;
-	public static final double FLYWHEEL_KV = 0;
-	public static final double FLYWHEEL_KA = 0;
 	
 	//Panelers
 	public static final double ROTATION_MOTOR_SPEED = 0.75;
@@ -46,17 +42,17 @@ public class Constants {
 	public static final double HOOD_TOL = 3;
 	public static final double HOOD_CALIBRATE_SPEED = 0.1;
 	public static final double HOOD_TICKS_PER_REV = 4096.0 * (360.0 / 18.0);
-	public static final double HOOD_KP = 0;
-	public static final double HOOD_KD = 0;
-	public static final double HOOD_KS = 0;
-	public static final double HOOD_KV = 0;
-	public static final double HOOD_KA = 0;
-	public static final double HOOD_MAX_VEL = 0;
-	public static final double HOOD_MAX_ACC = 0;
+	public static final double HOOD_KD = 0.00926;
+	public static final double HOOD_KS = 0.02;
+	public static final double HOOD_KV = 0.0605;
+	public static final double HOOD_KA = 0.00218;
+	public static final double HOOD_MAX_VEL = 200;
+	public static final double HOOD_MAX_ACC = 2000;
 	
 	//Hopper
 	public static final double HOPPER_START_INTAKE_SPEED = 7;
-	public static final double HOPPER_MIDDLE_BALL_SIZE = 17000;//17000;
+	public static final double HOPPER_START_INDEX_SPEED = 0.5;
+	public static final double HOPPER_MIDDLE_BALL_SIZE = 17000;
 	public static final double HOPPER_MIDDLE_INDEX_SPEED = 12;
 	public static final double HOPPER_FEED_SPEED = 12;
 	public static final double HOPPER_FEED_INDEX_SPEED = 2;
@@ -74,12 +70,12 @@ public class Constants {
 	//Turret
 	public static final double TURRET_CALIBRATE_SPEED = 0.1;
 	public static final double TURRET_TICKS_PER_REV = 2048.0 / (8.0 / 60.0 /*gear*/) / (22.0 / 150.0 /*sprocket*/);
-	public static final double TURRET_KP = 0;
-	public static final double TURRET_KD = 0;
-	public static final double TURRET_KS = 0;
-	public static final double TURRET_KV = 0;
-	public static final double TURRET_KA = 0;
-	public static final double TURRET_MAX_VEL = 0;
-	public static final double TURRET_MAX_ACC = 0;
+	public static final double TURRET_KP = 0.229;
+	public static final double TURRET_KD = 0.001;
+	public static final double TURRET_KS = 0.05/10;
+	public static final double TURRET_KV = 0.015/10;
+	public static final double TURRET_KA = 0.000384/10;
+	public static final double TURRET_MAX_VEL = 200;
+	public static final double TURRET_MAX_ACC = 1400;
 	public static final double TURRET_VISION_TOL = 2;
 }

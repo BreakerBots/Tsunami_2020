@@ -1,6 +1,7 @@
 /*BreakerBots Robotics Team 2020*/
 package frc.team5104;
 
+import edu.wpi.first.wpilibj.RobotState;
 import frc.team5104.subsystems.Flywheel;
 import frc.team5104.subsystems.Hood;
 import frc.team5104.subsystems.Hopper;
@@ -73,8 +74,8 @@ public class Superstructure {
 		
 		//Started Shooting
 		if (getMode() == Mode.AIMING && Flywheel.isAvgSpedUp() && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
-//			setMode(Mode.SHOOTING);
-//			console.log(c.SUPERSTRUCTURE, "finished aiming... shooting");
+			setMode(Mode.SHOOTING);
+			console.log(c.SUPERSTRUCTURE, "finished aiming... shooting");
 		}
 		
 		//Spin Flywheel while Shooting
@@ -91,8 +92,10 @@ public class Superstructure {
 	
 	//Reset
 	protected static void reset() {
+		console.log(c.SUPERSTRUCTURE, "Resetting Superstructure!");
 		setSystemState(SystemState.CALIBRATING); 
-		setMode(Mode.IDLE);
+		if (!RobotState.isAutonomous())
+			setMode(Mode.IDLE);
 		setPanelState(PanelState.ROTATION);
 		setFlywheelState(FlywheelState.STOPPED);
 		setTarget(Target.HIGH);

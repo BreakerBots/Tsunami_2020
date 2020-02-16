@@ -9,13 +9,15 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.FlywheelState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.BreakerMath;
+import frc.team5104.util.CharacterizedController;
 import frc.team5104.util.MovingAverage;
+import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
 public class Flywheel extends Subsystem {
 	private static TalonFX motor1, motor2;
 	private static MovingAverage avgRPMS;
-//	private static CharacterizedController controller;
+	private static CharacterizedController controller;
 	private static final double targetRPMS = 5000;
 	
 	//Loop
@@ -23,41 +25,37 @@ public class Flywheel extends Subsystem {
 		if ((Superstructure.getSystemState() == SystemState.AUTOMATIC || 
 			Superstructure.getSystemState() == SystemState.MANUAL) &&
 			Superstructure.getFlywheelState() == FlywheelState.SPINNING) {
+			setRampRate(Constants.FLYWHEEL_RAMP_RATE_UP);
 			if (Constants.FLYWHEEL_OPEN_LOOP)
 				setPercentOutput(targetRPMS / 6100);
 			else setSpeed(targetRPMS);
 		}
-		else stop();
+		else {
+			setRampRate(Constants.FLYWHEEL_RAMP_RATE_DOWN);
+			stop();
+		}
+		
+//		Tuner.setTunerOutput("Flywheel RPMS", getRPMS());
 		
 		avgRPMS.update(getRPMS());
-		
-//		try {
-//			Constants.FLYWHEEL_KP = Double.parseDouble(Tuner.getTunerInput("KP", Constants.FLYWHEEL_KP));
-//			Constants.FLYWHEEL_KF = Double.parseDouble(Tuner.getTunerInput("KF", Constants.FLYWHEEL_KF));
-//			targetRPMS = Double.parseDouble(Tuner.getTunerInput("target", targetRPMS));
-//		} catch (Exception e) {}
-//		Tuner.setTunerOutput("Out Percent", falcon1.getMotorOutputPercent());
-//		Tuner.setTunerOutput("Speed", getRPMS());
-		
-//		falcon1.config_kP(0, Constants.FLYWHEEL_KP);
-//		falcon1.config_kF(0, Constants.FLYWHEEL_KF);
 	}
 
 	//Internal Functions
 	private void setSpeed(double rpms) {
 		//rev/min -> ticks/100ms
 		motor1.set(ControlMode.Velocity, rpms * 2048.0 / 60.0 / 10.0);
-		//setVoltage(controller.get(getRPMS(), targetRPMS));
-	}
-	@SuppressWarnings("unused")
-	private void setVoltage(double voltage) {
-		setPercentOutput(voltage / motor1.getBusVoltage());
 	}
 	private void setPercentOutput(double percent) {
 		motor1.set(ControlMode.PercentOutput, percent);
 	}
 	private void stop() {
 		motor1.set(ControlMode.Disabled, 0);
+	}
+	private void setRampRate(double rate) {
+		motor1.configOpenloopRamp(rate);
+		motor2.configOpenloopRamp(rate);
+		motor1.configClosedloopRamp(rate);
+		motor2.configClosedloopRamp(rate);
 	}
 	
 	//External Functions
@@ -90,25 +88,16 @@ public class Flywheel extends Subsystem {
 		motor1.configFactoryDefault();
 		motor1.config_kP(0, Constants.FLYWHEEL_KP);
 		motor1.config_kF(0, Constants.FLYWHEEL_KF);
-		motor1.configClosedloopRamp(Constants.FLYWHEEL_RAMP_RATE);
 		motor1.setInverted(false);
 		
 		motor2 = new TalonFX(Ports.FLYWHEEL_MOTOR_2);
 		motor2.configFactoryDefault();
 		motor2.config_kP(0, Constants.FLYWHEEL_KP);
 		motor2.config_kF(0, Constants.FLYWHEEL_KF);
-		motor2.configClosedloopRamp(Constants.FLYWHEEL_RAMP_RATE);
 		motor2.follow(motor1);
 		motor2.setInverted(true);
 		
-//		controller = new CharacterizedController(
-//				Constants.FLYWHEEL_KP,
-//				0,
-//				Constants.FLYWHEEL_KD,
-//				Constants.FLYWHEEL_KS,
-//				Constants.FLYWHEEL_KV,
-//				Constants.FLYWHEEL_KA
-//			);
+		setRampRate(Constants.FLYWHEEL_RAMP_RATE_UP);
 		
 		avgRPMS = new MovingAverage(50, 0);
 	}
