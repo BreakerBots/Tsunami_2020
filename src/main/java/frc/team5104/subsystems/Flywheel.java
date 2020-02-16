@@ -9,15 +9,13 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.FlywheelState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.BreakerMath;
-import frc.team5104.util.CharacterizedController;
 import frc.team5104.util.MovingAverage;
-import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
 public class Flywheel extends Subsystem {
 	private static TalonFX motor1, motor2;
 	private static MovingAverage avgRPMS;
-	private static CharacterizedController controller;
+	//private static CharacterizedController controller;
 	private static final double targetRPMS = 5000;
 	
 	//Loop

@@ -12,13 +12,10 @@ import frc.team5104.util.CharacterizedController;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
-import frc.team5104.util.Tuner;
-import frc.team5104.util.console;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
 	private static TalonFX motor;
-	@SuppressWarnings("unused")
 	private static double fieldOrientedOffset = 120;
 	private static CharacterizedController controller;
 	private static MovingAverage visionFilter;
@@ -53,17 +50,10 @@ public class Turret extends Subsystem {
 
 			//Field Oriented Mode
 			else if (Superstructure.getMode() != Mode.SHOOTING) {
-//				setTargetAngle(120);
 				setTargetAngle(fieldOrientedOffset + (-Drive.getGyro() % 360));
 			}
 			
-			double pid = controller.getPID(getAngle(), targetAngle);
-			double ff = controller.getFF() * ((getAngle() > targetAngle) ? -1 : 1);
-			setVoltage(BreakerMath.clamp(pid + ff, -4, 4));
-//			stop();
-			
-//			Tuner.setTunerOutput("turret ff", ff);
-//			Tuner.setTunerOutput("turret pid", pid);
+			setVoltage(BreakerMath.clamp(controller.calculate(getAngle(), targetAngle), -4, 4));
 		}
 		
 		//Disabled

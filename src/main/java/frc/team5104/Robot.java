@@ -5,20 +5,19 @@ import edu.wpi.first.wpilibj.RobotState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.auto.AutoManager;
 import frc.team5104.auto.Odometry;
-import frc.team5104.auto.paths.ExamplePath;
 import frc.team5104.auto.paths.*;
 import frc.team5104.subsystems.*;
 import frc.team5104.teleop.CompressorController;
 import frc.team5104.teleop.DriveController;
 import frc.team5104.teleop.SuperstructureController;
+import frc.team5104.util.Limelight;
+import frc.team5104.util.Plotter;
+import frc.team5104.util.Webapp;
 import frc.team5104.util.XboxController;
 import frc.team5104.util.console;
 import frc.team5104.util.managers.SubsystemManager;
 import frc.team5104.util.managers.TeleopControllerManager;
 import frc.team5104.util.setup.RobotController;
-import frc.team5104.util.Limelight;
-import frc.team5104.util.Plotter;
-import frc.team5104.util.Webapp;
 
 public class Robot extends RobotController.BreakerRobot {
 	public Robot() {
@@ -95,11 +94,8 @@ public class Robot extends RobotController.BreakerRobot {
 	public void mainLoop() {
 		if (RobotState.isDisabled())
 			Superstructure.setSystemState(SystemState.DISABLED);
-//		console.log(-Drive.getGyro() % 360);
-//		console.log("Turret: " + Turret.onTarget() + " Hood: " + Hood.onTarget() + " Fly: " + Flywheel.isSpedUp());
 		Superstructure.update();
 		SubsystemManager.update();
 		XboxController.update();
-		
 	}
 }

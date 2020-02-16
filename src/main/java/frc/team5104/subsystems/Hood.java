@@ -22,7 +22,6 @@ public class Hood extends Subsystem {
 	private static MovingAverage visionFilterY;
 	private static CharacterizedController controller;
 	private static double targetAngle = 0;
-	private static double visionTargetAngle = 10; //TODO: take out
 
 	//Loop
 	public void update() {
@@ -64,7 +63,7 @@ public class Hood extends Subsystem {
 					setTargetAngle(0);
 			}
 			
-			setVoltage(controller.get(getAngle(), targetAngle));
+			setVoltage(controller.calculate(getAngle(), targetAngle));
 		}
 			
 		//Disabled
