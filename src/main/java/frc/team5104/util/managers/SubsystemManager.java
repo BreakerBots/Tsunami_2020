@@ -21,6 +21,7 @@ public class SubsystemManager {
 		for (Subsystem subsystem : targetSubsystems) {
 			try {
 				subsystem.isAttached = true;
+				subsystem.emergencyStopped = false;
 				subsystem.init();
 				message += subsystem.getClass().getSimpleName() + ", ";
 			} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
@@ -32,7 +33,7 @@ public class SubsystemManager {
 	public static void reset() {
 		for (Subsystem subsystem : targetSubsystems) {
 			try {
-				subsystem.reset();
+				subsystem.disabled();
 			} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
 		}
 	}
@@ -41,7 +42,9 @@ public class SubsystemManager {
 	public static void update() {
 		for (Subsystem subsystem : targetSubsystems) {
 			try {
-				subsystem.update();
+				if (subsystem.emergencyStopped)
+					subsystem.disabled();
+				else subsystem.update();
 			} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
 		}
 	}

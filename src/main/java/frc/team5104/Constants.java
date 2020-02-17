@@ -42,8 +42,9 @@ public class Constants {
 	public static final double HOOD_TOL = 3;
 	public static final double HOOD_CALIBRATE_SPEED = 0.1;
 	public static final double HOOD_TICKS_PER_REV = 4096.0 * (360.0 / 18.0);
-	public static final double HOOD_KD = 0.00926;
-	public static final double HOOD_KS = 0.02;
+	public static double HOOD_KP = 0.0979;
+	public static double HOOD_KD = 0.0296;
+	public static final double HOOD_KS = 0.49;
 	public static final double HOOD_KV = 0.0605;
 	public static final double HOOD_KA = 0.00218;
 	public static final double HOOD_MAX_VEL = 200;
@@ -68,14 +69,14 @@ public class Constants {
 	public static final double PANELER_TICKS_PER_REV = 4096.0 * (/*belt*/30.0 / 24.0) * (/*control panel*/16.0 / 1.5);
 	
 	//Turret
-	public static final double TURRET_CALIBRATE_SPEED = 0.1;
+	public static final double TURRET_CALIBRATE_SPEED = 0.08;
 	public static final double TURRET_TICKS_PER_REV = 2048.0 / (8.0 / 60.0 /*gear*/) / (22.0 / 150.0 /*sprocket*/);
-	public static final double TURRET_KP = 0.229;
-	public static final double TURRET_KD = 0.001;
-	public static final double TURRET_KS = 0.05/10;
-	public static final double TURRET_KV = 0.015/10;
-	public static final double TURRET_KA = 0.000384/10;
+	public static double TURRET_KP = 0.0488;
+	public static double TURRET_KD = 0.0118;
+	public static final double TURRET_KS = 0.223;
+	public static final double TURRET_KV = 0.015;
+	public static final double TURRET_KA = 0.000384;
 	public static final double TURRET_MAX_VEL = 200;
-	public static final double TURRET_MAX_ACC = 1400;
+	public static final double TURRET_MAX_ACC = 2000;
 	public static final double TURRET_VISION_TOL = 2;
 }

@@ -1,7 +1,6 @@
 /*BreakerBots Robotics Team 2020*/
 package frc.team5104;
 
-import edu.wpi.first.wpilibj.RobotState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.auto.AutoManager;
 import frc.team5104.auto.Odometry;
@@ -29,11 +28,11 @@ public class Robot extends RobotController.BreakerRobot {
 		//Managers
 		SubsystemManager.useSubsystems(
 			new Drive(),
-			new Intake(),
-			new Turret(),
-			new Flywheel(),
-			new Hopper(),
-			new Hood()
+//			new Intake(),
+			new Turret()
+//			new Flywheel(),
+//			new Hopper(),
+//			new Hood()
 //			new Paneler()
 		);
 		TeleopControllerManager.useTeleopControllers(
@@ -88,12 +87,9 @@ public class Robot extends RobotController.BreakerRobot {
 	public void mainStop() {
 		Superstructure.reset();
 		SubsystemManager.reset();
-		
 		console.logFile.end();
 	}
 	public void mainLoop() {
-		if (RobotState.isDisabled())
-			Superstructure.setSystemState(SystemState.DISABLED);
 		Superstructure.update();
 		SubsystemManager.update();
 		XboxController.update();

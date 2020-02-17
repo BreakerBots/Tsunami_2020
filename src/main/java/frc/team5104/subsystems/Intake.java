@@ -54,7 +54,7 @@ public class Intake extends Subsystem {
 	}
 
 	//Reset
-	public void reset() {
+	public void disabled() {
 		stop();
 	}
 }

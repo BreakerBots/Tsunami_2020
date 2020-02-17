@@ -41,6 +41,7 @@ public class TeleopControllerManager {
 		}
 	}
 
+	/** Call once the robot becomes disabled */
 	public static void disabled() {
 		for (TeleopController teleopController : targetTeleopControllers) {
 			try {

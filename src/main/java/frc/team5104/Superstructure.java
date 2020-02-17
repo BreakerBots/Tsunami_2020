@@ -23,8 +23,10 @@ public class Superstructure {
 		DISABLED, CALIBRATING, MANUAL, AUTOMATIC 
 	}
 	public static enum Mode {
-		IDLE, INTAKE, AIMING, SHOOTING, CLIMBING, 
-		PANELING, PANEL_DEPLOYING
+		IDLE,
+		INTAKE, AIMING, SHOOTING,
+		CLIMBING,
+		PANEL_DEPLOYING, PANELING
 	}
 	public static enum PanelState { ROTATION, POSITION };
 	public static enum FlywheelState { STOPPED, SPINNING };
@@ -35,10 +37,15 @@ public class Superstructure {
 	private static PanelState panelState = PanelState.ROTATION;
 	private static FlywheelState shooterWheelState = FlywheelState.STOPPED;
 	private static Target target = Target.HIGH;
+	private static long systemStateStart = System.currentTimeMillis();
 	
 	//External Functions
 	public static SystemState getSystemState() { return systemState; }
-	public static void setSystemState(SystemState systemState) {  Superstructure.systemState = systemState; }
+	public static void setSystemState(SystemState systemState) { 
+		Superstructure.systemState = systemState;
+		systemStateStart = System.currentTimeMillis();
+	}
+	public static long getTimeInSystemState() { return System.currentTimeMillis() - systemStateStart; }
 	public static Mode getMode() { return mode; }
 	public static void setMode(Mode mode) { Superstructure.mode = mode; }
 	public static void setPanelState(PanelState panelState) { Superstructure.panelState = panelState; }
@@ -50,7 +57,10 @@ public class Superstructure {
 	
 	//Loop
 	protected static void update() {
-//		console.log(getSystemState() + " Mode: " + getMode());
+		//Set Disabled
+		if (RobotState.isDisabled())
+			Superstructure.setSystemState(SystemState.DISABLED);
+		
 		//Exit Paneling
 		if (Superstructure.getMode() == Mode.PANELING && Paneler.isFinished()) {
 			Superstructure.setMode(Mode.IDLE);
@@ -84,7 +94,7 @@ public class Superstructure {
 		}
 		
 		//Exit Calibration
-		if (getSystemState() == SystemState.CALIBRATING && /*Turret.leftLimitHit() &&*/ Hood.backLimitHit()) {
+		if (getSystemState() == SystemState.CALIBRATING && Turret.leftLimitHit() && Hood.backLimitHit()) {
 			setSystemState(SystemState.AUTOMATIC);
 			console.log(c.SUPERSTRUCTURE, "finished calibration");
 		}
@@ -93,7 +103,7 @@ public class Superstructure {
 	//Reset
 	protected static void reset() {
 		console.log(c.SUPERSTRUCTURE, "Resetting Superstructure!");
-		setSystemState(SystemState.CALIBRATING); 
+		setSystemState(SystemState.CALIBRATING);
 		if (!RobotState.isAutonomous())
 			setMode(Mode.IDLE);
 		setPanelState(PanelState.ROTATION);

@@ -109,7 +109,7 @@ public class Paneler extends Subsystem {
 	}
 
 	//Reset
-	public void reset() {
+	public void disabled() {
 		resetEncoder();
 		stop();
 		setPiston(false);

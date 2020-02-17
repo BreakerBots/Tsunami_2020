@@ -101,7 +101,7 @@ public class Flywheel extends Subsystem {
 	}
 
 	//Reset
-	public void reset() {
+	public void disabled() {
 		stop();
 	}
 }

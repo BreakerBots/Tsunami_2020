@@ -124,7 +124,7 @@ public class Drive extends Subsystem {
 	}
 	
 	//Reset
-	public void reset() {
+	public void disabled() {
 		currentDriveSignal = new DriveSignal();
 	}
 }

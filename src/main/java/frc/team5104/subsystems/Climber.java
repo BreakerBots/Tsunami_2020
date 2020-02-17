@@ -55,7 +55,7 @@ public class Climber extends Subsystem {
 	}
 
 	//Reset
-	public void reset() {
+	public void disabled() {
 		stop();
 	}
 }

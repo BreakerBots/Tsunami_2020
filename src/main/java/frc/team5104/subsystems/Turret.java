@@ -1,6 +1,8 @@
 package frc.team5104.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
+import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import frc.team5104.Constants;
@@ -12,6 +14,7 @@ import frc.team5104.util.CharacterizedController;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.MovingAverage;
+import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
@@ -21,21 +24,29 @@ public class Turret extends Subsystem {
 	private static MovingAverage visionFilter;
 	private static double targetAngle = getAngle();
 	
-	
 	//Loop
 	public void update() {
 		//Debugging
-//		Tuner.setTunerOutput("Turret Angle", getAngle());
-//		Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
-//		Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
-//		controller.setPID(Constants.TURRET_KP,
-//				0,
-//				Constants.TURRET_KD);
+		Tuner.setTunerOutput("Turret FF", controller.getLastFFOutput());
+		Tuner.setTunerOutput("Turret PID", controller.getLastPIDOutput());
+		Tuner.setTunerOutput("Turret Angle", getAngle());
+		Tuner.setTunerOutput("Turret Target Angle", targetAngle);
+		Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
+		Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
+		controller.setPID(Constants.TURRET_KP, 0, Constants.TURRET_KD);
 		
 		//Calibrating
 		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
-			//TODO: Slowly drive
-			stop();
+			if (leftLimitHit()) {
+				stop();
+			}
+			else {
+				if (Superstructure.getTimeInSystemState() < 15000)
+					setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
+				else if (Superstructure.getTimeInSystemState() < 30000)
+					setPercentOutput(-Constants.TURRET_CALIBRATE_SPEED);
+				else emergencyStop();
+			}
 		}
 		
 		//Automatic
@@ -50,24 +61,30 @@ public class Turret extends Subsystem {
 
 			//Field Oriented Mode
 			else if (Superstructure.getMode() != Mode.SHOOTING) {
+				//TODO ANGLE MATH FIX DIS PLZ
 				setTargetAngle(fieldOrientedOffset + (-Drive.getGyro() % 360));
 			}
 			
-			setVoltage(BreakerMath.clamp(controller.calculate(getAngle(), targetAngle), -4, 4));
+			setVoltage(controller.calculate(getAngle(), targetAngle));
 		}
 		
 		//Disabled
 		else stop();
 		
-		//TODO: Zero Encoder
+		//Zero Encoder
+		if (leftLimitHit()) {
+			resetEncoder(250);
+			enableSoftLimits(true);
+		}
 	}
 
 	//Internal Functions
 	private void setTargetAngle(double angle) {
 		targetAngle = BreakerMath.clamp(angle, 0, 240);
 	}
-	private void setVoltage(double voltage) {
-		setPercentOutput(voltage / motor.getBusVoltage());
+	private void setVoltage(double volts) {
+		volts = BreakerMath.clamp(volts, -6, 6); //TODO DELETE ME!!!!
+		setPercentOutput(volts / motor.getBusVoltage());
 	}
 	private void setPercentOutput(double percent) {
 		motor.set(ControlMode.PercentOutput, percent);
@@ -75,9 +92,12 @@ public class Turret extends Subsystem {
 	private void stop() {
 		motor.set(ControlMode.Disabled, 0);
 	}
-	@SuppressWarnings("unused")
-	private void resetEncoder() {
-		motor.setSelectedSensorPosition(0);
+	private void resetEncoder(double angle) {
+		motor.setSelectedSensorPosition((int) (angle / 360.0 * Constants.TURRET_TICKS_PER_REV));
+	}
+	private void enableSoftLimits(boolean enabled) {
+		motor.configForwardSoftLimitEnable(enabled);
+		motor.configReverseSoftLimitEnable(enabled);
 	}
 
 	//External Functions
@@ -87,8 +107,7 @@ public class Turret extends Subsystem {
 	}
 	public static boolean leftLimitHit() {
 		if (motor == null) return true;
-		return false;
-		//return falcon.isRevLimitSwitchClosed() == 1;
+		return motor.isRevLimitSwitchClosed() == 1;
 	}
 	public static boolean onTarget() {
 		if (motor == null) return true;
@@ -104,13 +123,11 @@ public class Turret extends Subsystem {
 		motor.configFactoryDefault();
 		motor.setInverted(true);
 		
-		motor.configForwardSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (220.0 / 360.0)));
-		motor.configReverseSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (20.0 / 360.0)));
-		motor.configForwardSoftLimitEnable(true);
-		motor.configReverseSoftLimitEnable(true);
+		motor.configForwardSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (230.0 / 360.0)));
+		motor.configReverseSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (0.0 / 360.0)));
+		enableSoftLimits(false);
+		motor.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled);
 		
-		//resetEncoder();
-
 		controller = new CharacterizedController(
 				Constants.TURRET_KP,
 				0,
@@ -125,7 +142,8 @@ public class Turret extends Subsystem {
 	}
 
 	//Reset
-	public void reset() {
+	public void disabled() {
 		stop();
+		enableSoftLimits(false);
 	}
 }

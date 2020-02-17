@@ -157,7 +157,7 @@ public class Hopper extends Subsystem {
 	}
 
 	//Reset
-	public void reset() {
+	public void disabled() {
 		stopAll();
 	}
 }
