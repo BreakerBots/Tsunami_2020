@@ -19,7 +19,7 @@ import frc.team5104.util.managers.Subsystem;
 
 public class Hood extends Subsystem {
 	private static TalonSRX motor;
-	private static MovingAverage visionFilterY;
+	private static MovingAverage visionFilter;
 	private static CharacterizedController controller;
 	private static double targetAngle = 0;
 
@@ -53,20 +53,17 @@ public class Hood extends Subsystem {
 			if (Superstructure.getTarget() == Target.LOW)
 				setTargetAngle(40);
 			
-			else {
-				//Vision
-				if (Superstructure.getMode() == Mode.AIMING) {
+			//Vision
+			else if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
 					setTargetAngle(tunerTargetAngle); //TODO DELETE ME!!!
-//					if (Limelight.hasTarget()) {
-//						visionFilterY.update(Limelight.getTargetY());
-//						setTargetAngle(getTargetVisionAngle());
-//					}
+					//if (Limelight.hasTarget()) {
+					//	visionFilter.update(Limelight.getTargetY());
+					//	setTargetAngle(getTargetVisionAngle());
+					//}
 				}
 				
-				//Pull Back
-				else if (Superstructure.getMode() != Mode.SHOOTING)
-					setTargetAngle(0);
-			}
+			//Pull Back
+			else setTargetAngle(0);
 			
 			setVoltage(controller.calculate(getAngle(), targetAngle));
 		}
@@ -113,7 +110,7 @@ public class Hood extends Subsystem {
 		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
 	}
 	public static double getTargetVisionAngle() {
-		double x = visionFilterY.getDoubleOutput();
+		double x = visionFilter.getDoubleOutput();
 		return -0.00643 * x * x * x - 0.122 * x * x - 0.934 * x + 7.715;
 	}
 
@@ -138,7 +135,7 @@ public class Hood extends Subsystem {
 				Constants.HOOD_KV,
 				Constants.HOOD_KA
 			);
-		visionFilterY = new MovingAverage(3, 0);
+		visionFilter = new MovingAverage(3, 0);
 	}
 
 	//Reset

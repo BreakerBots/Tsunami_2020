@@ -11,9 +11,9 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.CharacterizedController;
+import frc.team5104.util.LatencyCompensator;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
-import frc.team5104.util.MovingAverage;
 import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
@@ -21,7 +21,8 @@ public class Turret extends Subsystem {
 	private static TalonFX motor;
 	private static double fieldOrientedOffset = 120;
 	private static CharacterizedController controller;
-	private static MovingAverage visionFilter;
+	private static LatencyCompensator compensator;
+	//private static MovingAverage visionFilter;
 	private static double targetAngle = getAngle();
 	
 	//Loop
@@ -52,17 +53,14 @@ public class Turret extends Subsystem {
 		//Automatic
 		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			//Vision
-			if (Superstructure.getMode() == Mode.AIMING) {
+			if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
 				if (Limelight.hasTarget()) {
-					visionFilter.update(Limelight.getTargetX());
-					setTargetAngle(getAngle() - visionFilter.getDoubleOutput());
+					setTargetAngle(compensator.getValueInHistory(Limelight.getLatency()) - Limelight.getTargetX());
 				}
 			}
 
 			//Field Oriented Mode
-			else if (Superstructure.getMode() != Mode.SHOOTING) {
-				setTargetAngle(BreakerMath.boundDegrees360(Drive.getGyro() + fieldOrientedOffset));
-			}
+			else setTargetAngle(BreakerMath.boundDegrees360(Drive.getGyro() + fieldOrientedOffset));
 			
 			setVoltage(controller.calculate(getAngle(), targetAngle));
 		}
@@ -110,7 +108,7 @@ public class Turret extends Subsystem {
 	}
 	public static boolean onTarget() {
 		if (motor == null) return true;
-		return Math.abs(visionFilter.getDoubleOutput()) < Constants.TURRET_VISION_TOL;
+		return Math.abs(getAngle() - targetAngle) < Constants.TURRET_VISION_TOL;
 	}
 	public static void setFieldOrientedTarget(double angle) {
 		fieldOrientedOffset = angle;
@@ -137,12 +135,13 @@ public class Turret extends Subsystem {
 				Constants.TURRET_KV,
 				Constants.TURRET_KA
 			);
-		visionFilter = new MovingAverage(3, 0);
+		compensator = new LatencyCompensator(() -> getAngle());
 	}
 
 	//Reset
 	public void disabled() {
 		stop();
 		enableSoftLimits(false);
+		compensator.reset();
 	}
 }

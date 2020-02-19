@@ -24,8 +24,9 @@ public class Limelight {
 		else return defaultValue;
 	}
 
-	public static double getTargetX() { return getDouble("tx", 5104); }
-	public static double getTargetY() { return getDouble("ty", 5104); }
+	public static double getTargetX() { return getDouble("tx", 0); }
+	public static double getTargetY() { return getDouble("ty", 0); }
+	public static double getLatency() { return getDouble("tl", 0); }
 	public static boolean hasTarget() { return getDouble("tv", 0) == 1; }
 	public static boolean isConnected() { return getDouble("tl", 0) != 0.0; }
 	
