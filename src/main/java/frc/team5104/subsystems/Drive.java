@@ -3,8 +3,7 @@ package frc.team5104.subsystems;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.DemandType;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.ctre.phoenix.motorcontrol.can.VictorSPX;
+import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import frc.team5104.Constants;
@@ -14,8 +13,7 @@ import frc.team5104.util.DriveEncoder;
 import frc.team5104.util.managers.Subsystem;
 
 public class Drive extends Subsystem {
-	private static TalonSRX talonL1, talonL2, talonR;
-	private static VictorSPX victorR;
+	private static TalonFX falconL1, falconL2, falconR1, falconR2;
 	private static DriveEncoder leftEncoder, rightEncoder;
 	private static PigeonIMU gyro;
 	
@@ -62,30 +60,35 @@ public class Drive extends Subsystem {
 	
 	//Internal Functions
 	void setMotors(double leftSpeed, double rightSpeed, ControlMode controlMode, double leftFeedForward, double rightFeedForward) {
-		talonL1.set(controlMode, leftSpeed, DemandType.ArbitraryFeedForward, leftFeedForward);
-		talonR.set(controlMode, rightSpeed, DemandType.ArbitraryFeedForward, rightFeedForward);
+		falconL1.set(controlMode, leftSpeed, DemandType.ArbitraryFeedForward, leftFeedForward);
+		falconR1.set(controlMode, rightSpeed, DemandType.ArbitraryFeedForward, rightFeedForward);
 	}
 	void stopMotors() {
-		talonL1.set(ControlMode.Disabled, 0);
-		talonR.set(ControlMode.Disabled, 0);
+		falconL1.set(ControlMode.Disabled, 0);
+		falconR1.set(ControlMode.Disabled, 0);
 	}
 	
 	//External Functions
 	public static void set(DriveSignal signal) { currentDriveSignal = signal; }
 	public static void stop() { currentDriveSignal = new DriveSignal(); }
-	public static double getLeftGearboxVoltage() { return talonL1.getBusVoltage(); }
-	public static double getRightGearboxVoltage() { return talonR.getBusVoltage(); }
-	public static double getLeftGearboxOutputVoltage() { return talonL1.getMotorOutputVoltage(); }
-	public static double getRightGearboxOutputVoltage() { return talonR.getMotorOutputVoltage(); }
+	public static double getLeftGearboxVoltage() { return falconL1.getBusVoltage(); }
+	public static double getRightGearboxVoltage() { return falconR1.getBusVoltage(); }
+	public static double getLeftGearboxOutputVoltage() { return falconL1.getMotorOutputVoltage(); }
+	public static double getRightGearboxOutputVoltage() { return falconR1.getMotorOutputVoltage(); }
 	public static void resetGyro() { 
-		gyro.setFusedHeading(0);
+		if (gyro != null)
+			gyro.setFusedHeading(0);
 	}
 	public static double getGyro() {
-		return gyro.getFusedHeading();
+		if (gyro != null)
+			return gyro.getFusedHeading();
+		else return 0;
 	}
 	public static void resetEncoders() {
-		leftEncoder.reset();
-		rightEncoder.reset();
+		if (leftEncoder != null) {
+			leftEncoder.reset();
+			rightEncoder.reset();
+		}
 	}
 	public static DriveEncoder getLeftEncoder() {
 		return leftEncoder;
@@ -96,27 +99,27 @@ public class Drive extends Subsystem {
 	
 	//Config
 	public void init() {
-		talonL1 = new TalonSRX(Ports.DRIVE_TALON_L1);
-		talonL2 = new TalonSRX(Ports.DRIVE_TALON_L2);
-		talonR = new TalonSRX(Ports.DRIVE_TALON_R1);
-		victorR = new VictorSPX(Ports.DRIVE_VICTOR_R2);
-		gyro = new PigeonIMU(talonL2);
-		leftEncoder = new DriveEncoder(talonL1);
-		rightEncoder = new DriveEncoder(talonR);
+		falconL1 = new TalonFX(Ports.DRIVE_MOTOR_L1);
+		falconL2 = new TalonFX(Ports.DRIVE_MOTOR_L2);
+		falconR1 = new TalonFX(Ports.DRIVE_MOTOR_R1);
+		falconR2 = new TalonFX(Ports.DRIVE_MOTOR_R2);
+		gyro = new PigeonIMU(Ports.DRIVE_GYRO);
+		leftEncoder = new DriveEncoder(falconL1);
+		rightEncoder = new DriveEncoder(falconR1);
 		
-		talonL1.configFactoryDefault();
-		talonL2.configFactoryDefault();
-		talonL1.config_kP(0, Constants.DRIVE_KP, 0);
-		talonL1.config_kD(0, Constants.DRIVE_KD, 0);
-		talonL2.set(ControlMode.Follower, talonL1.getDeviceID());
-		talonL1.setInverted(true);
-		talonL2.setInverted(true);
+		falconL1.configFactoryDefault();
+		falconL2.configFactoryDefault();
+		falconL1.config_kP(0, Constants.DRIVE_KP, 0);
+		falconL1.config_kD(0, Constants.DRIVE_KD, 0);
+		falconL2.set(ControlMode.Follower, falconL1.getDeviceID());
 		
-		talonR.configFactoryDefault();
-		victorR.configFactoryDefault();
-		talonR.config_kP(0, Constants.DRIVE_KP, 0);
-		talonR.config_kD(0, Constants.DRIVE_KD, 0);
-		victorR.set(ControlMode.Follower, talonR.getDeviceID());
+		falconR1.configFactoryDefault();
+		falconR2.configFactoryDefault();
+		falconR1.config_kP(0, Constants.DRIVE_KP, 0);
+		falconR1.config_kD(0, Constants.DRIVE_KD, 0);
+		falconR2.set(ControlMode.Follower, falconR1.getDeviceID());
+		falconR1.setInverted(true);
+		falconR2.setInverted(true);
 		
 		stopMotors();
 		resetGyro();

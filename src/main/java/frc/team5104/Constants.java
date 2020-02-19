@@ -15,15 +15,15 @@ public class Constants {
 	public static final double DRIVE_WHEEL_DIAMETER = 6.0/12.0; //ft
 	public static final double DRIVE_TICKS_PER_REV = 4096.0;
 	public static final double DRIVE_WHEEL_BASE_WIDTH = 25.25 / 12.0; //ft
-	public static final double DRIVE_KP = 0.5;
+	public static final double DRIVE_KP = 1;
 	public static final double DRIVE_KD = 0;
-	public static final double DRIVE_KS = 0.806;
-	public static final double DRIVE_KV = 0.624;
-	public static final double DRIVE_KA = 0.163;
-	public static final double AUTO_MAX_VELOCITY = 5; //ft/s
-	public static final double AUTO_MAX_ACCEL = 3;
-	public static final double AUTO_CORRECTION_FACTOR = 100; //>0
-	public static final double AUTO_DAMPENING_FACTOR  = 0.7; //0-1
+	public static final double DRIVE_KS = 0.0551;
+	public static final double DRIVE_KV = 1.69;
+	public static final double DRIVE_KA = 0.131;
+	public static final double AUTO_MAX_VELOCITY = 8; //ft/s
+	public static final double AUTO_MAX_ACCEL = 6;
+	public static final double AUTO_CORRECTION_FACTOR = 1; //>0
+	public static final double AUTO_DAMPENING_FACTOR  = 0.5; //0-1
 	public static final boolean AUTO_PLOT_ODOMETRY = true;
 	
 	//Flywheel
@@ -70,9 +70,10 @@ public class Constants {
 	
 	//Turret
 	public static final double TURRET_CALIBRATE_SPEED = 0.08;
+	public static final double TURRET_VOLT_LIMIT = 6;
 	public static final double TURRET_TICKS_PER_REV = 2048.0 / (8.0 / 60.0 /*gear*/) / (22.0 / 150.0 /*sprocket*/);
-	public static double TURRET_KP = 0.0488;
-	public static double TURRET_KD = 0.0118;
+	public static double TURRET_KP = 0.2;
+	public static double TURRET_KD = 0.0;
 	public static final double TURRET_KS = 0.223;
 	public static final double TURRET_KV = 0.015;
 	public static final double TURRET_KA = 0.000384;

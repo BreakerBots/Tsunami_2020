@@ -11,26 +11,23 @@ public class CompressorController extends TeleopController {
 	
 	protected void update() {
 		if (Controls.COMPRESSOR_TOGGLE.get()) {
-			if (compressor.enabled()) {
-				console.log("Stop compressing");
+			if (compressor.enabled())
 				stop();
-			}
-			else {
-				console.log("Start compressing");
-				start();
-			}
+			else start();
 		}
 	}
 	
-	protected void enabled() {
-		stop();
-	}
-	
 	public static void stop() {
-		compressor.stop();
+		if (compressor.enabled()) {
+			console.log("Stop compressing");
+			compressor.stop();
+		}
 	}
 	
 	public static void start() {
-		compressor.start();
+		if (!compressor.enabled()) {
+			console.log("Start compressing");
+			compressor.start();
+		}
 	}
 }

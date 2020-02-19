@@ -4,10 +4,11 @@ package frc.team5104;
 /** All port numbers on the robot */
 public class Ports {
 	//Drive
-	public static final int DRIVE_TALON_L1 = 11;
-	public static final int DRIVE_TALON_L2 = 12;
-	public static final int DRIVE_TALON_R1 = 13;
-	public static final int DRIVE_VICTOR_R2 = 14; 
+	public static final int DRIVE_MOTOR_L1 = 11;
+	public static final int DRIVE_MOTOR_L2 = 12;
+	public static final int DRIVE_MOTOR_R1 = 13;
+	public static final int DRIVE_MOTOR_R2 = 14;
+	public static final int DRIVE_GYRO = 27;
 	
 	//Hood
 	public static final int HOOD_MOTOR = 15;
@@ -32,13 +33,12 @@ public class Ports {
 	public static final int HOPPER_SENSOR_END = 0;
 	
 	//Climber
-	public static final int CLIMBER_MOTOR_1 = 23;
-	public static final int CLIMBER_MOTOR_2 = 24;
+	public static final int CLIMBER_MOTOR = 23;
 	public static final int CLIMBER_DEPLOYER_FORWARD = 0;
 	public static final int CLIMBER_DEPLOYER_REVERSE = 1;
 	
 	//Paneler
 	public static final int PANELER_MOTOR = 26;
-	public static final int PANELER_DEPLOYER_FORWARD = 6;
-	public static final int PANELER_DEPLOYER_REVERSE = 7;
+	public static final int PANELER_DEPLOYER_FORWARD = 2;
+	public static final int PANELER_DEPLOYER_REVERSE = 3;
 }

@@ -19,7 +19,7 @@ public class CharacterizedController {
 	public double calculate(double currentPosition, double targetPosition) {
 		lastPIDOutput = pid.calculate(currentPosition, targetPosition);
 		lastFFOutput = ff.calculate(
-				pid.getSetpoint().velocity, 
+				pid.getSetpoint().velocity,
 				(pid.getSetpoint().velocity - lastVelocity) / RobotState.getDeltaTime()
 			);
 		lastOutput = lastFFOutput + lastPIDOutput;

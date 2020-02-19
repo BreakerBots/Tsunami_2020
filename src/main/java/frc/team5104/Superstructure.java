@@ -84,8 +84,8 @@ public class Superstructure {
 		
 		//Started Shooting
 		if (getMode() == Mode.AIMING && Flywheel.isAvgSpedUp() && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
-			setMode(Mode.SHOOTING);
-			console.log(c.SUPERSTRUCTURE, "finished aiming... shooting");
+//			setMode(Mode.SHOOTING);
+//			console.log(c.SUPERSTRUCTURE, "finished aiming... shooting");
 		}
 		
 		//Spin Flywheel while Shooting

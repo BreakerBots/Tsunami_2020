@@ -12,34 +12,36 @@ public class DriveHelper {
 	private static final double LEFT_ACCOUNT_FORWARD  = 1.000;
 	private static final double LEFT_ACCOUNT_REVERSE  = 1.000;
 	
-	private static final double MIN_SPEED_HIGH_GEAR_FORWARD = 1.75/12.0; //percent
-	private static final double MIN_SPEED_HIGH_GEAR_TURN = 3.3/12.0;
-	private static final double MIN_SPEED_LOW_GEAR_FORWARD = 0;
-	private static final double MIN_SPEED_LOW_GEAR_TURN = 0;
+	private static final double MIN_SPEED_FORWARD = 0.055; //percent
+	private static final double MIN_SPEED_TURN = 0.055;
 	
-	private static final double KICKSTAND_SCALAR_FORWARD = 0.5;
-	private static final double KICKSTAND_SCALAR_TURN = 0.5;
+	private static final double KICKSTAND_SCALAR = 0.2;
 	
 	private static final double TURN_SPEED_ADJ = 0.2;
 	
 	//Methods
-	public static double applyKickstandForward(double forward) { return forward * KICKSTAND_SCALAR_FORWARD; }
-	public static double applyKickstandTurn(double turn) { return turn * KICKSTAND_SCALAR_TURN; }
-	
 	/** Calculates and left and right speed (in volts) for the robot depending on input variables */
-	public static DriveSignal get(double turn, double forward, boolean inHighGear) {
+	public static DriveSignal get(double turn, double forward, boolean kickstand) {
 		DriveSignal signal = new DriveSignal(
 			(forward + turn) * 12,
 			(forward - turn) * 12,
-			inHighGear, DriveUnit.VOLTAGE
+			true, DriveUnit.VOLTAGE
 		);
+		if (kickstand)
+			signal = applyKickstand(signal);
 		signal = applyDriveStraight(signal);
-		signal = applyMotorMinSpeed(signal, inHighGear);
+		signal = applyMotorMinSpeed(signal);
 		return signal;
 	}
 	
 	public static double getTurnAdjust(double forward) {
 		return (1 - Math.abs(forward)) * (1 - TURN_SPEED_ADJ) + TURN_SPEED_ADJ;
+	}
+	
+	private static DriveSignal applyKickstand(DriveSignal signal) {
+		signal.leftSpeed *= KICKSTAND_SCALAR;
+		signal.rightSpeed *= KICKSTAND_SCALAR;
+		return signal;
 	}
 	
 	private static DriveSignal applyDriveStraight(DriveSignal signal) {
@@ -56,7 +58,7 @@ public class DriveHelper {
 		return signal;
 	}
 
-	private static DriveSignal applyMotorMinSpeed(DriveSignal signal, boolean inHighGear) {
+	private static DriveSignal applyMotorMinSpeed(DriveSignal signal) {
 		double turn = Math.abs(signal.leftSpeed - signal.rightSpeed) / 2;
 		double biggerMax = (Math.abs(signal.leftSpeed) > Math.abs(signal.rightSpeed) ? Math.abs(signal.leftSpeed) : Math.abs(signal.rightSpeed));
 		if (biggerMax != 0)
@@ -64,10 +66,7 @@ public class DriveHelper {
 		double forward = 1 - turn;
 		
 		double minSpeed;
-		if (inHighGear)
-			minSpeed = (forward * (MIN_SPEED_HIGH_GEAR_FORWARD/12.0)) + (turn * (MIN_SPEED_HIGH_GEAR_TURN/12.0));
-		else
-			minSpeed = (forward * (MIN_SPEED_LOW_GEAR_FORWARD/12.0)) + (turn * (MIN_SPEED_LOW_GEAR_TURN/12.0));
+		minSpeed = (forward * (MIN_SPEED_FORWARD/12.0)) + (turn * (MIN_SPEED_TURN/12.0));
 		
 		if (signal.leftSpeed != 0)
 			signal.leftSpeed = signal.leftSpeed * (1 - minSpeed) + (signal.leftSpeed > 0 ? minSpeed : -minSpeed);

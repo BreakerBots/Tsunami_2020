@@ -1,14 +1,15 @@
 package frc.team5104.util;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
+import com.ctre.phoenix.motorcontrol.can.BaseTalon;
 
 import frc.team5104.Constants;
 
 public class DriveEncoder {
-	private TalonSRX talon;
+	private BaseTalon talon;
 	
 	//Constructor
-	public DriveEncoder(TalonSRX talon) {
+	public DriveEncoder(BaseTalon talon) {
 		this.talon = talon;
 	}
 

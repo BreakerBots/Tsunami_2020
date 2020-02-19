@@ -61,8 +61,7 @@ public class Turret extends Subsystem {
 
 			//Field Oriented Mode
 			else if (Superstructure.getMode() != Mode.SHOOTING) {
-				//TODO ANGLE MATH FIX DIS PLZ
-				setTargetAngle(fieldOrientedOffset + (-Drive.getGyro() % 360));
+				setTargetAngle(BreakerMath.boundDegrees360(Drive.getGyro() + fieldOrientedOffset));
 			}
 			
 			setVoltage(controller.calculate(getAngle(), targetAngle));
@@ -83,7 +82,7 @@ public class Turret extends Subsystem {
 		targetAngle = BreakerMath.clamp(angle, 0, 240);
 	}
 	private void setVoltage(double volts) {
-		volts = BreakerMath.clamp(volts, -6, 6); //TODO DELETE ME!!!!
+		volts = BreakerMath.clamp(volts, -6, Constants.TURRET_VOLT_LIMIT);
 		setPercentOutput(volts / motor.getBusVoltage());
 	}
 	private void setPercentOutput(double percent) {
