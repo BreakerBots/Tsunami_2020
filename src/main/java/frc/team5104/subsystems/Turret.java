@@ -82,7 +82,7 @@ public class Turret extends Subsystem {
 		targetAngle = BreakerMath.clamp(angle, 0, 240);
 	}
 	private void setVoltage(double volts) {
-		volts = BreakerMath.clamp(volts, -6, Constants.TURRET_VOLT_LIMIT);
+		volts = BreakerMath.clamp(volts, -Constants.TURRET_VOLT_LIMIT, Constants.TURRET_VOLT_LIMIT);
 		setPercentOutput(volts / motor.getBusVoltage());
 	}
 	private void setPercentOutput(double percent) {

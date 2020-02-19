@@ -35,7 +35,7 @@ public class Constants {
 	public static final double FLYWHEEL_KF = 0.05;
 	
 	//Panelers
-	public static final double ROTATION_MOTOR_SPEED = 0.75;
+	public static final double ROTATION_MOTOR_SPEED = 1.0;
 	public static final double POSITION_MOTOR_SPEED = 0.3;
 
 	//Hood
