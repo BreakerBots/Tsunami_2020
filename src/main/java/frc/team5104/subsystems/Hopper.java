@@ -12,8 +12,11 @@ import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.LatchedBoolean;
 import frc.team5104.util.LatchedBoolean.LatchedBooleanMode;
 import frc.team5104.util.MovingAverage;
+import frc.team5104.util.PositionController;
 import frc.team5104.util.Sensor;
 import frc.team5104.util.Sensor.PortType;
+import frc.team5104.util.Tuner;
+import frc.team5104.util.console;
 import frc.team5104.util.managers.Subsystem;
 
 public class Hopper extends Subsystem {
@@ -22,6 +25,7 @@ public class Hopper extends Subsystem {
 	private static Sensor entrySensor, endSensor;
 	private static LatchedBoolean entrySensorLatch;
 	private static MovingAverage isFullAverage, hasFed;
+	private static PositionController controller;
 	private static boolean isIndexing;
 	private static double targetMidPosition = 0;
 	
@@ -47,22 +51,23 @@ public class Hopper extends Subsystem {
 		//Indexing
 		else {
 			hasFed.update(false);
-			
 			//Indexing
-			isIndexing = !isFull() && (isEntrySensorTripped() || getMidPosition() < targetMidPosition);
+			isIndexing = !isFull() && (isEntrySensorTripped() || 
+					(getMidPosition() + Constants.HOPPER_INDEX_TOL) < targetMidPosition);
 			if (entrySensorLatch.get(isEntrySensorTripped())) {
-				targetMidPosition = Constants.HOPPER_MIDDLE_BALL_SIZE;
+				targetMidPosition = Constants.HOPPER_INDEX_BALL_SIZE;
 				resetMidEncoder();
 			}
 			
 			//Mid and Feeder
 			if (isIndexing) {
-				setMiddle(Constants.HOPPER_MIDDLE_INDEX_SPEED);
-				setFeeder(Constants.HOPPER_FEED_INDEX_SPEED);
+				setMiddle(controller.calculate(getMidPosition(), targetMidPosition));
+				//setMiddle(Constants.HOPPER_MIDDLE_INDEX_SPEED);
+				setFeeder(controller.calculate(getMidPosition(), targetMidPosition)/2.0);
 			}
 			else {
-				setFeeder(0);
 				setMiddle(0);
+				setFeeder(0);
 			}
 			
 			//Entry
@@ -72,9 +77,23 @@ public class Hopper extends Subsystem {
 				setStart(Constants.HOPPER_START_INDEX_SPEED);
 			else setStart(0);
 		}
-		
 		isFullAverage.update(isFull());
-		//Constants.HOPPER_MID_BALL_SIZE = Double.parseDouble(Tuner.getTunerInput("Hopper Mid Ball Size", Constants.HOPPER_MID_BALL_SIZE));
+		
+		//Debugging
+//		Constants.HOPPER_INDEX_BALL_SIZE = Tuner.getTunerInputDouble("Hopper Mid Ball Size", Constants.HOPPER_INDEX_BALL_SIZE);
+//		Constants.HOPPER_INDEX_KP = Tuner.getTunerInputDouble("Hopper Index KP", Constants.HOPPER_INDEX_KP);
+//		Constants.HOPPER_INDEX_KD = Tuner.getTunerInputDouble("Hopper Index KD", Constants.HOPPER_INDEX_KD);
+//		Constants.HOPPER_INDEX_VEL = Tuner.getTunerInputDouble("Hopper Index VEL", Constants.HOPPER_INDEX_VEL);
+//		Constants.HOPPER_INDEX_ACC = Tuner.getTunerInputDouble("Hopper Index ACC", Constants.HOPPER_INDEX_ACC);
+//		Constants.HOPPER_INDEX_TOL = Tuner.getTunerInputDouble("Hopper Mid Tol", Constants.HOPPER_INDEX_TOL);
+//		Tuner.setTunerOutput("Hopper Target", targetMidPosition);
+//		Tuner.setTunerOutput("Hopper Position", getMidPosition());
+//		Tuner.setTunerOutput("Hopper FF", controller.getLastFFOutput());
+//		Tuner.setTunerOutput("Hopper PID", controller.getLastOutput());
+//		Tuner.setTunerOutput("Hopper Output", controller.getLastOutput());
+//		Tuner.setTunerOutput("Hopper Indexing", isIndexing);
+//		controller.setPID(Constants.HOPPER_INDEX_KP, 0, Constants.HOPPER_INDEX_KD);
+//		controller.setProfiling(Constants.HOPPER_INDEX_VEL, Constants.HOPPER_INDEX_ACC);
 	}
 
 	//Internal Functions
@@ -131,7 +150,7 @@ public class Hopper extends Subsystem {
 	public static double getMidPosition() {
 		if (middleMotor == null)
 			return 0;
-		return middleMotor.getSelectedSensorPosition();
+		return middleMotor.getSelectedSensorPosition() / Constants.HOPPER_INDEX_TICKS_PER_REV;
 	}
 	
 	//Config
@@ -154,10 +173,22 @@ public class Hopper extends Subsystem {
 		entrySensorLatch = new LatchedBoolean(LatchedBooleanMode.RISING);
 		isFullAverage = new MovingAverage(100, 0);
 		hasFed = new MovingAverage(100, 0);
+		
+		controller = new PositionController(
+			Constants.HOPPER_INDEX_KP, 
+			0, 
+			Constants.HOPPER_INDEX_KD,
+			Constants.HOPPER_INDEX_VEL, 
+			Constants.HOPPER_INDEX_ACC,
+			Constants.HOPPER_INDEX_KS,
+			Constants.HOPPER_INDEX_KV,
+			Constants.HOPPER_INDEX_KA
+		);
 	}
 
 	//Reset
 	public void disabled() {
 		stopAll();
+		resetMidEncoder();
 	}
 }

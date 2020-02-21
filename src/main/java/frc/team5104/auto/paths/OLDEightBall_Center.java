@@ -7,8 +7,8 @@ import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
 import frc.team5104.auto.actions.ShootAction;
 
-public class FiveBall_Center extends AutoPath {
-	public FiveBall_Center() {
+public class OLDEightBall_Center extends AutoPath {
+	public OLDEightBall_Center() {
 		/*Robot Position - Center of the field, drives and picks up 
 		the closest two balls from the trench, then drives back and
 		fires, and finally grabs the three balls in our trench and shoots*/

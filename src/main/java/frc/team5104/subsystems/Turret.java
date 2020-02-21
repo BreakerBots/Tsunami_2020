@@ -10,17 +10,16 @@ import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
-import frc.team5104.util.CharacterizedController;
+import frc.team5104.util.PositionController;
 import frc.team5104.util.LatencyCompensator;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Limelight;
-import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
 	private static TalonFX motor;
 	private static double fieldOrientedOffset = 120;
-	private static CharacterizedController controller;
+	private static PositionController controller;
 	private static LatencyCompensator compensator;
 	//private static MovingAverage visionFilter;
 	private static double targetAngle = getAngle();
@@ -28,13 +27,13 @@ public class Turret extends Subsystem {
 	//Loop
 	public void update() {
 		//Debugging
-		Tuner.setTunerOutput("Turret FF", controller.getLastFFOutput());
-		Tuner.setTunerOutput("Turret PID", controller.getLastPIDOutput());
-		Tuner.setTunerOutput("Turret Angle", getAngle());
-		Tuner.setTunerOutput("Turret Target Angle", targetAngle);
-		Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
-		Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
-		controller.setPID(Constants.TURRET_KP, 0, Constants.TURRET_KD);
+//		Tuner.setTunerOutput("Turret FF", controller.getLastFFOutput());
+//		Tuner.setTunerOutput("Turret PID", controller.getLastPIDOutput());
+//		Tuner.setTunerOutput("Turret Angle", getAngle());
+//		Tuner.setTunerOutput("Turret Target Angle", targetAngle);
+//		Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
+//		Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
+//		controller.setPID(Constants.TURRET_KP, 0, Constants.TURRET_KD);
 		
 		//Calibrating
 		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
@@ -125,7 +124,7 @@ public class Turret extends Subsystem {
 		enableSoftLimits(false);
 		motor.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled);
 		
-		controller = new CharacterizedController(
+		controller = new PositionController(
 				Constants.TURRET_KP,
 				0,
 				Constants.TURRET_KD,

@@ -5,12 +5,12 @@ import edu.wpi.first.wpilibj.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.trajectory.TrapezoidProfile.Constraints;
 import frc.team5104.util.setup.RobotState;
 
-public class CharacterizedController {
+public class PositionController {
 	private ProfiledPIDController pid;
 	private SimpleMotorFeedforward ff;
 	private double lastVelocity, lastPIDOutput, lastFFOutput, lastOutput;
 	
-	public CharacterizedController(double kP, double kI, double kD, double maxVel, 
+	public PositionController(double kP, double kI, double kD, double maxVel, 
 			double maxAccel, double kS, double kV, double kA) {
 		pid = new ProfiledPIDController(kP, kI, kD, new Constraints(maxVel, maxAccel));
 		ff = new SimpleMotorFeedforward(kS, kV, kA);

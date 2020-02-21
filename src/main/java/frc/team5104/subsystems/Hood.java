@@ -11,16 +11,17 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.Superstructure.Target;
-import frc.team5104.util.CharacterizedController;
+import frc.team5104.util.PositionController;
+import frc.team5104.util.Tuner;
+import frc.team5104.util.Limelight;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.MovingAverage;
-import frc.team5104.util.Tuner;
 import frc.team5104.util.managers.Subsystem;
 
 public class Hood extends Subsystem {
 	private static TalonSRX motor;
 	private static MovingAverage visionFilter;
-	private static CharacterizedController controller;
+	private static PositionController controller;
 	private static double targetAngle = 0;
 
 	//Loop
@@ -28,11 +29,13 @@ public class Hood extends Subsystem {
 		//Debugging
 		Tuner.setTunerOutput("Hood Angle", getAngle());
 		Tuner.setTunerOutput("Hood Output", controller.getLastOutput());
-		Tuner.setTunerOutput("Hood FF", controller.getLastFFOutput());
-		Tuner.setTunerOutput("Hood PID", controller.getLastPIDOutput());
-		Constants.HOOD_KP = Tuner.getTunerInputDouble("Hood KP", Constants.HOOD_KP);
-		Constants.HOOD_KD = Tuner.getTunerInputDouble("Hood KD", Constants.HOOD_KD);
-		double tunerTargetAngle = Tuner.getTunerInputDouble("Hood Target Vision Angle", 10);
+//		Tuner.setTunerOutput("Hood FF", controller.getLastFFOutput());
+//		Tuner.setTunerOutput("Hood PID", controller.getLastPIDOutput());
+//		Tuner.setTunerOutput("Hood kP", getkP());
+//		Constants.HOOD_KP = Tuner.getTunerInputDouble("Hood KP", Constants.HOOD_KP);
+		Constants.HOOD_KP = getkP();
+//		Constants.HOOD_KD = Tuner.getTunerInputDouble("Hood KD", Constants.HOOD_KD);
+//		double tunerTargetAngle = Tuner.getTunerInputDouble("Hood Target Vision Angle", 10);
 		controller.setPID(Constants.HOOD_KP, 0, Constants.HOOD_KD);
 		
 		//Calibrating
@@ -55,15 +58,15 @@ public class Hood extends Subsystem {
 			
 			//Vision
 			else if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
-					setTargetAngle(tunerTargetAngle); //TODO DELETE ME!!!
-					//if (Limelight.hasTarget()) {
-					//	visionFilter.update(Limelight.getTargetY());
-					//	setTargetAngle(getTargetVisionAngle());
-					//}
+//					setTargetAngle(tunerTargetAngle); //TODO DELETE ME!!!
+					if (Limelight.hasTarget()) {
+						visionFilter.update(Limelight.getTargetY());
+						setTargetAngle(getTargetVisionAngle());
+					}
 				}
 				
 			//Pull Back
-			else setTargetAngle(0);
+			else setTargetAngle(-1);
 			
 			setVoltage(controller.calculate(getAngle(), targetAngle));
 		}
@@ -80,7 +83,7 @@ public class Hood extends Subsystem {
 
 	//Internal Functions
 	private void setTargetAngle(double degrees) {
-		targetAngle = BreakerMath.clamp(degrees, 0, 40);
+		targetAngle = BreakerMath.clamp(degrees, -1, 40);
 	}
 	private void setVoltage(double volts) {
 		volts = BreakerMath.clamp(volts, -6, 6); //TODO DELETE ME!!
@@ -94,6 +97,10 @@ public class Hood extends Subsystem {
 	}
 	private void resetEncoder() {
 		motor.setSelectedSensorPosition(0);
+	}
+	private double getkP() {
+		double x = getAngle();
+		return -0.000250 * x * x * x + 0.0136 * x * x - 0.209 * x + 1.5;// + 1.21;
 	}
 
 	//External Functions
@@ -125,7 +132,7 @@ public class Hood extends Subsystem {
 		motor.configForwardSoftLimitThreshold((int) (Constants.HOOD_TICKS_PER_REV * (38.0 / 360.0)));
 		motor.configForwardSoftLimitEnable(false);
 		
-		controller = new CharacterizedController(
+		controller = new PositionController(
 				Constants.HOOD_KP,
 				0,
 				Constants.HOOD_KD,

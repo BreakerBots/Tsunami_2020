@@ -7,8 +7,8 @@ import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
 import frc.team5104.auto.actions.ShootAction;
 
-public class SimpleRight extends AutoPath {
-	public SimpleRight() {
+public class OLDSimpleRight extends AutoPath {
+	public OLDSimpleRight() {
 		//Robot Position - In front of the Power Port
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),

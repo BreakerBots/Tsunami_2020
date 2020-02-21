@@ -6,23 +6,19 @@ import frc.team5104.auto.Position;
 import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
 
-public class ChezyVictoryLap extends AutoPath {
-	public ChezyVictoryLap() {
+public class OLDRight5BallPickup extends AutoPath {
+	public OLDRight5BallPickup() {
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),
 				new Position(0.5, 0, 0)
 			));
 		//Shooting Code
-		add(new DriveTrajectoryAction(true, false,
-				new Position(6, -4.17, 0)
-			));
-		//Reverse
 		add(new DriveTrajectoryAction(true,true,
-				new Position(3.33, -2.5, 90),
-				new Position(3, -5.58, 180),
-				new Position(6, -9.33, 270),
-				new Position(4.17, 4.67, 0),
-				new Position(-2.33, -7.5, 0)
+				new Position(18, 0, 0),
+				new Position(20.5, 1.25, 0),
+				new Position(20.92, 0, 90),
+				new Position(20.5, -1.25, 180),
+				new Position(-0.42, -1.25, 180)
 			));
 		//Shooting Code
 		add(new DriveStopAction());

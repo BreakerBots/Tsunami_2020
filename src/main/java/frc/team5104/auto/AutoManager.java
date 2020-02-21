@@ -4,6 +4,8 @@ package frc.team5104.auto;
 import frc.team5104.Constants;
 import frc.team5104.teleop.CompressorController;
 import frc.team5104.util.Plotter;
+import frc.team5104.util.console;
+import frc.team5104.util.console.c;
 import frc.team5104.util.setup.RobotState;
 import frc.team5104.util.setup.RobotState.RobotMode;
 
@@ -18,6 +20,7 @@ public class AutoManager {
 		Odometry.reset();
 		
 		//choose path
+		console.log(c.AUTO, "Running auto path: " + targetPath.getClass().getSimpleName());
 		pathScheduler = new AutoPathScheduler(targetPath);
 	}
 	public static void disabled() {
@@ -25,7 +28,8 @@ public class AutoManager {
 	}
 	
 	//Init
-	public static void setTargetPath(AutoPath path) { 
+	public static void setTargetPath(AutoPath path) {
+		console.log(c.AUTO, "Setting target auto path to: " + path.getClass().getSimpleName());
 		targetPath = path;
 	}
 	

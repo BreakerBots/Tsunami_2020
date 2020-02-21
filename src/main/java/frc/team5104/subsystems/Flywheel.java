@@ -10,13 +10,15 @@ import frc.team5104.Superstructure.FlywheelState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.MovingAverage;
+import frc.team5104.util.VelocityController;
 import frc.team5104.util.managers.Subsystem;
 
 public class Flywheel extends Subsystem {
 	private static TalonFX motor1, motor2;
 	private static MovingAverage avgRPMS;
-	//private static CharacterizedController controller;
+	private static VelocityController controller;
 	private static final double targetRPMS = 5000;
+	static double lastRPM = 0, lastAcc = 0, currAcc = 0;
 	
 	//Loop
 	public void update() {
@@ -33,7 +35,18 @@ public class Flywheel extends Subsystem {
 			stop();
 		}
 		
-//		Tuner.setTunerOutput("Flywheel RPMS", getRPMS());
+//		Tuner.setTunerOutput("Flywheel RPM", getRPMS());
+//		console.log(controller.getLastOutput());
+//		Tuner.setTunerOutput("Flywheel FF", controller.getLastFFOutput());
+//		Tuner.setTunerOutput("Flywheel PID", controller.getLastPIDOutput());
+//		Tuner.setTunerOutput("Flywheel Out", controller.getLastOutput());
+//		Constants.FLYWHEEL_KP = Tuner.getTunerInputDouble("Flywheel KP", Constants.FLYWHEEL_KP);
+//		controller.setPID(Constants.FLYWHEEL_KP, 0, 0);
+//		currAcc = ((lastRPM - getRPMS()) / 60.0) / RobotState.getDeltaTime();
+//		Tuner.setTunerOutput("Flywheel Accel", currAcc);
+//		Tuner.setTunerOutput("Flywheel Jerk", (lastAcc - currAcc) / RobotState.getDeltaTime());
+//		lastRPM = getRPMS();
+//		lastAcc = currAcc;
 		
 		avgRPMS.update(getRPMS());
 	}
@@ -41,7 +54,11 @@ public class Flywheel extends Subsystem {
 	//Internal Functions
 	private void setSpeed(double rpms) {
 		//rev/min -> ticks/100ms
-		motor1.set(ControlMode.Velocity, rpms * 2048.0 / 60.0 / 10.0);
+//		motor1.set(ControlMode.Velocity, rpms * 2048.0 / 60.0 / 10.0);
+		setVoltage(controller.calculate(getRPMS() / 60.0, rpms / 60.0));
+	}
+	private void setVoltage(double volts) {
+		motor1.set(ControlMode.PercentOutput, volts / motor1.getBusVoltage());
 	}
 	private void setPercentOutput(double percent) {
 		motor1.set(ControlMode.PercentOutput, percent);
@@ -84,18 +101,27 @@ public class Flywheel extends Subsystem {
 	public void init() {
 		motor1 = new TalonFX(Ports.FLYWHEEL_MOTOR_1);
 		motor1.configFactoryDefault();
-		motor1.config_kP(0, Constants.FLYWHEEL_KP);
-		motor1.config_kF(0, Constants.FLYWHEEL_KF);
+//		motor1.config_kP(0, Constants.FLYWHEEL_KP);
+//		motor1.config_kF(0, Constants.FLYWHEEL_KF);
 		motor1.setInverted(false);
 		
 		motor2 = new TalonFX(Ports.FLYWHEEL_MOTOR_2);
 		motor2.configFactoryDefault();
-		motor2.config_kP(0, Constants.FLYWHEEL_KP);
-		motor2.config_kF(0, Constants.FLYWHEEL_KF);
+//		motor2.config_kP(0, Constants.FLYWHEEL_KP);
+//		motor2.config_kF(0, Constants.FLYWHEEL_KF);
 		motor2.follow(motor1);
 		motor2.setInverted(true);
 		
 		setRampRate(Constants.FLYWHEEL_RAMP_RATE_UP);
+		
+		controller = new VelocityController(
+				Constants.FLYWHEEL_KP,
+				0,
+				0,
+				Constants.FLYWHEEL_KS,
+				Constants.FLYWHEEL_KV,
+				Constants.FLYWHEEL_KA
+			);
 		
 		avgRPMS = new MovingAverage(50, 0);
 	}

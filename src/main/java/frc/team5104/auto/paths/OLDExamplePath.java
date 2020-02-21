@@ -5,17 +5,21 @@ import frc.team5104.auto.AutoPath;
 import frc.team5104.auto.Position;
 import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
-import frc.team5104.auto.actions.ShootAction;
 
-public class SimpleLeft extends AutoPath {
-	public SimpleLeft() {
-		//Robot Position - Farthest position on left (Ball Collection) side
+public class OLDExamplePath extends AutoPath {
+	public OLDExamplePath() {
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),
-				new Position(1, 1, 90),
-				new Position(1, 18.33, 90)
+				new Position(8, 3, 0)
 			));
+	/*	add(new DriveTrajectoryAction(true, false,
+				new Position(0, 0, 0),
+				new Position(12, 0, 0)
+			));
+		add(new DriveTrajectoryAction(true, true,
+				new Position(12, 0, 0),
+				new Position(0, 0, 0)
+			)); */
 		add(new DriveStopAction());
-		add(new ShootAction());
 	}
 }

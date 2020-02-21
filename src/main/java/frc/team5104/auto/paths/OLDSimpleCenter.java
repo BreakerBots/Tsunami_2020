@@ -7,9 +7,9 @@ import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
 import frc.team5104.auto.actions.ShootAction;
 
-public class SimpleCenter extends AutoPath {
+public class OLDSimpleCenter extends AutoPath {
 	//Robot Position - Center of Initiation Line
-	public SimpleCenter() {
+	public OLDSimpleCenter() {
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),
 				new Position(1, 1, 90),

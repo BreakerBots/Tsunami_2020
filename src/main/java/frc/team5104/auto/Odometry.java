@@ -26,7 +26,7 @@ public class Odometry {
 	
 	public static void update() {
 		m_odometry.update(
-				Rotation2d.fromDegrees(Drive.getGyro()),
+				Rotation2d.fromDegrees(-Drive.getGyro()),
 				Drive.getLeftEncoder().getPositionMeters(),
 				Drive.getRightEncoder().getPositionMeters()
 			);
@@ -54,7 +54,8 @@ public class Odometry {
 	public static void reset() {
 		Drive.resetEncoders();
 		Drive.resetGyro();
-		m_odometry.resetPosition(new Pose2d(), new Rotation2d());
-	   console.log(c.AUTO, "Reset Odometry at " + getPose2dMeters());
+		try { Thread.sleep(10); } catch (Exception e) { }
+		m_odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(-Drive.getGyro()));
+		console.log(c.AUTO, "Reset Odometry at " + getPose2dMeters());
 	}
 }

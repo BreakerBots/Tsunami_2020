@@ -8,10 +8,10 @@ import frc.team5104.auto.actions.DriveTrajectoryAction;
 import frc.team5104.auto.actions.IntakeAction;
 import frc.team5104.auto.actions.ShootAction;
 
-public class Right3BallPickup extends AutoPath {
+public class OLDRight3BallPickup extends AutoPath {
 	
 	
-	public Right3BallPickup() {
+	public OLDRight3BallPickup() {
 		// We changed the path!!  Robot lines up in front of power port,
 		// shoots 3 balls, gets 3 balls from our trench
 		// returns to shoot

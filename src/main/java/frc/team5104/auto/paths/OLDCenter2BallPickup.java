@@ -8,17 +8,18 @@ import frc.team5104.auto.actions.DriveTrajectoryAction;
 import frc.team5104.auto.actions.IntakeAction;
 import frc.team5104.auto.actions.ShootAction;
 
-public class Left2BallPickup extends AutoPath {
-	public Left2BallPickup() {
+public class OLDCenter2BallPickup extends AutoPath {
+	//Robot Position - Middle of Initiation Line
+	public OLDCenter2BallPickup() {
 		add(new IntakeAction());
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),
-				new Position(9.58, 0, 0)
+				new Position(11, 10.83, 0)
 			));
+		
 		add(new DriveTrajectoryAction(true, true,
-				new Position(5, 0, 0),
-		//		new Position(4.17, 0.83, 0),
-				new Position(4.17, 16, -90)
+				new Position(11, 10.83, 0),
+				new Position(0, 5.25, 90)
 			));
 		add(new DriveStopAction());
 		add(new ShootAction());

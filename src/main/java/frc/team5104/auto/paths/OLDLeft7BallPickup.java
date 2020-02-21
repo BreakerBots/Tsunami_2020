@@ -6,22 +6,28 @@ import frc.team5104.auto.Position;
 import frc.team5104.auto.actions.DriveStopAction;
 import frc.team5104.auto.actions.DriveTrajectoryAction;
 
-public class Right2BallPickup extends AutoPath {
-	//Robot Position - Almost at right (Power Port) side edge
-	public Right2BallPickup() {
+public class OLDLeft7BallPickup extends AutoPath {
+	public OLDLeft7BallPickup() {
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),
-		//		new Position(5.67, 0, 0),
-				new Position(11.67, 0, 0)
+				new Position(0.5, 0, 0),
+				new Position(5.83, 0, 0)
 			));
 		//Reversing
+		add(new DriveTrajectoryAction(true,true,  
+				new Position(1.67, 2.92, 90),
+				new Position(1.67, 16.67, 90)
+			));
+		
+		
+		//Shooting Code
 		add(new DriveTrajectoryAction(true,true,
-				//new Position(0, 0, 0),
-				new Position(11.67, 0, 0),
-				new Position(0, -5, 0)
+				new Position(4.17, 21.67, 180),
+				new Position(16.67, 21.67, 180),
+				new Position(4.17, 21.67, 180),
+				new Position(1.67, 16.67, 90)
 			));
 		//Shooting Code
 		add(new DriveStopAction());
-		//Code checked 1/25/2020 - Seems to work
 	}
 }
