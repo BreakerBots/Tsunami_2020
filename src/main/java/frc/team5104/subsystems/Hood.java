@@ -39,22 +39,20 @@ public class Hood extends Subsystem {
 			}
 			
 			//Low
-			else if (Superstructure.getTarget() == Target.LOW)
-				setTargetAngle(40);
+			else if (Superstructure.getTarget() == Target.LOW) {
+				setAngle(40);
+			}
 			
 			//Vision
 			else if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
-				//setTargetAngle(tunerTargetAngle); //TODO DELETE ME!!!
 				if (Limelight.hasTarget()) {
 					visionFilter.update(Limelight.getTargetY());
-					setTargetAngle(getTargetVisionAngle());
+					setAngle(getTargetVisionAngle());
 				}
 			}
 				
 			//Pull Back
-			else setTargetAngle(-1);
-			
-			setVoltage(controller.calculate(getAngle(), targetAngle));
+			else setAngle(-1);
 		}
 			
 		//Disabled
@@ -88,8 +86,9 @@ public class Hood extends Subsystem {
 	}
 
 	//Internal Functions
-	private void setTargetAngle(double degrees) {
+	private void setAngle(double degrees) {
 		targetAngle = BreakerMath.clamp(degrees, -1, 40);
+		setVoltage(controller.calculate(getAngle(), targetAngle));
 	}
 	private void setVoltage(double volts) {
 		volts = BreakerMath.clamp(volts, -6, 6); //TODO DELETE ME!!

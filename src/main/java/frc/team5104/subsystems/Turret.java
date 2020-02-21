@@ -41,18 +41,16 @@ public class Turret extends Subsystem {
 			}
 			
 			//Vision
-			if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
+			else if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
 				if (Limelight.hasTarget()) {
-					setTargetAngle(
+					setAngle(
 						compensator.getValueInHistory(Limelight.getLatency()) - Limelight.getTargetX()
 					);
 				}
 			}
 
 			//Field Oriented Mode
-			else setTargetAngle(BreakerMath.boundDegrees360(Drive.getGyro() + fieldOrientedOffset));
-			
-			setVoltage(controller.calculate(getAngle(), targetAngle));
+			else setAngle(BreakerMath.boundDegrees360(Drive.getGyro() + fieldOrientedOffset));
 		}
 		
 		//Disabled
@@ -85,8 +83,9 @@ public class Turret extends Subsystem {
 	}
 
 	//Internal Functions
-	private void setTargetAngle(double angle) {
+	private void setAngle(double angle) {
 		targetAngle = BreakerMath.clamp(angle, 0, 240);
+		setVoltage(controller.calculate(getAngle(), targetAngle));
 	}
 	private void setVoltage(double volts) {
 		volts = BreakerMath.clamp(volts, -Constants.TURRET_VOLT_LIMIT, Constants.TURRET_VOLT_LIMIT);
