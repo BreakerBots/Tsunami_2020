@@ -38,7 +38,7 @@ public class LatencyCompensator {
 	//Getters
 	public double getValueInHistory(double msBack) {
 		double targetTime = Timer.getFPGATimestamp() - (msBack / 1000.0);
-		for (int i = timeStamps.size()-1; i > 0; i--) {
+		for (int i = timeStamps.size()-1; i >= 0; i--) {
 			if (targetTime >= timeStamps.get(i))
 				return values.get(i);
 		}
