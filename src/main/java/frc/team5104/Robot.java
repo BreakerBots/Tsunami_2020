@@ -49,6 +49,7 @@ public class Robot extends RobotController.BreakerRobot {
 		Limelight.init();
 		CompressorController.stop();
 		AutoManager.setTargetPath(new SixBall_PP());
+		SubsystemManager.debug(Hopper.class);
 	}
 	
 	//Teleop 

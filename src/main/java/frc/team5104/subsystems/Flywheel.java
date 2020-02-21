@@ -10,6 +10,7 @@ import frc.team5104.Superstructure.FlywheelState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.MovingAverage;
+import frc.team5104.util.Tuner;
 import frc.team5104.util.VelocityController;
 import frc.team5104.util.managers.Subsystem;
 
@@ -18,7 +19,6 @@ public class Flywheel extends Subsystem {
 	private static MovingAverage avgRPMS;
 	private static VelocityController controller;
 	private static final double targetRPMS = 5000;
-	static double lastRPM = 0, lastAcc = 0, currAcc = 0;
 	
 	//Loop
 	public void update() {
@@ -35,22 +35,19 @@ public class Flywheel extends Subsystem {
 			stop();
 		}
 		
-//		Tuner.setTunerOutput("Flywheel RPM", getRPMS());
-//		console.log(controller.getLastOutput());
-//		Tuner.setTunerOutput("Flywheel FF", controller.getLastFFOutput());
-//		Tuner.setTunerOutput("Flywheel PID", controller.getLastPIDOutput());
-//		Tuner.setTunerOutput("Flywheel Out", controller.getLastOutput());
-//		Constants.FLYWHEEL_KP = Tuner.getTunerInputDouble("Flywheel KP", Constants.FLYWHEEL_KP);
-//		controller.setPID(Constants.FLYWHEEL_KP, 0, 0);
-//		currAcc = ((lastRPM - getRPMS()) / 60.0) / RobotState.getDeltaTime();
-//		Tuner.setTunerOutput("Flywheel Accel", currAcc);
-//		Tuner.setTunerOutput("Flywheel Jerk", (lastAcc - currAcc) / RobotState.getDeltaTime());
-//		lastRPM = getRPMS();
-//		lastAcc = currAcc;
-		
 		avgRPMS.update(getRPMS());
 	}
 
+	//Debugging
+	public void debug() {
+		Tuner.setTunerOutput("Flywheel RPM", getRPMS());
+		Tuner.setTunerOutput("Flywheel FF", controller.getLastFFOutput());
+		Tuner.setTunerOutput("Flywheel PID", controller.getLastPIDOutput());
+		Tuner.setTunerOutput("Flywheel Out", controller.getLastOutput());
+		Constants.FLYWHEEL_KP = Tuner.getTunerInputDouble("Flywheel KP", Constants.FLYWHEEL_KP);
+		controller.setPID(Constants.FLYWHEEL_KP, 0, 0);
+	}
+	
 	//Internal Functions
 	private void setSpeed(double rpms) {
 		//rev/min -> ticks/100ms

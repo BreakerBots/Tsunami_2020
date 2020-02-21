@@ -68,6 +68,11 @@ public class Paneler extends Subsystem {
 			setPiston(false);
 		}
 	}
+	
+	//Debugging
+	public void debug() {
+		
+	}
 
 	// Internal Functions
 	private void setPiston(boolean up) {

@@ -7,6 +7,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.Timer;
+import frc.team5104.util.CrashLogger.Crash;
 
 public class LatencyCompensator {
 	private List<Double> values, timeStamps;
@@ -18,13 +19,15 @@ public class LatencyCompensator {
 		timeStamps = new ArrayList<Double>();
 		this.valueReader = valueReader;
 		thread = new Notifier(() -> {
-			values.add(this.valueReader.getAsDouble());
-			timeStamps.add(Timer.getFPGATimestamp());
-			
-			if (values.size() > 20)
-				values.remove(0);
-			if (timeStamps.size() > 20)
-				timeStamps.remove(0);
+			try {
+				values.add(this.valueReader.getAsDouble());
+				timeStamps.add(Timer.getFPGATimestamp());
+				
+				if (values.size() > 20)
+					values.remove(0);
+				if (timeStamps.size() > 20)
+					timeStamps.remove(0);
+			} catch (Exception e) { CrashLogger.logCrash(new Crash("latency compensator", e)); }
 		});
 		thread.startPeriodic(0.01);
 	}

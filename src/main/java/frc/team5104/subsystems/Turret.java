@@ -3,6 +3,7 @@ package frc.team5104.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.LimitSwitchNormal;
 import com.ctre.phoenix.motorcontrol.LimitSwitchSource;
+import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import frc.team5104.Constants;
@@ -11,8 +12,12 @@ import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.PositionController;
+import frc.team5104.util.Tuner;
+import frc.team5104.util.console;
+import frc.team5104.util.console.c;
 import frc.team5104.util.LatencyCompensator;
 import frc.team5104.util.BreakerMath;
+import frc.team5104.util.Filer;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.managers.Subsystem;
 
@@ -26,27 +31,11 @@ public class Turret extends Subsystem {
 	
 	//Loop
 	public void update() {
-		//Debugging
-//		Tuner.setTunerOutput("Turret FF", controller.getLastFFOutput());
-//		Tuner.setTunerOutput("Turret PID", controller.getLastPIDOutput());
-//		Tuner.setTunerOutput("Turret Angle", getAngle());
-//		Tuner.setTunerOutput("Turret Target Angle", targetAngle);
-//		Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
-//		Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
-//		controller.setPID(Constants.TURRET_KP, 0, Constants.TURRET_KD);
-		
 		//Calibrating
-		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
-			if (leftLimitHit()) {
-				stop();
-			}
-			else {
-				if (Superstructure.getTimeInSystemState() < 15000)
-					setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
-				else if (Superstructure.getTimeInSystemState() < 30000)
-					setPercentOutput(-Constants.TURRET_CALIBRATE_SPEED);
-				else emergencyStop();
-			}
+		if (isCalibrating()) {
+			if (getTimeInCalibration() < 15000)
+				setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
+			else emergencyStop();
 		}
 		
 		//Automatic
@@ -54,7 +43,9 @@ public class Turret extends Subsystem {
 			//Vision
 			if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
 				if (Limelight.hasTarget()) {
-					setTargetAngle(compensator.getValueInHistory(Limelight.getLatency()) - Limelight.getTargetX());
+					setTargetAngle(
+						compensator.getValueInHistory(Limelight.getLatency()) - Limelight.getTargetX()
+					);
 				}
 			}
 
@@ -73,6 +64,25 @@ public class Turret extends Subsystem {
 			enableSoftLimits(true);
 		}
 	}
+	
+	//Fast Loop
+	public void fastUpdate() {
+		if (isCalibrating() && leftLimitHit()) {
+			console.log(c.TURRET, "finished calibration!");
+			stopCalibrating();
+		}
+	}
+	
+	//Debugging
+	public void debug() {
+		Tuner.setTunerOutput("Turret FF", controller.getLastFFOutput());
+		Tuner.setTunerOutput("Turret PID", controller.getLastPIDOutput());
+		Tuner.setTunerOutput("Turret Angle", getAngle());
+		Tuner.setTunerOutput("Turret Target Angle", targetAngle);
+		Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
+		Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
+		controller.setPID(Constants.TURRET_KP, 0, Constants.TURRET_KD);
+	}
 
 	//Internal Functions
 	private void setTargetAngle(double angle) {
@@ -83,6 +93,7 @@ public class Turret extends Subsystem {
 		setPercentOutput(volts / motor.getBusVoltage());
 	}
 	private void setPercentOutput(double percent) {
+		motor.setNeutralMode(NeutralMode.Brake);
 		motor.set(ControlMode.PercentOutput, percent);
 	}
 	private void stop() {
@@ -135,11 +146,19 @@ public class Turret extends Subsystem {
 				Constants.TURRET_KA
 			);
 		compensator = new LatencyCompensator(() -> getAngle());
+		
+		//Always calibrate at comp. Only calibrate once per roborio boot while not.
+		if (Constants.AT_COMPETITION || !Filer.fileExists("/tmp/turret_calibrated.txt")) {
+			Filer.createFile("/tmp/turret_calibrated.txt");
+			startCalibrating();
+			console.log(c.TURRET, "ready to calibrate!");
+		}
 	}
 
 	//Reset
 	public void disabled() {
 		stop();
+		motor.setNeutralMode(NeutralMode.Coast);
 		enableSoftLimits(false);
 		compensator.reset();
 	}

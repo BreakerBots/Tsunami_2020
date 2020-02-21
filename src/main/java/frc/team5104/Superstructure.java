@@ -20,7 +20,7 @@ import frc.team5104.util.console.c;
 public class Superstructure {
 	//States and Variables
 	public static enum SystemState { 
-		DISABLED, CALIBRATING, MANUAL, AUTOMATIC 
+		DISABLED, MANUAL, AUTOMATIC 
 	}
 	public static enum Mode {
 		IDLE,
@@ -92,20 +92,13 @@ public class Superstructure {
 		if (getMode() == Mode.SHOOTING || getMode() == Mode.AIMING) {
 			setFlywheelState(FlywheelState.SPINNING);
 		}
-		
-		//Exit Calibration
-		if (getSystemState() == SystemState.CALIBRATING && Turret.leftLimitHit() && Hood.backLimitHit()) {
-			setSystemState(SystemState.AUTOMATIC);
-			console.log(c.SUPERSTRUCTURE, "finished calibration");
-		}
 	}
 	
 	//Reset
 	protected static void reset() {
 		console.log(c.SUPERSTRUCTURE, "Resetting Superstructure!");
-		setSystemState(SystemState.CALIBRATING);
-		if (!RobotState.isAutonomous())
-			setMode(Mode.IDLE);
+		setSystemState(SystemState.AUTOMATIC);
+		setMode(Mode.IDLE);
 		setPanelState(PanelState.ROTATION);
 		setFlywheelState(FlywheelState.STOPPED);
 		setTarget(Target.HIGH);

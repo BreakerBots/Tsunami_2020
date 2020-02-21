@@ -16,7 +16,6 @@ import frc.team5104.util.PositionController;
 import frc.team5104.util.Sensor;
 import frc.team5104.util.Sensor.PortType;
 import frc.team5104.util.Tuner;
-import frc.team5104.util.console;
 import frc.team5104.util.managers.Subsystem;
 
 public class Hopper extends Subsystem {
@@ -35,7 +34,6 @@ public class Hopper extends Subsystem {
 		if (Superstructure.getMode() == Mode.CLIMBING ||
 			Superstructure.getMode() == Mode.PANEL_DEPLOYING ||
 			Superstructure.getMode() == Mode.PANELING ||
-			Superstructure.getSystemState() == SystemState.CALIBRATING ||
 			Superstructure.getSystemState() == SystemState.DISABLED) {
 			stopAll();
 		}
@@ -77,23 +75,26 @@ public class Hopper extends Subsystem {
 				setStart(Constants.HOPPER_START_INDEX_SPEED);
 			else setStart(0);
 		}
-		isFullAverage.update(isFull());
 		
-		//Debugging
-//		Constants.HOPPER_INDEX_BALL_SIZE = Tuner.getTunerInputDouble("Hopper Mid Ball Size", Constants.HOPPER_INDEX_BALL_SIZE);
-//		Constants.HOPPER_INDEX_KP = Tuner.getTunerInputDouble("Hopper Index KP", Constants.HOPPER_INDEX_KP);
-//		Constants.HOPPER_INDEX_KD = Tuner.getTunerInputDouble("Hopper Index KD", Constants.HOPPER_INDEX_KD);
-//		Constants.HOPPER_INDEX_VEL = Tuner.getTunerInputDouble("Hopper Index VEL", Constants.HOPPER_INDEX_VEL);
-//		Constants.HOPPER_INDEX_ACC = Tuner.getTunerInputDouble("Hopper Index ACC", Constants.HOPPER_INDEX_ACC);
-//		Constants.HOPPER_INDEX_TOL = Tuner.getTunerInputDouble("Hopper Mid Tol", Constants.HOPPER_INDEX_TOL);
-//		Tuner.setTunerOutput("Hopper Target", targetMidPosition);
-//		Tuner.setTunerOutput("Hopper Position", getMidPosition());
-//		Tuner.setTunerOutput("Hopper FF", controller.getLastFFOutput());
-//		Tuner.setTunerOutput("Hopper PID", controller.getLastOutput());
-//		Tuner.setTunerOutput("Hopper Output", controller.getLastOutput());
-//		Tuner.setTunerOutput("Hopper Indexing", isIndexing);
-//		controller.setPID(Constants.HOPPER_INDEX_KP, 0, Constants.HOPPER_INDEX_KD);
-//		controller.setProfiling(Constants.HOPPER_INDEX_VEL, Constants.HOPPER_INDEX_ACC);
+		isFullAverage.update(isFull());
+	}
+	
+	//Debugging
+	public void debug() {
+		Constants.HOPPER_INDEX_BALL_SIZE = Tuner.getTunerInputDouble("Hopper Mid Ball Size", Constants.HOPPER_INDEX_BALL_SIZE);
+		Constants.HOPPER_INDEX_KP = Tuner.getTunerInputDouble("Hopper Index KP", Constants.HOPPER_INDEX_KP);
+		Constants.HOPPER_INDEX_KD = Tuner.getTunerInputDouble("Hopper Index KD", Constants.HOPPER_INDEX_KD);
+		Constants.HOPPER_INDEX_VEL = Tuner.getTunerInputDouble("Hopper Index VEL", Constants.HOPPER_INDEX_VEL);
+		Constants.HOPPER_INDEX_ACC = Tuner.getTunerInputDouble("Hopper Index ACC", Constants.HOPPER_INDEX_ACC);
+		Constants.HOPPER_INDEX_TOL = Tuner.getTunerInputDouble("Hopper Mid Tol", Constants.HOPPER_INDEX_TOL);
+		Tuner.setTunerOutput("Hopper Target", targetMidPosition);
+		Tuner.setTunerOutput("Hopper Position", getMidPosition());
+		Tuner.setTunerOutput("Hopper FF", controller.getLastFFOutput());
+		Tuner.setTunerOutput("Hopper PID", controller.getLastOutput());
+		Tuner.setTunerOutput("Hopper Output", controller.getLastOutput());
+		Tuner.setTunerOutput("Hopper Indexing", isIndexing);
+		controller.setPID(Constants.HOPPER_INDEX_KP, 0, Constants.HOPPER_INDEX_KD);
+		controller.setProfiling(Constants.HOPPER_INDEX_VEL, Constants.HOPPER_INDEX_ACC);
 	}
 
 	//Internal Functions

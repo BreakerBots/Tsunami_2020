@@ -60,10 +60,10 @@ public class RobotController extends RobotBase {
 
 	//Main Loop
 	private void loop() {
-		//Default to Disabled
+		//Disabled
 		if (isDisabled()) state.currentMode = RobotMode.DISABLED;
 		
-		//Enabled - Teleop/Test
+		//Enabled - Teleop/Test/Autonomous
 		else if (isEnabled()) {
 			//Test
 			if (isTest()) state.currentMode = RobotMode.TEST;
@@ -73,85 +73,6 @@ public class RobotController extends RobotBase {
 			
 			//Default to Teleop
 			else state.currentMode = RobotMode.TELEOP;
-		}
-		
-		//Handle Modes
-		switch(state.currentMode) {
-			case TELEOP: {
-				try {
-					//Teleop
-					if (lastMode != state.currentMode) {
-						console.log(c.MAIN, t.INFO, "Teleop Enabled");
-						robot.teleopStart();
-					}
-					
-					robot.teleopLoop();
-					HAL.observeUserProgramTeleop();
-				} catch (Exception e) {
-					CrashLogger.logCrash(new Crash("main", e));
-				}
-				break;
-			}
-			case AUTONOMOUS: {
-				try {
-					//Auto
-					if (lastMode != state.currentMode) {
-						console.log(c.MAIN, t.INFO, "Auto Enabled");
-						robot.autoStart();
-					}
-					
-					robot.autoLoop();
-					HAL.observeUserProgramTeleop();
-				} catch (Exception e) {
-					CrashLogger.logCrash(new Crash("main", e));
-				}
-				break;
-			}
-			case TEST: {
-				try {
-					//Test
-					if (lastMode != state.currentMode) {
-						console.log(c.MAIN, t.INFO, "Test Enabled");
-						robot.testStart();
-					}
-					
-					robot.testLoop();
-					HAL.observeUserProgramTest();
-				} catch (Exception e) {
-					CrashLogger.logCrash(new Crash("main", e));
-				}
-				break;
-			}
-			case DISABLED: {
-				try {
-					//Disabled
-					if (lastMode != state.currentMode)
-						switch (lastMode) {
-							case TELEOP: { 
-								robot.teleopStop(); 
-								console.log(c.MAIN, t.INFO, "Teleop Disabled"); 
-								break;
-							}
-							case AUTONOMOUS: {
-								robot.autoStop(); 
-								console.log(c.MAIN, t.INFO, "Autonomous Disabled"); 
-								break;
-							}
-							case TEST: { 
-								robot.testStop(); 
-								console.log(c.MAIN, t.INFO, "Test Disabled"); 
-								break;
-							}
-							default: break;
-						}
-					
-					HAL.observeUserProgramDisabled();
-				} catch (Exception e) {
-					CrashLogger.logCrash(new Crash("main", e));
-				}
-				break;
-			}
-			default: break;
 		}
 		
 		//Handle Main Disabling
@@ -170,15 +91,79 @@ public class RobotController extends RobotBase {
 				}
 				lastMode = state.currentMode;
 			}
-		} catch (Exception e) {
-			CrashLogger.logCrash(new Crash("main", e));
-		}
+		} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
 		
 		//Update Main Robot Loop
 		try {
 			robot.mainLoop();
-		} catch (Exception e) {
-			CrashLogger.logCrash(new Crash("main", e));
+		} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
+		
+		//Handle Modes
+		switch(state.currentMode) {
+			case TELEOP: {
+				try {
+					//Teleop
+					if (lastMode != state.currentMode) {
+						console.log(c.MAIN, t.INFO, "Teleop Enabled");
+						robot.teleopStart();
+					}
+					robot.teleopLoop();
+					HAL.observeUserProgramTeleop();
+				} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
+				break;
+			}
+			case AUTONOMOUS: {
+				try {
+					//Auto
+					if (lastMode != state.currentMode) {
+						console.log(c.MAIN, t.INFO, "Auto Enabled");
+						robot.autoStart();
+					}
+					robot.autoLoop();
+					HAL.observeUserProgramTeleop();
+				} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
+				break;
+			}
+			case TEST: {
+				try {
+					//Test
+					if (lastMode != state.currentMode) {
+						console.log(c.MAIN, t.INFO, "Test Enabled");
+						robot.testStart();
+					}
+					robot.testLoop();
+					HAL.observeUserProgramTest();
+				} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
+				break;
+			}
+			case DISABLED: {
+				try {
+					//Disabled
+					if (lastMode != state.currentMode) {
+						switch (lastMode) {
+							case TELEOP: { 
+								robot.teleopStop(); 
+								console.log(c.MAIN, t.INFO, "Teleop Disabled"); 
+								break;
+							}
+							case AUTONOMOUS: {
+								robot.autoStop(); 
+								console.log(c.MAIN, t.INFO, "Autonomous Disabled"); 
+								break;
+							}
+							case TEST: { 
+								robot.testStop(); 
+								console.log(c.MAIN, t.INFO, "Test Disabled"); 
+								break;
+							}
+							default: break;
+						}
+					}
+					HAL.observeUserProgramDisabled();
+				} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
+				break;
+			}
+			default: break;
 		}
 	}
 	

@@ -13,8 +13,11 @@ import frc.team5104.Superstructure.SystemState;
 import frc.team5104.Superstructure.Target;
 import frc.team5104.util.PositionController;
 import frc.team5104.util.Tuner;
+import frc.team5104.util.console;
+import frc.team5104.util.console.c;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.BreakerMath;
+import frc.team5104.util.Filer;
 import frc.team5104.util.MovingAverage;
 import frc.team5104.util.managers.Subsystem;
 
@@ -22,48 +25,31 @@ public class Hood extends Subsystem {
 	private static TalonSRX motor;
 	private static MovingAverage visionFilter;
 	private static PositionController controller;
-	private static double targetAngle = 0;
+	private static double targetAngle = 0;//, tunerTargetAngle;
 
 	//Loop
 	public void update() {
-		//Debugging
-		Tuner.setTunerOutput("Hood Angle", getAngle());
-		Tuner.setTunerOutput("Hood Output", controller.getLastOutput());
-//		Tuner.setTunerOutput("Hood FF", controller.getLastFFOutput());
-//		Tuner.setTunerOutput("Hood PID", controller.getLastPIDOutput());
-//		Tuner.setTunerOutput("Hood kP", getkP());
-//		Constants.HOOD_KP = Tuner.getTunerInputDouble("Hood KP", Constants.HOOD_KP);
-		Constants.HOOD_KP = getkP();
-//		Constants.HOOD_KD = Tuner.getTunerInputDouble("Hood KD", Constants.HOOD_KD);
-//		double tunerTargetAngle = Tuner.getTunerInputDouble("Hood Target Vision Angle", 10);
-		controller.setPID(Constants.HOOD_KP, 0, Constants.HOOD_KD);
-		
-		//Calibrating
-		if (Superstructure.getSystemState() == SystemState.CALIBRATING) {
-			if (backLimitHit()) {
-				stop();
-			}
-			else {
-				if (Superstructure.getTimeInSystemState() < 10000)
+		//Automatic
+		if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
+			//Calibrating
+			if (isCalibrating()) {
+				if (getTimeInCalibration() > 15000)
 					setPercentOutput(-Constants.HOOD_CALIBRATE_SPEED);
 				else emergencyStop();
 			}
-		}
-		
-		//Automatic
-		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
+			
 			//Low
-			if (Superstructure.getTarget() == Target.LOW)
+			else if (Superstructure.getTarget() == Target.LOW)
 				setTargetAngle(40);
 			
 			//Vision
 			else if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
-//					setTargetAngle(tunerTargetAngle); //TODO DELETE ME!!!
-					if (Limelight.hasTarget()) {
-						visionFilter.update(Limelight.getTargetY());
-						setTargetAngle(getTargetVisionAngle());
-					}
+				//setTargetAngle(tunerTargetAngle); //TODO DELETE ME!!!
+				if (Limelight.hasTarget()) {
+					visionFilter.update(Limelight.getTargetY());
+					setTargetAngle(getTargetVisionAngle());
 				}
+			}
 				
 			//Pull Back
 			else setTargetAngle(-1);
@@ -79,6 +65,26 @@ public class Hood extends Subsystem {
 			resetEncoder();
 			motor.configForwardSoftLimitEnable(true);
 		}
+		controller.setPID(getKP(), 0, Constants.HOOD_KD);
+	}
+	
+	//Fast Loop
+	public void fastUpdate() {
+		if (isCalibrating() && backLimitHit()) {
+			console.log(c.HOOD, "finished calibration!");
+			stopCalibrating();
+		}
+	}
+	
+	//Debugging
+	public void debug() {
+		Tuner.setTunerOutput("Hood Angle", getAngle());
+		Tuner.setTunerOutput("Hood Output", controller.getLastOutput());
+		Tuner.setTunerOutput("Hood FF", controller.getLastFFOutput());
+		Tuner.setTunerOutput("Hood PID", controller.getLastPIDOutput());
+		Tuner.setTunerOutput("Hood KP", getKP());
+		Constants.HOOD_KD = Tuner.getTunerInputDouble("Hood KD", Constants.HOOD_KD);
+		//tunerTargetAngle = Tuner.getTunerInputDouble("Hood Target Vision Angle", 10);
 	}
 
 	//Internal Functions
@@ -98,9 +104,9 @@ public class Hood extends Subsystem {
 	private void resetEncoder() {
 		motor.setSelectedSensorPosition(0);
 	}
-	private double getkP() {
+	private double getKP() {
 		double x = getAngle();
-		return -0.000250 * x * x * x + 0.0136 * x * x - 0.209 * x + 1.5;// + 1.21;
+		return -0.000250 * x * x * x + 0.0136 * x * x - 0.209 * x + 1.5;
 	}
 
 	//External Functions
@@ -133,7 +139,7 @@ public class Hood extends Subsystem {
 		motor.configForwardSoftLimitEnable(false);
 		
 		controller = new PositionController(
-				Constants.HOOD_KP,
+				getKP(),
 				0,
 				Constants.HOOD_KD,
 				Constants.HOOD_MAX_VEL,
@@ -143,6 +149,13 @@ public class Hood extends Subsystem {
 				Constants.HOOD_KA
 			);
 		visionFilter = new MovingAverage(3, 0);
+		
+		//Always calibrate at comp. Only calibrate once per roborio boot while not.
+		if (Constants.AT_COMPETITION || !Filer.fileExists("/tmp/hood_calibrated.txt")) {
+			Filer.createFile("/tmp/hood_calibrated.txt");
+			startCalibrating();
+			console.log(c.HOOD, "ready to calibrate!");
+		}
 	}
 
 	//Reset
