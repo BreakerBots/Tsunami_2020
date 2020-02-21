@@ -49,6 +49,7 @@ public class Hood extends Subsystem {
 					visionFilter.update(Limelight.getTargetY());
 					setAngle(getTargetVisionAngle());
 				}
+				else setAngle(targetAngle);
 			}
 				
 			//Pull Back
@@ -57,20 +58,20 @@ public class Hood extends Subsystem {
 			
 		//Disabled
 		else stop();
+	}
+	
+	//Fast Loop
+	public void fastUpdate() {
+		//Exit Calibrating
+		if (isCalibrating() && backLimitHit()) {
+			console.log(c.HOOD, "finished calibration!");
+			stopCalibrating();
+		}
 		
 		//Zero
 		if (backLimitHit()) {
 			resetEncoder();
 			motor.configForwardSoftLimitEnable(true);
-		}
-		controller.setPID(getKP(), 0, Constants.HOOD_KD);
-	}
-	
-	//Fast Loop
-	public void fastUpdate() {
-		if (isCalibrating() && backLimitHit()) {
-			console.log(c.HOOD, "finished calibration!");
-			stopCalibrating();
 		}
 	}
 	
@@ -88,6 +89,7 @@ public class Hood extends Subsystem {
 	//Internal Functions
 	private void setAngle(double degrees) {
 		targetAngle = BreakerMath.clamp(degrees, -1, 40);
+		controller.setPID(getKP(), 0, Constants.HOOD_KD);
 		setVoltage(controller.calculate(getAngle(), targetAngle));
 	}
 	private void setVoltage(double volts) {

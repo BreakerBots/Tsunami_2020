@@ -43,12 +43,10 @@ public class Hopper extends Subsystem {
 			setMiddle(Constants.HOPPER_FEED_SPEED);
 			setFeeder(Constants.HOPPER_FEED_SPEED);
 			setStart(Constants.HOPPER_FEED_SPEED);
-			hasFed.update(true);
 		}
 		
 		//Indexing
 		else {
-			hasFed.update(false);
 			//Indexing
 			isIndexing = !isFull() && (isEntrySensorTripped() || 
 					(getMidPosition() + Constants.HOPPER_INDEX_TOL) < targetMidPosition);
@@ -76,6 +74,7 @@ public class Hopper extends Subsystem {
 			else setStart(0);
 		}
 		
+		hasFed.update(Superstructure.getMode() == Mode.SHOOTING);
 		isFullAverage.update(isFull());
 	}
 	

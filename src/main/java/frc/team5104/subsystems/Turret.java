@@ -47,6 +47,7 @@ public class Turret extends Subsystem {
 						compensator.getValueInHistory(Limelight.getLatency()) - Limelight.getTargetX()
 					);
 				}
+				else setAngle(targetAngle);
 			}
 
 			//Field Oriented Mode
@@ -55,19 +56,20 @@ public class Turret extends Subsystem {
 		
 		//Disabled
 		else stop();
+	}
+	
+	//Fast Loop
+	public void fastUpdate() {
+		//Exit Calibration
+		if (isCalibrating() && leftLimitHit()) {
+			console.log(c.TURRET, "finished calibration!");
+			stopCalibrating();
+		}
 		
 		//Zero Encoder
 		if (leftLimitHit()) {
 			resetEncoder(250);
 			enableSoftLimits(true);
-		}
-	}
-	
-	//Fast Loop
-	public void fastUpdate() {
-		if (isCalibrating() && leftLimitHit()) {
-			console.log(c.TURRET, "finished calibration!");
-			stopCalibrating();
 		}
 	}
 	
