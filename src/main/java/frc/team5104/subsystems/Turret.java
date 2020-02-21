@@ -31,15 +31,15 @@ public class Turret extends Subsystem {
 	
 	//Loop
 	public void update() {
-		//Calibrating
-		if (isCalibrating()) {
-			if (getTimeInCalibration() < 15000)
-				setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
-			else emergencyStop();
-		}
-		
 		//Automatic
-		else if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
+		if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
+			//Calibrating
+			if (isCalibrating()) {
+				if (getTimeInCalibration() < 15000)
+					setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
+				else emergencyStop();
+			}
+			
 			//Vision
 			if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
 				if (Limelight.hasTarget()) {

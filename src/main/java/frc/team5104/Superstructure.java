@@ -19,9 +19,7 @@ import frc.team5104.util.console.c;
  */
 public class Superstructure {
 	//States and Variables
-	public static enum SystemState { 
-		DISABLED, MANUAL, AUTOMATIC 
-	}
+	public static enum SystemState { DISABLED, MANUAL, AUTOMATIC }
 	public static enum Mode {
 		IDLE,
 		INTAKE, AIMING, SHOOTING,
