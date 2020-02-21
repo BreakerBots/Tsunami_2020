@@ -65,6 +65,7 @@ public class Hood extends Subsystem {
 		//Exit Calibrating
 		if (isCalibrating() && backLimitHit()) {
 			console.log(c.HOOD, "finished calibration!");
+			Filer.createFile("/tmp/hood_calibrated.txt");
 			stopCalibrating();
 		}
 		
@@ -153,9 +154,8 @@ public class Hood extends Subsystem {
 		
 		//Always calibrate at comp. Only calibrate once per roborio boot while not.
 		if (Constants.AT_COMPETITION || !Filer.fileExists("/tmp/hood_calibrated.txt")) {
-			Filer.createFile("/tmp/hood_calibrated.txt");
-			startCalibrating();
 			console.log(c.HOOD, "ready to calibrate!");
+			startCalibrating();
 		}
 	}
 

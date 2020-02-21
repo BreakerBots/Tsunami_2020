@@ -63,6 +63,7 @@ public class Turret extends Subsystem {
 		//Exit Calibration
 		if (isCalibrating() && leftLimitHit()) {
 			console.log(c.TURRET, "finished calibration!");
+			Filer.createFile("/tmp/turret_calibrated.txt");
 			stopCalibrating();
 		}
 		
@@ -150,9 +151,8 @@ public class Turret extends Subsystem {
 		
 		//Always calibrate at comp. Only calibrate once per roborio boot while not.
 		if (Constants.AT_COMPETITION || !Filer.fileExists("/tmp/turret_calibrated.txt")) {
-			Filer.createFile("/tmp/turret_calibrated.txt");
-			startCalibrating();
 			console.log(c.TURRET, "ready to calibrate!");
+			startCalibrating();
 		}
 	}
 
