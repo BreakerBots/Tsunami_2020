@@ -7,6 +7,8 @@ import frc.team5104.subsystems.Hood;
 import frc.team5104.subsystems.Hopper;
 import frc.team5104.subsystems.Paneler;
 import frc.team5104.subsystems.Turret;
+import frc.team5104.util.LatchedBoolean;
+import frc.team5104.util.LatchedBoolean.LatchedBooleanMode;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.Limelight.LEDMode;
 import frc.team5104.util.console;
@@ -36,6 +38,9 @@ public class Superstructure {
 	private static FlywheelState shooterWheelState = FlywheelState.STOPPED;
 	private static Target target = Target.HIGH;
 	private static long systemStateStart = System.currentTimeMillis();
+	private static LatchedBoolean flywheelOnTarget = new LatchedBoolean(LatchedBooleanMode.RISING), 
+								  hoodOnTarget = new LatchedBoolean(LatchedBooleanMode.RISING), 
+								  turretOnTarget = new LatchedBoolean(LatchedBooleanMode.RISING);
 	
 	//External Functions
 	public static SystemState getSystemState() { return systemState; }
@@ -80,8 +85,14 @@ public class Superstructure {
 			console.log(c.SUPERSTRUCTURE, "done shooting... idling");
 		}
 		
-		//Started Shooting
-		if (getMode() == Mode.AIMING && Flywheel.isAvgSpedUp() && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
+		//Start Shooting after done Aiming
+		if (flywheelOnTarget.get(Flywheel.isAvgSpedUp()) && getMode() == Mode.AIMING)
+			console.log(c.FLYWHEEL, "sped up");
+		if (hoodOnTarget.get(Hood.onTarget()) && getMode() == Mode.AIMING)
+			console.log(c.HOOD, "on target");
+		if (turretOnTarget.get(Turret.onTarget()) && getMode() == Mode.AIMING)
+			console.log(c.TURRET, "on target");
+		if (getMode() == Mode.AIMING) {// && Flywheel.isAvgSpedUp()) {// && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
 			setMode(Mode.SHOOTING);
 			console.log(c.SUPERSTRUCTURE, "finished aiming... shooting");
 		}

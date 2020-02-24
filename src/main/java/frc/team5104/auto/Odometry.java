@@ -52,10 +52,15 @@ public class Odometry {
 	}
 	
 	public static void reset() {
+		resetWithoutWaiting();
+		try { Thread.sleep(10); } catch (Exception e) { }
+		resetWithoutWaiting();
+		console.log(c.AUTO, "Reset Odometry at " + getPose2dMeters());
+	}
+	
+	public static void resetWithoutWaiting() {
 		Drive.resetEncoders();
 		Drive.resetGyro();
-		try { Thread.sleep(10); } catch (Exception e) { }
 		m_odometry.resetPosition(new Pose2d(), Rotation2d.fromDegrees(-Drive.getGyro()));
-		console.log(c.AUTO, "Reset Odometry at " + getPose2dMeters());
 	}
 }

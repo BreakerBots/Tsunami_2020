@@ -26,9 +26,9 @@ public class Flywheel extends Subsystem {
 			Superstructure.getSystemState() == SystemState.MANUAL) &&
 			Superstructure.getFlywheelState() == FlywheelState.SPINNING) {
 			setRampRate(Constants.FLYWHEEL_RAMP_RATE_UP);
-			if (Constants.FLYWHEEL_OPEN_LOOP)
-				setPercentOutput(targetRPMS / 6100);
-			else setSpeed(targetRPMS);
+			//if (Constants.FLYWHEEL_OPEN_LOOP)
+			setPercentOutput(1);//targetRPMS / 6100);
+//			else setSpeed(targetRPMS);
 		}
 		else {
 			setRampRate(Constants.FLYWHEEL_RAMP_RATE_DOWN);
@@ -49,6 +49,7 @@ public class Flywheel extends Subsystem {
 	}
 	
 	//Internal Functions
+	@SuppressWarnings("unused")
 	private void setSpeed(double rpms) {
 		//rev/min -> ticks/100ms
 //		motor1.set(ControlMode.Velocity, rpms * 2048.0 / 60.0 / 10.0);
@@ -98,14 +99,10 @@ public class Flywheel extends Subsystem {
 	public void init() {
 		motor1 = new TalonFX(Ports.FLYWHEEL_MOTOR_1);
 		motor1.configFactoryDefault();
-//		motor1.config_kP(0, Constants.FLYWHEEL_KP);
-//		motor1.config_kF(0, Constants.FLYWHEEL_KF);
 		motor1.setInverted(false);
 		
 		motor2 = new TalonFX(Ports.FLYWHEEL_MOTOR_2);
 		motor2.configFactoryDefault();
-//		motor2.config_kP(0, Constants.FLYWHEEL_KP);
-//		motor2.config_kF(0, Constants.FLYWHEEL_KF);
 		motor2.follow(motor1);
 		motor2.setInverted(true);
 		

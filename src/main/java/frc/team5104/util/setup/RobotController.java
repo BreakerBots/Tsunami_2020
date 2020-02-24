@@ -27,6 +27,8 @@ public class RobotController extends RobotBase {
 		HAL.report(tResourceType.kResourceType_Framework, tInstances.kFramework_Iterative);
 		console.logFile.start();
 		console.sets.create("RobotInit");
+		if (Constants.ROBOT_NAME.length() < 4)
+			console.error("Please deploy robot.txt with the correct robot name!");
 		console.log(c.MAIN, t.INFO, "Initializing " + Constants.ROBOT_NAME + " Code...");
 		
 		//try {
@@ -89,7 +91,6 @@ public class RobotController extends RobotBase {
 					console.logFile.start();
 					robot.mainStart();
 				}
-				lastMode = state.currentMode;
 			}
 		} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
 		
@@ -165,6 +166,8 @@ public class RobotController extends RobotBase {
 			}
 			default: break;
 		}
+		
+		lastMode = state.currentMode;
 	}
 	
 	//Child Class

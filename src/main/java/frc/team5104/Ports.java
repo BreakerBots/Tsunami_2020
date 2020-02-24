@@ -39,6 +39,6 @@ public class Ports {
 	
 	//Paneler
 	public static final int PANELER_MOTOR = 26;
-	public static final int PANELER_DEPLOYER_FORWARD = 2;
-	public static final int PANELER_DEPLOYER_REVERSE = 3;
+	public static final int PANELER_DEPLOYER_FORWARD = 3;
+	public static final int PANELER_DEPLOYER_REVERSE = 2;
 }

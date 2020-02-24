@@ -19,6 +19,7 @@ import frc.team5104.util.LatencyCompensator;
 import frc.team5104.util.BreakerMath;
 import frc.team5104.util.Filer;
 import frc.team5104.util.Limelight;
+import frc.team5104.util.MovingAverage;
 import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
@@ -26,6 +27,7 @@ public class Turret extends Subsystem {
 	private static double fieldOrientedOffset = 120;
 	private static PositionController controller;
 	private static LatencyCompensator compensator;
+	private static MovingAverage outputAverage;
 	//private static MovingAverage visionFilter;
 	private static double targetAngle = getAngle();
 	
@@ -35,9 +37,9 @@ public class Turret extends Subsystem {
 		if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			//Calibrating
 			if (isCalibrating()) {
-				if (getTimeInCalibration() < 15000)
+				//if (getTimeInCalibration() < 15000)
 					setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
-				else emergencyStop();
+				//else emergencyStop();
 			}
 			
 			//Vision
@@ -88,7 +90,8 @@ public class Turret extends Subsystem {
 	//Internal Functions
 	private void setAngle(double angle) {
 		targetAngle = BreakerMath.clamp(angle, 0, 240);
-		setVoltage(controller.calculate(getAngle(), targetAngle));
+		outputAverage.update(controller.calculate(getAngle(), targetAngle));
+		setVoltage(outputAverage.getDoubleOutput());
 	}
 	private void setVoltage(double volts) {
 		volts = BreakerMath.clamp(volts, -Constants.TURRET_VOLT_LIMIT, Constants.TURRET_VOLT_LIMIT);
@@ -148,6 +151,7 @@ public class Turret extends Subsystem {
 				Constants.TURRET_KA
 			);
 		compensator = new LatencyCompensator(() -> getAngle());
+		outputAverage = new MovingAverage(4, 0);
 		
 		//Always calibrate at comp. Only calibrate once per roborio boot while not.
 		if (Constants.AT_COMPETITION || !Filer.fileExists("/tmp/turret_calibrated.txt")) {

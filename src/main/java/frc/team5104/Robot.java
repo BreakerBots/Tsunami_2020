@@ -1,10 +1,11 @@
 /*BreakerBots Robotics Team 2020*/
 package frc.team5104;
 
+import edu.wpi.first.wpilibj.RobotState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.auto.AutoManager;
 import frc.team5104.auto.Odometry;
-import frc.team5104.auto.paths.SixBall_PP;
+import frc.team5104.auto.paths.EightBall_Left;
 import frc.team5104.subsystems.*;
 import frc.team5104.teleop.CompressorController;
 import frc.team5104.teleop.DriveController;
@@ -27,12 +28,12 @@ public class Robot extends RobotController.BreakerRobot {
 		
 		//Managers
 		SubsystemManager.useSubsystems(
-			new Drive(),
+			new Drive()
 //			new Climber()
-			new Intake(),
+//			new Intake(),
 //			new Turret(),
-			new Flywheel(),
-			new Hopper()
+//			new Flywheel(),
+//			new Hopper()
 //			new Hood()
 //			new Paneler()
 		);
@@ -48,8 +49,8 @@ public class Robot extends RobotController.BreakerRobot {
 		Odometry.init();
 		Limelight.init();
 		CompressorController.stop();
-		AutoManager.setTargetPath(new SixBall_PP());
-		SubsystemManager.debug(Hopper.class);
+		AutoManager.setTargetPath(new EightBall_Left());
+		SubsystemManager.debug(Turret.class);
 	}
 	
 	//Teleop 
@@ -95,5 +96,11 @@ public class Robot extends RobotController.BreakerRobot {
 		Superstructure.update();
 		SubsystemManager.update();
 		XboxController.update();
+		
+		if (RobotState.isDisabled()) {
+			Drive.resetEncoders();
+			Drive.resetGyro();
+			Odometry.resetWithoutWaiting();
+		}
 	}
 }

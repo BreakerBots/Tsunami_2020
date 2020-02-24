@@ -55,14 +55,15 @@ public class LatchedBoolean {
 	 * @return
 	 */
 	public boolean get(boolean currentValue) {
-		if (currentValue != lastValue) {
+		boolean changed = currentValue != lastValue;
+		lastValue = currentValue;
+		if (changed) {
 			if (mode == LatchedBooleanMode.ALWAYS)
 				return true;
 			if (mode == LatchedBooleanMode.RISING && currentValue == true)
 				return true;
 			if (mode == LatchedBooleanMode.FALLING && currentValue == false)
 				return true;
-			lastValue = currentValue;
 		}
 		return false;
 	}

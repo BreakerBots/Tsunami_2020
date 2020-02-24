@@ -20,6 +20,8 @@ public class Drive extends Subsystem {
 	//Update
 	private static DriveSignal currentDriveSignal = new DriveSignal();
 	public void update() {
+//		falconL1.set(TalonFXControlMode.MusicTone, Math.random() * 400);
+//		falconR1.set(TalonFXControlMode.MusicTone, Math.random() * 400);
 		switch (currentDriveSignal.unit) {
 			case PERCENT_OUTPUT: {
 				setMotors(

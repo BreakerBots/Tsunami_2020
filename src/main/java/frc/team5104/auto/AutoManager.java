@@ -16,6 +16,7 @@ public class AutoManager {
 	
 	//Enabled/Disbabled
 	public static void enabled() {
+		System.out.println("0");
 		//reset odometry
 		Odometry.reset();
 		

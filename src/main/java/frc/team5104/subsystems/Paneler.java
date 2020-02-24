@@ -36,12 +36,10 @@ public class Paneler extends Subsystem {
 			}
 	
 			//paneling
-			if (Superstructure.getMode() == Mode.PANELING) {
+			else if (Superstructure.getMode() == Mode.PANELING) {
 				//rotation
 				if (Superstructure.getPanelState() == PanelState.ROTATION) {
 					if (getPanelRotations() >= 4) {
-						stop();
-						setPiston(false);
 						complete = true;
 					} 
 					else setPercentOutput(Constants.PANELER_ROT_SPEED);
@@ -50,15 +48,13 @@ public class Paneler extends Subsystem {
 				//position
 				else {
 					if (readFMS().length() > 0 && PanelColor.fromChar(readFMS().charAt(0)) == readColor()) {
-						stop();
-						setPiston(false);
 						complete = true;
 					}
 					else setPercentOutput(Constants.PANELER_POS_SPEED);
 				}
 			}
 			//idle
-			if (Superstructure.getMode() == Mode.IDLE) {
+			else if (Superstructure.getMode() == Mode.IDLE) {
 				stop();
 				setPiston(false);
 			}
