@@ -18,7 +18,7 @@ public class Flywheel extends Subsystem {
 	private static TalonFX motor1, motor2;
 	private static MovingAverage avgRPMS;
 	private static VelocityController controller;
-	private static final double targetRPMS = 5000;
+	private static final double targetRPMS = 9000;
 	
 	//Loop
 	public void update() {
@@ -26,9 +26,9 @@ public class Flywheel extends Subsystem {
 			Superstructure.getSystemState() == SystemState.MANUAL) &&
 			Superstructure.getFlywheelState() == FlywheelState.SPINNING) {
 			setRampRate(Constants.FLYWHEEL_RAMP_RATE_UP);
-			//if (Constants.FLYWHEEL_OPEN_LOOP)
-			setPercentOutput(1);//targetRPMS / 6100);
-//			else setSpeed(targetRPMS);
+			if (Constants.FLYWHEEL_OPEN_LOOP)
+				setPercentOutput(1);
+			else setSpeed(targetRPMS);
 		}
 		else {
 			setRampRate(Constants.FLYWHEEL_RAMP_RATE_DOWN);
@@ -41,18 +41,22 @@ public class Flywheel extends Subsystem {
 	//Debugging
 	public void debug() {
 		Tuner.setTunerOutput("Flywheel RPM", getRPMS());
+		Tuner.setTunerOutput("Flywheel ARPM", getAvgRPMS());
 		Tuner.setTunerOutput("Flywheel FF", controller.getLastFFOutput());
 		Tuner.setTunerOutput("Flywheel PID", controller.getLastPIDOutput());
 		Tuner.setTunerOutput("Flywheel Out", controller.getLastOutput());
+		Tuner.setTunerOutput("Flywheel Sped Up", isSpedUp());
+		Tuner.setTunerOutput("Flywheel Current 1", motor1.getSupplyCurrent());
+		Tuner.setTunerOutput("Flywheel Current 2", motor2.getSupplyCurrent());
+		Tuner.setTunerOutput("Flywheel Voltage 1", motor1.getMotorOutputVoltage());
+		Tuner.setTunerOutput("Flywheel Voltage 2", motor2.getMotorOutputVoltage());
 		Constants.FLYWHEEL_KP = Tuner.getTunerInputDouble("Flywheel KP", Constants.FLYWHEEL_KP);
-		controller.setPID(Constants.FLYWHEEL_KP, 0, 0);
+		Constants.FLYWHEEL_KD = Tuner.getTunerInputDouble("Flywheel KD", Constants.FLYWHEEL_KD);
+		controller.setPID(Constants.FLYWHEEL_KP, 0, Constants.FLYWHEEL_KD);
 	}
 	
 	//Internal Functions
-	@SuppressWarnings("unused")
 	private void setSpeed(double rpms) {
-		//rev/min -> ticks/100ms
-//		motor1.set(ControlMode.Velocity, rpms * 2048.0 / 60.0 / 10.0);
 		setVoltage(controller.calculate(getRPMS() / 60.0, rpms / 60.0));
 	}
 	private void setVoltage(double volts) {
@@ -75,7 +79,7 @@ public class Flywheel extends Subsystem {
 	public static double getRPMS() {
 		if (motor1 == null)
 			return 0;
-		return motor1.getSelectedSensorVelocity() / 2048.0 * 60.0 * 10.0;
+		return motor1.getSelectedSensorVelocity() / Constants.FLYWHEEL_TICKS_PER_REV * 60.0 * 10.0;
 	}
 	public static double getAvgRPMS() {
 		if (motor1 == null)
@@ -111,10 +115,10 @@ public class Flywheel extends Subsystem {
 		controller = new VelocityController(
 				Constants.FLYWHEEL_KP,
 				0,
-				0,
+				Constants.FLYWHEEL_KD,
 				Constants.FLYWHEEL_KS,
 				Constants.FLYWHEEL_KV,
-				Constants.FLYWHEEL_KA
+				0
 			);
 		
 		avgRPMS = new MovingAverage(50, 0);

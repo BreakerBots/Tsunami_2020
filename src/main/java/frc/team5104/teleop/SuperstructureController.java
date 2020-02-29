@@ -1,6 +1,5 @@
 package frc.team5104.teleop;
 
-import frc.team5104.Constants;
 import frc.team5104.Controls;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.FlywheelState;
@@ -8,9 +7,7 @@ import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.PanelState;
 import frc.team5104.Superstructure.Target;
 import frc.team5104.subsystems.Climber;
-import frc.team5104.util.Limelight;
 import frc.team5104.util.console;
-import frc.team5104.util.Limelight.LEDMode;
 import frc.team5104.util.console.c;
 import frc.team5104.util.managers.TeleopController;
 
@@ -20,8 +17,6 @@ public class SuperstructureController extends TeleopController {
 		if (Controls.IDLE.get()) {
 			Superstructure.setMode(Mode.IDLE);
 			Superstructure.setFlywheelState(FlywheelState.STOPPED);
-			if (Constants.LIMELIGHT_DEFAULT_OFF)
-				Limelight.setLEDMode(LEDMode.OFF);
 			console.log(c.SUPERSTRUCTURE, "idling");
 		}
 
@@ -69,13 +64,10 @@ public class SuperstructureController extends TeleopController {
 			if (Superstructure.getMode() == Mode.SHOOTING || Superstructure.getMode() == Mode.AIMING) {
 				Superstructure.setMode(Mode.IDLE);
 				Superstructure.setFlywheelState(FlywheelState.STOPPED);
-				if (Constants.LIMELIGHT_DEFAULT_OFF)
-					Limelight.setLEDMode(LEDMode.OFF);
 				console.log(c.SUPERSTRUCTURE, "exiting shooting... idling");
 			}
 			else {
 				Superstructure.setMode(Mode.AIMING);
-				Limelight.setLEDMode(LEDMode.ON);
 				console.log(c.SUPERSTRUCTURE, "aiming");
 			}
 		}

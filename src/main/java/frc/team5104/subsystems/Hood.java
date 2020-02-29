@@ -32,8 +32,8 @@ public class Hood extends Subsystem {
 		if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			//Calibrating
 			if (isCalibrating()) {
+				setPercentOutput(-Constants.HOOD_CALIBRATE_SPEED);
 				//if (getTimeInCalibration() > 15000)
-					setPercentOutput(-Constants.HOOD_CALIBRATE_SPEED);
 				//else emergencyStop();
 			}
 			
@@ -44,11 +44,11 @@ public class Hood extends Subsystem {
 			
 			//Vision
 			else if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
-//				if (Limelight.hasTarget()) {
+				if (/*Limelight.hasTarget() && */Superstructure.getMode() == Mode.AIMING) {
 					visionFilter.update(Limelight.getTargetY());
 					setAngle(getTargetVisionAngle());
-//				}
-//				else setAngle(targetAngle);
+				}
+				else setAngle(targetAngle);
 			}
 				
 			//Pull Back
@@ -107,7 +107,7 @@ public class Hood extends Subsystem {
 	}
 	private double getKP() {
 		double x = getAngle();
-		return -0.000250 * x * x * x + 0.0136 * x * x - 0.209 * x + 1.5;
+		return -0.000250 * x * x * x + 0.0136 * x * x - 0.209 * x + 1.7;
 	}
 
 	//External Functions
@@ -117,7 +117,7 @@ public class Hood extends Subsystem {
 	}
 	public static boolean backLimitHit() {
 		if (motor == null) return true;
-		return !motor.getSensorCollection().isRevLimitSwitchClosed();
+		return motor.getSensorCollection().isRevLimitSwitchClosed();
 	}
 	public static boolean onTarget() {
 		if (motor == null) return true;
@@ -136,7 +136,7 @@ public class Hood extends Subsystem {
 		motor.setInverted(false);
 		motor.setSensorPhase(true);
 		
-		motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyClosed);
+		motor.configReverseLimitSwitchSource(LimitSwitchSource.FeedbackConnector, LimitSwitchNormal.NormallyOpen);
 		motor.configForwardSoftLimitThreshold((int) (Constants.HOOD_TICKS_PER_REV * (38.0 / 360.0)));
 		motor.configForwardSoftLimitEnable(false);
 		

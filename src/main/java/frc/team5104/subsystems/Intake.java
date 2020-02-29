@@ -49,6 +49,7 @@ public class Intake extends Subsystem {
 		
 		motor = new VictorSPX(Ports.INTAKE_MOTOR);
 		motor.configFactoryDefault();
+		motor.setInverted(true);
 	}
 
 	//Reset

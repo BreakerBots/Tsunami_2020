@@ -8,7 +8,7 @@ import frc.team5104.util.setup.RobotState;
 public class PositionController {
 	private ProfiledPIDController pid;
 	private SimpleMotorFeedforward ff;
-	private double lastVelocity, lastPIDOutput, lastFFOutput, lastOutput;
+	private double lastVelocity, lastPIDOutput, lastFFOutput, lastOutput, lastPosition, lastTarget;
 	
 	public PositionController(double kP, double kI, double kD, double maxVel, 
 			double maxAccel, double kS, double kV, double kA) {
@@ -32,6 +32,7 @@ public class PositionController {
 	public double getLastFFOutput() { return lastFFOutput; }
 	public double getLastPIDOutput() { return lastPIDOutput; }
 	public double getLastOutput() { return lastOutput; }
+	public double getLastError() { return lastTarget - lastPosition; }
 	
 	public void setPID(double kP, double kI, double kD) {
 		pid.setPID(kP, kI, kD);

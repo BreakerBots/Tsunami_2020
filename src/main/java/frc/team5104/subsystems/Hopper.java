@@ -178,7 +178,7 @@ public class Hopper extends Subsystem {
 		endSensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_END, true);
 		
 		entrySensorLatch = new LatchedBoolean(LatchedBooleanMode.RISING);
-		isFullAverage = new MovingAverage(100, 0);
+		isFullAverage = new MovingAverage(200, 0);
 		hasFed = new MovingAverage(100, 0);
 		entrySensorAverage = new MovingAverage(4, false);
 		

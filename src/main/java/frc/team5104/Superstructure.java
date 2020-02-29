@@ -11,6 +11,7 @@ import frc.team5104.util.LatchedBoolean;
 import frc.team5104.util.LatchedBoolean.LatchedBooleanMode;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.Limelight.LEDMode;
+import frc.team5104.util.MovingAverage;
 import frc.team5104.util.console;
 import frc.team5104.util.console.c;
 
@@ -40,7 +41,9 @@ public class Superstructure {
 	private static long systemStateStart = System.currentTimeMillis();
 	private static LatchedBoolean flywheelOnTarget = new LatchedBoolean(LatchedBooleanMode.RISING), 
 								  hoodOnTarget = new LatchedBoolean(LatchedBooleanMode.RISING), 
-								  turretOnTarget = new LatchedBoolean(LatchedBooleanMode.RISING);
+								  turretOnTarget = new LatchedBoolean(LatchedBooleanMode.RISING),
+								  limelightOn = new LatchedBoolean();
+	private static MovingAverage readyToFire = new MovingAverage(15, false);
 	
 	//External Functions
 	public static SystemState getSystemState() { return systemState; }
@@ -80,8 +83,6 @@ public class Superstructure {
 		if (getMode() == Mode.SHOOTING && !Hopper.isFullAverage() && Hopper.hasFedAverage()) {
 			setMode(Mode.IDLE);
 			setFlywheelState(FlywheelState.STOPPED);
-			if (Constants.LIMELIGHT_DEFAULT_OFF)
-				Limelight.setLEDMode(LEDMode.OFF);
 			console.log(c.SUPERSTRUCTURE, "done shooting... idling");
 		}
 		
@@ -92,7 +93,8 @@ public class Superstructure {
 			console.log(c.HOOD, "on target");
 		if (turretOnTarget.get(Turret.onTarget()) && getMode() == Mode.AIMING)
 			console.log(c.TURRET, "on target");
-		if (getMode() == Mode.AIMING) {// && Flywheel.isAvgSpedUp()) {// && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget()) {
+		readyToFire.update(getMode() == Mode.AIMING && Flywheel.isAvgSpedUp() && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget());
+		if (readyToFire.getBooleanOutput()) {
 			setMode(Mode.SHOOTING);
 			console.log(c.SUPERSTRUCTURE, "finished aiming... shooting");
 		}
@@ -100,6 +102,14 @@ public class Superstructure {
 		//Spin Flywheel while Shooting
 		if (getMode() == Mode.SHOOTING || getMode() == Mode.AIMING) {
 			setFlywheelState(FlywheelState.SPINNING);
+		}
+		
+		//Limelight
+		if (limelightOn.get(getMode() == Mode.AIMING || getMode() == Mode.SHOOTING)) {
+			if (getMode() == Mode.AIMING || getMode() == Mode.SHOOTING)
+				Limelight.setLEDMode(LEDMode.ON);
+			else if (Constants.LIMELIGHT_DEFAULT_OFF)
+				Limelight.setLEDMode(LEDMode.OFF);
 		}
 	}
 	
@@ -111,5 +121,6 @@ public class Superstructure {
 		setPanelState(PanelState.ROTATION);
 		setFlywheelState(FlywheelState.STOPPED);
 		setTarget(Target.HIGH);
+		readyToFire.reset();
 	}
 }

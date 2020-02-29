@@ -31,7 +31,7 @@ public class Ports {
 	public static final int HOPPER_FEEDER_MOTOR = 22; 
 	public static final int HOPPER_SENSOR_START = 1;
 	public static final int HOPPER_SENSOR_END = 0;
-	
+					
 	//Climber
 	public static final int CLIMBER_MOTOR = 23;
 	public static final int CLIMBER_DEPLOYER_FORWARD = 0;

@@ -29,7 +29,7 @@ public class Turret extends Subsystem {
 	private static LatencyCompensator compensator;
 	private static MovingAverage outputAverage;
 	//private static MovingAverage visionFilter;
-	private static double targetAngle = getAngle();
+	private static double targetAngle = 0;
 	
 	//Loop
 	public void update() {
@@ -37,14 +37,15 @@ public class Turret extends Subsystem {
 		if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			//Calibrating
 			if (isCalibrating()) {
+				enableSoftLimits(false);
+				setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
 				//if (getTimeInCalibration() < 15000)
-					setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
 				//else emergencyStop();
 			}
 			
 			//Vision
 			else if (Superstructure.getMode() == Mode.AIMING || Superstructure.getMode() == Mode.SHOOTING) {
-				if (Limelight.hasTarget()) {
+				if (/*Limelight.hasTarget() &&*/ Superstructure.getMode() == Mode.AIMING) {
 					setAngle(
 						compensator.getValueInHistory(Limelight.getLatency()) - Limelight.getTargetX()
 					);
@@ -57,7 +58,11 @@ public class Turret extends Subsystem {
 		}
 		
 		//Disabled
-		else stop();
+		else {
+			stop();
+			targetAngle = BreakerMath.boundDegrees360(Drive.getGyro() + fieldOrientedOffset);
+			controller.calculate(getAngle(), targetAngle);
+		}
 	}
 	
 	//Fast Loop
@@ -80,6 +85,7 @@ public class Turret extends Subsystem {
 	public void debug() {
 		Tuner.setTunerOutput("Turret FF", controller.getLastFFOutput());
 		Tuner.setTunerOutput("Turret PID", controller.getLastPIDOutput());
+		Tuner.setTunerOutput("Turret Error", controller.getLastError());
 		Tuner.setTunerOutput("Turret Angle", getAngle());
 		Tuner.setTunerOutput("Turret Target Angle", targetAngle);
 		Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
@@ -158,13 +164,14 @@ public class Turret extends Subsystem {
 			console.log(c.TURRET, "ready to calibrate!");
 			startCalibrating();
 		}
+		else enableSoftLimits(true);
 	}
 
 	//Reset
 	public void disabled() {
 		stop();
 		motor.setNeutralMode(NeutralMode.Coast);
-		enableSoftLimits(false);
 		compensator.reset();
+		outputAverage.reset();
 	}
 }

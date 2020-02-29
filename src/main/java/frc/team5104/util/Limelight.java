@@ -37,12 +37,12 @@ public class Limelight {
 		else console.warn(c.VISION, "limelight is not connected");
 	}
 
-	public static enum CamMode { VISION(0), DRIVE(1); int value; private CamMode(int value) { this.value = value; } }
-	public static void setCamMode(CamMode cMode) { 
-		if (isConnected())
-			setEntry("camMode", cMode.value);  
-		else console.warn(c.VISION, "limelight is not connected");
-	}
+//	public static enum CamMode { VISION(0), DRIVE(1); int value; private CamMode(int value) { this.value = value; } }
+//	public static void setCamMode(CamMode cMode) { 
+//		if (isConnected())
+//			setEntry("camMode", cMode.value);  
+//		else console.warn(c.VISION, "limelight is not connected");
+//	}
 	
 	public static void init() {
 		Thread initLimelightThread = new Thread() {
@@ -53,7 +53,7 @@ public class Limelight {
 						if (Constants.LIMELIGHT_DEFAULT_OFF)
 							setLEDMode(LEDMode.OFF);
 						else setLEDMode(LEDMode.ON);
-						setCamMode(CamMode.VISION);
+						setEntry("camMode", 0);
 						setEntry("pipeline", 0);
 						setEntry("stream", 0);
 						setEntry("snapshot", 0);

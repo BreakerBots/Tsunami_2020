@@ -30,14 +30,15 @@ public class Constants {
 	public static final boolean AUTO_PLOT_ODOMETRY = true;
 	
 	//Flywheel
-	public static final boolean FLYWHEEL_OPEN_LOOP = true;
+	public static final boolean FLYWHEEL_OPEN_LOOP = false;
 	public static final double FLYWHEEL_RAMP_RATE_UP = 0.7;
 	public static final double FLYWHEEL_RAMP_RATE_DOWN = 3;
-	public static final double FLYWHEEL_RPM_TOL = 300;
-	public static double FLYWHEEL_KP = 0.00134;
-	public static final double FLYWHEEL_KS = 0.15;
-	public static final double FLYWHEEL_KV = 0.111;
-	public static final double FLYWHEEL_KA = 0.00655;
+	public static final double FLYWHEEL_RPM_TOL = 500;
+	public static final double FLYWHEEL_TICKS_PER_REV = 2048.0 * (24.0 / 44.0);
+	public static double FLYWHEEL_KP = 4;
+	public static double FLYWHEEL_KD = 0.4;
+	public static final double FLYWHEEL_KS = 0.229;
+	public static final double FLYWHEEL_KV = 0.115;
 	
 	//Panelers
 	public static final double ROTATION_MOTOR_SPEED = 1.0;
@@ -45,7 +46,7 @@ public class Constants {
 
 	//Hood
 	public static final double HOOD_TOL = 3;
-	public static final double HOOD_CALIBRATE_SPEED = 0.45;
+	public static final double HOOD_CALIBRATE_SPEED = 0.4;
 	public static final double HOOD_TICKS_PER_REV = 4096.0 * (360.0 / 18.0);
 	public static double HOOD_KD = 0.0;
 	public static final double HOOD_KS = 0.49;
@@ -82,10 +83,10 @@ public class Constants {
 	public static final double TURRET_TICKS_PER_REV = 2048.0 / (8.0 / 60.0 /*gear*/) / (22.0 / 150.0 /*sprocket*/);
 	public static double TURRET_KP = 0.2;
 	public static double TURRET_KD = 0.0;
-	public static final double TURRET_KS = 0.223;
+	public static final double TURRET_KS = 0.35;
 	public static final double TURRET_KV = 0.015;
 	public static final double TURRET_KA = 0.000384;
 	public static final double TURRET_MAX_VEL = 200;
 	public static final double TURRET_MAX_ACC = 2000;
-	public static final double TURRET_VISION_TOL = 2;
+	public static final double TURRET_VISION_TOL = 3;
 }

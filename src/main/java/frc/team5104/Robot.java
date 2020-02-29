@@ -28,13 +28,13 @@ public class Robot extends RobotController.BreakerRobot {
 		
 		//Managers
 		SubsystemManager.useSubsystems(
-			new Drive()
+			new Drive(),
 //			new Climber()
-//			new Intake(),
-//			new Turret(),
-//			new Flywheel(),
-//			new Hopper()
-//			new Hood()
+			new Intake(),
+			new Turret(),
+			new Flywheel(),
+			new Hopper(),
+			new Hood()
 //			new Paneler()
 		);
 		TeleopControllerManager.useTeleopControllers(
@@ -50,7 +50,7 @@ public class Robot extends RobotController.BreakerRobot {
 		Limelight.init();
 		CompressorController.stop();
 		AutoManager.setTargetPath(new EightBall_Left());
-		SubsystemManager.debug(Turret.class);
+		SubsystemManager.debug(Hood.class, Flywheel.class);
 	}
 	
 	//Teleop 
