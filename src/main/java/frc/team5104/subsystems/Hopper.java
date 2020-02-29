@@ -121,10 +121,10 @@ public class Hopper extends Subsystem {
 	private void resetMidEncoder() {
 		middleMotor.setSelectedSensorPosition(0);
 	}
-	private static boolean isEntrySensorTrippedAvg() {
+	public static boolean isEntrySensorTrippedAvg() {
 		return entrySensorAverage.getBooleanOutput();
 	}
-	private static boolean isEndSensorTripped() {
+	public static boolean isEndSensorTripped() {
 		return endSensor.get();
 	}
 	
@@ -164,18 +164,18 @@ public class Hopper extends Subsystem {
 	public void init() {
 		startMotor = new VictorSPX(Ports.HOPPER_START_MOTOR);
 		startMotor.configFactoryDefault();
-		startMotor.setInverted(true);
+		startMotor.setInverted(Constants.COMP_BOT ? false : true);
 
 		feederMotor = new VictorSPX(Ports.HOPPER_FEEDER_MOTOR);
 		feederMotor.configFactoryDefault();
-		feederMotor.setInverted(true);
+		feederMotor.setInverted(Constants.COMP_BOT ? false : true);
 		
 		middleMotor = new TalonFX(Ports.HOPPER_MIDDLE_MOTOR);
 		middleMotor.configFactoryDefault();
 		middleMotor.setInverted(true);
 
-		entrySensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_START, true);
-		endSensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_END, true);
+		entrySensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_START, Constants.COMP_BOT ? false : true);
+		endSensor = new Sensor(PortType.ANALOG, Ports.HOPPER_SENSOR_END, Constants.COMP_BOT ? false : true);
 		
 		entrySensorLatch = new LatchedBoolean(LatchedBooleanMode.RISING);
 		isFullAverage = new MovingAverage(200, 0);

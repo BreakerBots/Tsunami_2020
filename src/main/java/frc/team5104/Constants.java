@@ -58,7 +58,7 @@ public class Constants {
 	//Hopper
 	public static final double HOPPER_START_INTAKE_SPEED = 7;
 	public static final double HOPPER_START_INDEX_SPEED = 0.5;
-	public static double HOPPER_INDEX_BALL_SIZE = 2;
+	public static double HOPPER_INDEX_BALL_SIZE = Constants.COMP_BOT ? 2.5 : 2;
 	public static double HOPPER_INDEX_TOL = 0.05;
 	public static final double HOPPER_INDEX_TICKS_PER_REV = 2048 * (70.0/12.0);
 	public static double HOPPER_INDEX_KP = 14;

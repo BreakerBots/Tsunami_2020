@@ -14,6 +14,7 @@ import frc.team5104.Superstructure.Mode;
 import frc.team5104.Superstructure.PanelState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.util.ColorSensor;
+import frc.team5104.util.console;
 import frc.team5104.util.ColorSensor.PanelColor;
 import frc.team5104.util.managers.Subsystem;
 
@@ -39,6 +40,7 @@ public class Paneler extends Subsystem {
 			else if (Superstructure.getMode() == Mode.PANELING) {
 				//rotation
 				if (Superstructure.getPanelState() == PanelState.ROTATION) {
+					console.log(motor.getSelectedSensorPosition());
 					if (getPanelRotations() >= 4) {
 						complete = true;
 					} 
@@ -106,6 +108,7 @@ public class Paneler extends Subsystem {
 		motor = new TalonSRX(Ports.PANELER_MOTOR);
 		motor.configOpenloopRamp(0.25);
 		motor.configFactoryDefault();
+		motor.setInverted(Constants.COMP_BOT ? true : false);
 		resetEncoder();
 	}
 
