@@ -28,7 +28,7 @@ public class Robot extends RobotController.BreakerRobot {
 		
 		//Managers
 		SubsystemManager.useSubsystems(
-			new Drive(),
+//			new Drive(),
 //			new Climber()
 			new Intake(),
 //			new Turret(),
@@ -96,6 +96,7 @@ public class Robot extends RobotController.BreakerRobot {
 		Superstructure.update();
 		SubsystemManager.update();
 		XboxController.update();
+		
 		
 		if (RobotState.isDisabled()) {
 			Drive.resetEncoders();
