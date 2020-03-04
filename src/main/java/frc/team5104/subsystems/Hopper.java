@@ -34,9 +34,7 @@ public class Hopper extends Subsystem {
 	public void update() {
 //		middleMotor.set(TalonFXControlMode.MusicTone, Math.random() * 400);
 		//Force Stopped
-		if (Superstructure.getMode() == Mode.CLIMBING ||
-			Superstructure.getMode() == Mode.PANEL_DEPLOYING ||
-			Superstructure.getMode() == Mode.PANELING ||
+		if (Superstructure.isClimbing() || Superstructure.isPaneling() ||
 			Superstructure.getSystemState() == SystemState.DISABLED) {
 			stopAll();
 		}

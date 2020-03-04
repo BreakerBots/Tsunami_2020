@@ -91,9 +91,19 @@ public class SuperstructureController extends TeleopController {
 		}
 
 		// Climb
-		if (Controls.CLIMBER_DEPLOY.get() && Superstructure.getMode() == Mode.IDLE) {
-			Superstructure.setMode(Mode.CLIMBING);
-			console.log(c.SUPERSTRUCTURE, "deploying climber!!!!");
+		if (Controls.CLIMBER_DEPLOY.get()) {
+			if (Superstructure.getMode() == Mode.CLIMBING) {
+				Superstructure.setMode(Mode.IDLE);
+				console.log(c.SUPERSTRUCTURE, "stopping climb... idling");
+			}
+			else if (Superstructure.getMode() == Mode.CLIMBER_DEPLOYING) {
+				Superstructure.setMode(Mode.CLIMBING);
+				console.log(c.SUPERSTRUCTURE, "climbing!");
+			}
+			else {
+				Superstructure.setMode(Mode.CLIMBER_DEPLOYING);
+				console.log(c.SUPERSTRUCTURE, "deploying climber!!!!");
+			}
 		}
 		Climber.climberManual = Controls.CLIMBER_WINCH.get() + Controls.CLIMBER_WINCH_OP.get();
 	}

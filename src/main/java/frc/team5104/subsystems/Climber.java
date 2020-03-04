@@ -5,6 +5,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonFX;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import edu.wpi.first.wpilibj.Solenoid;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
 import frc.team5104.Superstructure.Mode;
@@ -14,26 +15,34 @@ import frc.team5104.util.managers.Subsystem;
 
 public class Climber extends Subsystem {
 	private static TalonFX motor;
-	private static DoubleSolenoid piston;
+	private static DoubleSolenoid deployerPiston;
+	private static Solenoid brakePiston;
 	
 	public static double climberManual = 0.0;
 	
 	//Loop
 	public void update() {
-		if (Superstructure.getSystemState() == SystemState.AUTOMATIC ||
-			Superstructure.getSystemState() == SystemState.MANUAL) {
-			setPiston(Superstructure.getMode() == Mode.CLIMBING);
+//		motor.set(TalonFXControlMode.MusicTone, Math.random() * 400);
+		if ((Superstructure.getSystemState() == SystemState.AUTOMATIC ||
+			Superstructure.getSystemState() == SystemState.MANUAL) && 
+			Superstructure.isClimbing()) {
+			setBrake(false);
+			setDeployerPiston(Superstructure.getMode() == Mode.CLIMBER_DEPLOYING);
 			setPercentOutput(climberManual);
 		}
 		else {
-			setPiston(false);
+			setBrake(true);
+			setDeployerPiston(false);
 			stop();
 		}	
 	}
 
 	//Internal Functions
-	private void setPiston(boolean up) {
-		piston.set(up ? Value.kForward: Value.kReverse);
+	private void setBrake(boolean braked) {
+		brakePiston.set(braked);
+	}
+	private void setDeployerPiston(boolean up) {
+		deployerPiston.set(up ? Value.kForward: Value.kReverse);
 	}
 	private void setPercentOutput(double percent) {
 		motor.set(ControlMode.PercentOutput, BreakerMath.clamp(percent, 0, 1));
@@ -44,8 +53,8 @@ public class Climber extends Subsystem {
 
 	//Config
 	public void init() {
-		piston = new DoubleSolenoid(Ports.CLIMBER_DEPLOYER_FORWARD, Ports.CLIMBER_DEPLOYER_REVERSE);
-		
+		deployerPiston = new DoubleSolenoid(Ports.CLIMBER_DEPLOYER_FORWARD, Ports.CLIMBER_DEPLOYER_REVERSE);
+		brakePiston = new Solenoid(Ports.CLIMBER_BRAKE);
 		motor = new TalonFX(Ports.CLIMBER_MOTOR);
 		motor.configFactoryDefault();
 	}

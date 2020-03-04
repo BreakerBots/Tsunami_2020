@@ -33,12 +33,12 @@ public class Constants {
 	public static final boolean FLYWHEEL_OPEN_LOOP = false;
 	public static final double FLYWHEEL_RAMP_RATE_UP = 0.7;
 	public static final double FLYWHEEL_RAMP_RATE_DOWN = 3;
-	public static final double FLYWHEEL_RPM_TOL = 500;
+	public static final double FLYWHEEL_RPM_TOL = 2000;
 	public static final double FLYWHEEL_TICKS_PER_REV = 2048.0 * (24.0 / 44.0);
-	public static double FLYWHEEL_KP = 4;
-	public static double FLYWHEEL_KD = 0.4;
-	public static final double FLYWHEEL_KS = 0.229;
-	public static final double FLYWHEEL_KV = 0.115;
+	public static double FLYWHEEL_KP = 1;//4;
+	public static double FLYWHEEL_KD = 0.2;//0.4;
+	public static final double FLYWHEEL_KS = 0.261;
+	public static final double FLYWHEEL_KV = 0.111;
 	
 	//Panelers
 	public static final double ROTATION_MOTOR_SPEED = 1.0;
@@ -65,7 +65,7 @@ public class Constants {
 	public static double HOPPER_INDEX_KI = 0.5;
 	public static double HOPPER_INDEX_KD = 0.2;
 	public static final double HOPPER_INDEX_KS = 0.42;
-	public static final double HOPPER_FEED_SPEED = 10;
+	public static final double HOPPER_FEED_SPEED = 5;
 	
 	//Intake
 	public static final double INTAKE_SPEED = 1.0;

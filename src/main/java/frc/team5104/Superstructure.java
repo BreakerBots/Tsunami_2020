@@ -26,7 +26,7 @@ public class Superstructure {
 	public static enum Mode {
 		IDLE,
 		INTAKE, AIMING, SHOOTING,
-		CLIMBING,
+		CLIMBER_DEPLOYING, CLIMBING,
 		PANEL_DEPLOYING, PANELING
 	}
 	public static enum PanelState { ROTATION, POSITION };
@@ -60,6 +60,8 @@ public class Superstructure {
 	public static FlywheelState getFlywheelState() { return shooterWheelState; }
 	public static void setTarget(Target target) { Superstructure.target = target; }
 	public static Target getTarget() { return target; }
+	public static boolean isClimbing() { return getMode() == Mode.CLIMBER_DEPLOYING || getMode() == Mode.CLIMBING; }
+	public static boolean isPaneling() { return getMode() == Mode.PANEL_DEPLOYING || getMode() == Mode.PANELING; }
 	
 	//Loop
 	protected static void update() {

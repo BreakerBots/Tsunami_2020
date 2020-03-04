@@ -31,10 +31,10 @@ public class Robot extends RobotController.BreakerRobot {
 			new Drive(),
 //			new Climber()
 			new Intake(),
-			new Turret(),
-			new Flywheel(),
-			new Hopper(),
-			new Hood()
+//			new Turret(),
+//			new Flywheel(),
+			new Hopper()
+//			new Hood()
 //			new Paneler()
 		);
 		TeleopControllerManager.useTeleopControllers(

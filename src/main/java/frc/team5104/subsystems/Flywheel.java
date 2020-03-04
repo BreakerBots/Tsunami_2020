@@ -18,7 +18,7 @@ public class Flywheel extends Subsystem {
 	private static TalonFX motor1, motor2;
 	private static MovingAverage avgRPMS;
 	private static VelocityController controller;
-	private static final double targetRPMS = 9000;
+	private static final double targetRPMS = 8000;
 	
 	//Loop
 	public void update() {
@@ -27,7 +27,7 @@ public class Flywheel extends Subsystem {
 			Superstructure.getFlywheelState() == FlywheelState.SPINNING) {
 			setRampRate(Constants.FLYWHEEL_RAMP_RATE_UP);
 			if (Constants.FLYWHEEL_OPEN_LOOP)
-				setPercentOutput(1);
+				setPercentOutput(0.8);
 			else setSpeed(targetRPMS);
 		}
 		else {
