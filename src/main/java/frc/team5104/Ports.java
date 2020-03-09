@@ -36,7 +36,8 @@ public class Ports {
 	public static final int CLIMBER_MOTOR = 23;
 	public static final int CLIMBER_DEPLOYER_FORWARD = 0;
 	public static final int CLIMBER_DEPLOYER_REVERSE = 1;
-	public static final int CLIMBER_BRAKE = 4;
+	public static final int CLIMBER_BRAKE_FORWARD = 6;
+	public static final int CLIMBER_BRAKE_REVERSE = 7;
 	
 	//Paneler
 	public static final int PANELER_MOTOR = 26;

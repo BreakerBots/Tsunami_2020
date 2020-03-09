@@ -92,6 +92,7 @@ public class Hopper extends Subsystem {
 		Constants.HOPPER_INDEX_KI = Tuner.getTunerInputDouble("Hopper Index KI", Constants.HOPPER_INDEX_KI);
 		Constants.HOPPER_INDEX_KD = Tuner.getTunerInputDouble("Hopper Index KD", Constants.HOPPER_INDEX_KD);
 		Constants.HOPPER_INDEX_TOL = Tuner.getTunerInputDouble("Hopper Mid Tol", Constants.HOPPER_INDEX_TOL);
+		Constants.HOPPER_FEED_SPEED = Tuner.getTunerInputDouble("Hopper Feed Speed", Constants.HOPPER_FEED_SPEED);
 		Tuner.setTunerOutput("Hopper Target", targetMidPosition);
 		Tuner.setTunerOutput("Hopper Position", getMidPosition());
 		Tuner.setTunerOutput("Hopper Output", middleMotor.getMotorOutputVoltage());

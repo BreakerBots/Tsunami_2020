@@ -66,7 +66,7 @@ public class Webapp {
 			
 			return true;
 		} catch (Exception e) { 
-			console.error(c.WEBAPP, e);  
+			console.error(c.WEBAPP, e);
 			return false;
 		}
 	}

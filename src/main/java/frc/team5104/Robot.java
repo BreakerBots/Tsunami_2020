@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.RobotState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.auto.AutoManager;
 import frc.team5104.auto.Odometry;
-import frc.team5104.auto.paths.EightBall_Left;
+import frc.team5104.auto.paths.SixBall_Right;
 import frc.team5104.subsystems.*;
 import frc.team5104.teleop.CompressorController;
 import frc.team5104.teleop.DriveController;
@@ -28,13 +28,13 @@ public class Robot extends RobotController.BreakerRobot {
 		
 		//Managers
 		SubsystemManager.useSubsystems(
-//			new Drive(),
-//			new Climber()
+			new Drive(),
 			new Intake(),
-//			new Turret(),
-//			new Flywheel(),
-			new Hopper()
-//			new Hood()
+			new Turret(),
+			new Flywheel(),
+			new Hopper(),
+			new Hood()
+//			new Climber(),
 //			new Paneler()
 		);
 		TeleopControllerManager.useTeleopControllers(
@@ -49,8 +49,8 @@ public class Robot extends RobotController.BreakerRobot {
 		Odometry.init();
 		Limelight.init();
 		CompressorController.stop();
-		AutoManager.setTargetPath(new EightBall_Left());
-		SubsystemManager.debug(Hood.class, Flywheel.class);
+		AutoManager.setTargetPath(new SixBall_Right());
+		SubsystemManager.debug(Turret.class, Hood.class);
 	}
 	
 	//Teleop 
@@ -96,7 +96,6 @@ public class Robot extends RobotController.BreakerRobot {
 		Superstructure.update();
 		SubsystemManager.update();
 		XboxController.update();
-		
 		
 		if (RobotState.isDisabled()) {
 			Drive.resetEncoders();

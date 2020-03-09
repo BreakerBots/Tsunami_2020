@@ -77,13 +77,13 @@ public class Drive extends Subsystem {
 	public static double getRightGearboxVoltage() { return falconR1.getBusVoltage(); }
 	public static double getLeftGearboxOutputVoltage() { return falconL1.getMotorOutputVoltage(); }
 	public static double getRightGearboxOutputVoltage() { return falconR1.getMotorOutputVoltage(); }
-	public static void resetGyro() { 
+	public static void resetGyro() {
 		if (gyro != null)
 			gyro.setFusedHeading(0);
 	}
 	public static double getGyro() {
 		if (gyro != null)
-			return gyro.getFusedHeading();
+			return gyro.getFusedHeading() * (Constants.COMP_BOT ? 1 : 1);
 		else return 0;
 	}
 	public static void resetEncoders() {

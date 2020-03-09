@@ -96,7 +96,7 @@ public class Superstructure {
 		if (turretOnTarget.get(Turret.onTarget()) && getMode() == Mode.AIMING)
 			console.log(c.TURRET, "on target");
 		readyToFire.update(getMode() == Mode.AIMING && Flywheel.isAvgSpedUp() && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget());
-		if (getMode() == Mode.AIMING) { //readyToFire.getBooleanOutput()) {
+		if (getMode() == Mode.AIMING && readyToFire.getBooleanOutput()) {
 			setMode(Mode.SHOOTING);
 			console.log(c.SUPERSTRUCTURE, "finished aiming... shooting");
 		}

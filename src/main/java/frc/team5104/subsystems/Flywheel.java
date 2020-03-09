@@ -18,7 +18,7 @@ public class Flywheel extends Subsystem {
 	private static TalonFX motor1, motor2;
 	private static MovingAverage avgRPMS;
 	private static VelocityController controller;
-	private static final double targetRPMS = 8000;
+	//private static final double targetRPMS = 11000;
 	
 	//Loop
 	public void update() {
@@ -27,12 +27,14 @@ public class Flywheel extends Subsystem {
 			Superstructure.getFlywheelState() == FlywheelState.SPINNING) {
 			setRampRate(Constants.FLYWHEEL_RAMP_RATE_UP);
 			if (Constants.FLYWHEEL_OPEN_LOOP)
-				setPercentOutput(0.8);
-			else setSpeed(targetRPMS);
+				setPercentOutput(1.0);
+			else setSpeed(getTargetRPMS());
 		}
 		else {
 			setRampRate(Constants.FLYWHEEL_RAMP_RATE_DOWN);
 			stop();
+			//motor1.set(TalonFXControlMode.MusicTone, Math.random() * 400);
+			//motor2.set(TalonFXControlMode.MusicTone, Math.random() * 400);
 		}
 		
 		avgRPMS.update(getRPMS());
@@ -46,12 +48,14 @@ public class Flywheel extends Subsystem {
 		Tuner.setTunerOutput("Flywheel PID", controller.getLastPIDOutput());
 		Tuner.setTunerOutput("Flywheel Out", controller.getLastOutput());
 		Tuner.setTunerOutput("Flywheel Sped Up", isSpedUp());
+		Tuner.setTunerOutput("Flywheel Avg Sped Up", isAvgSpedUp());
 		Tuner.setTunerOutput("Flywheel Current 1", motor1.getSupplyCurrent());
 		Tuner.setTunerOutput("Flywheel Current 2", motor2.getSupplyCurrent());
 		Tuner.setTunerOutput("Flywheel Voltage 1", motor1.getMotorOutputVoltage());
 		Tuner.setTunerOutput("Flywheel Voltage 2", motor2.getMotorOutputVoltage());
 		Constants.FLYWHEEL_KP = Tuner.getTunerInputDouble("Flywheel KP", Constants.FLYWHEEL_KP);
 		Constants.FLYWHEEL_KD = Tuner.getTunerInputDouble("Flywheel KD", Constants.FLYWHEEL_KD);
+		Constants.FLYWHEEL_RPM_TOL = Tuner.getTunerInputDouble("Flywheel Tol", Constants.FLYWHEEL_RPM_TOL);
 		controller.setPID(Constants.FLYWHEEL_KP, 0, Constants.FLYWHEEL_KD);
 	}
 	
@@ -86,17 +90,22 @@ public class Flywheel extends Subsystem {
 			return 0;
 		return avgRPMS.getDoubleOutput();
 	}
+	public static double getTargetRPMS() {
+		if (Hood.isTrenchMode())
+			return 11000;
+		else return 9000;
+	}
 	public static boolean isSpedUp() {
 		if (motor1 == null)
 			return true;
 		return BreakerMath.roughlyEquals(
-				getRPMS(), targetRPMS, Constants.FLYWHEEL_RPM_TOL);
+				getRPMS(), getTargetRPMS(), Constants.FLYWHEEL_RPM_TOL);
 	}
 	public static boolean isAvgSpedUp() {
 		if (motor1 == null)
 			return true;
 		return BreakerMath.roughlyEquals(
-				getAvgRPMS(), targetRPMS, Constants.FLYWHEEL_RPM_TOL);
+				getAvgRPMS(), getTargetRPMS(), Constants.FLYWHEEL_RPM_TOL);
 	}
 	
 	//Config

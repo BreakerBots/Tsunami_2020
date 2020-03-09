@@ -23,6 +23,7 @@ public class Paneler extends Subsystem {
 	private static TalonSRX motor;
 	private static DoubleSolenoid piston;
 	private static boolean complete;
+	private static int end;
 	
 	//Loop
 	public void update() {
@@ -31,6 +32,7 @@ public class Paneler extends Subsystem {
 			//deploying
 			if (Superstructure.getMode() == Mode.PANEL_DEPLOYING) {
 				complete = false;
+				end = 0;
 				setPiston(true);
 				stop();
 				resetEncoder();
@@ -40,17 +42,26 @@ public class Paneler extends Subsystem {
 			else if (Superstructure.getMode() == Mode.PANELING) {
 				//rotation
 				if (Superstructure.getPanelState() == PanelState.ROTATION) {
-					console.log(motor.getSelectedSensorPosition());
-					if (getPanelRotations() >= 4) {
+					console.log(getPanelRotations());
+					if (getPanelRotations() >= Constants.PANELER_ROTATIONS && end < Constants.PANELER_BRAKE_INT) {
+						setPercentOutput(0);
+						end++;
+					} else if (getPanelRotations() >= Constants.PANELER_ROTATIONS) {
 						complete = true;
+						end = 0;
 					} 
 					else setPercentOutput(Constants.PANELER_ROT_SPEED);
 				}
 		
 				//position
 				else {
-					if (readFMS().length() > 0 && PanelColor.fromChar(readFMS().charAt(0)) == readColor()) {
+					if (readFMS().length() > 0 && PanelColor.fromChar(readFMS().charAt(0)) == readColor() 
+							&& end < Constants.PANELER_BRAKE_INT) {
+						setPercentOutput(0);
+						end++;
+					} else if (readFMS().length() > 0 && PanelColor.fromChar(readFMS().charAt(0)) == readColor()) {
 						complete = true;
+						end = 0;
 					}
 					else setPercentOutput(Constants.PANELER_POS_SPEED);
 				}
@@ -109,6 +120,8 @@ public class Paneler extends Subsystem {
 		motor.configOpenloopRamp(0.25);
 		motor.configFactoryDefault();
 		motor.setInverted(Constants.COMP_BOT ? true : false);
+		motor.setSensorPhase(Constants.COMP_BOT ? true : false);
+		motor.configNeutralDeadband(0);
 		resetEncoder();
 	}
 

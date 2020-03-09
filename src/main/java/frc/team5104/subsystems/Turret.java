@@ -24,7 +24,7 @@ import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
 	private static TalonFX motor;
-	private static double fieldOrientedOffset = 120;
+	private static double fieldOrientedOffset = 0;
 	private static PositionController controller;
 	private static LatencyCompensator compensator;
 	private static MovingAverage outputAverage;
@@ -54,13 +54,13 @@ public class Turret extends Subsystem {
 			}
 
 			//Field Oriented Mode
-			else setAngle(BreakerMath.boundDegrees360(Drive.getGyro() + fieldOrientedOffset));
+			else setAngle(BreakerMath.boundDegrees180(Drive.getGyro() + fieldOrientedOffset));
 		}
 		
 		//Disabled
 		else {
 			stop();
-			targetAngle = BreakerMath.boundDegrees360(Drive.getGyro() + fieldOrientedOffset);
+			targetAngle = BreakerMath.boundDegrees180(Drive.getGyro() + fieldOrientedOffset);
 			controller.calculate(getAngle(), targetAngle);
 		}
 	}
@@ -76,7 +76,7 @@ public class Turret extends Subsystem {
 		
 		//Zero Encoder
 		if (leftLimitHit()) {
-			resetEncoder(250);
+			resetEncoder(Constants.TURRET_ZERO);
 			enableSoftLimits(true);
 		}
 	}
@@ -95,7 +95,7 @@ public class Turret extends Subsystem {
 
 	//Internal Functions
 	private void setAngle(double angle) {
-		targetAngle = BreakerMath.clamp(angle, 0, 240);
+		targetAngle = BreakerMath.clamp(angle, -260, 260);
 		outputAverage.update(controller.calculate(getAngle(), targetAngle));
 		setVoltage(outputAverage.getDoubleOutput());
 	}
@@ -125,6 +125,8 @@ public class Turret extends Subsystem {
 	}
 	public static boolean leftLimitHit() {
 		if (motor == null) return true;
+		else if (Constants.COMP_BOT)
+			return motor.isFwdLimitSwitchClosed() == 1;
 		return motor.isRevLimitSwitchClosed() == 1;
 	}
 	public static boolean onTarget() {
@@ -139,10 +141,10 @@ public class Turret extends Subsystem {
 	public void init() {
 		motor = new TalonFX(Ports.TURRET_MOTOR);
 		motor.configFactoryDefault();
-		motor.setInverted(true);
+		motor.setInverted(Constants.COMP_BOT ? false : true);
 		
-		motor.configForwardSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (230.0 / 360.0)));
-		motor.configReverseSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (0.0 / 360.0)));
+		motor.configForwardSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (Constants.TURRET_SOFT_LEFT / 360.0)));
+		motor.configReverseSoftLimitThreshold((int) (Constants.TURRET_TICKS_PER_REV * (Constants.TURRET_SOFT_RIGHT / 360.0)));
 		enableSoftLimits(false);
 		motor.configReverseLimitSwitchSource(LimitSwitchSource.Deactivated, LimitSwitchNormal.Disabled);
 		

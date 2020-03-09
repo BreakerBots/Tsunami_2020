@@ -3,6 +3,7 @@ package frc.team5104.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.VictorSPX;
 
+import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.Superstructure;
@@ -12,7 +13,7 @@ import frc.team5104.util.managers.Subsystem;
 
 public class Intake extends Subsystem {
 	private static VictorSPX motor;
-//	private static DoubleSolenoid piston;
+	private static DoubleSolenoid piston;
 	
 	//Loop
 	public void update() {
@@ -32,8 +33,8 @@ public class Intake extends Subsystem {
 
 	//Internal Functions
 	public void setPiston(boolean position) {
-//		piston.set(position ? Value.kReverse : Value.kForward);
-//		console.log(piston.get());
+		if (Constants.COMP_BOT)
+			piston.set(position ? DoubleSolenoid.Value.kReverse : DoubleSolenoid.Value.kForward);
 	}
 	public void setPercentOutput(double percent) {
 		motor.set(ControlMode.PercentOutput, percent);
@@ -45,8 +46,9 @@ public class Intake extends Subsystem {
 
 	//Config
 	public void init() {
-//		piston = new DoubleSolenoid(Ports.INTAKE_DEPLOYER_FORWARD, Ports.INTAKE_DEPLOYER_REVERSE);
-		
+		if (Constants.COMP_BOT)
+			piston = new DoubleSolenoid(Ports.INTAKE_DEPLOYER_FORWARD, Ports.INTAKE_DEPLOYER_REVERSE);
+			
 		motor = new VictorSPX(Ports.INTAKE_MOTOR);
 		motor.configFactoryDefault();
 		motor.setInverted(true);
