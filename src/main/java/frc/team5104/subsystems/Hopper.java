@@ -32,7 +32,12 @@ public class Hopper extends Subsystem {
 	
 	//Loop
 	public void update() {
-//		middleMotor.set(TalonFXControlMode.MusicTone, Math.random() * 400);
+		//Competition Debugging
+		if (Constants.AT_COMP) {
+			Tuner.setTunerOutput("Hopper Mid Output", middleMotor.getMotorOutputPercent());
+			Constants.HOPPER_INDEX_BALL_SIZE = Tuner.getTunerInputDouble("Hopper Mid Ball Size", Constants.HOPPER_INDEX_BALL_SIZE);
+		}
+		
 		//Force Stopped
 		if (Superstructure.isClimbing() || Superstructure.isPaneling() ||
 			Superstructure.getSystemState() == SystemState.DISABLED) {
@@ -87,7 +92,7 @@ public class Hopper extends Subsystem {
 	
 	//Debugging
 	public void debug() {
-		Constants.HOPPER_INDEX_BALL_SIZE = Tuner.getTunerInputDouble("Hopper Mid Ball Size", Constants.HOPPER_INDEX_BALL_SIZE);
+		//Constants.HOPPER_INDEX_BALL_SIZE = Tuner.getTunerInputDouble("Hopper Mid Ball Size", Constants.HOPPER_INDEX_BALL_SIZE);
 		Constants.HOPPER_INDEX_KP = Tuner.getTunerInputDouble("Hopper Index KP", Constants.HOPPER_INDEX_KP);
 		Constants.HOPPER_INDEX_KI = Tuner.getTunerInputDouble("Hopper Index KI", Constants.HOPPER_INDEX_KI);
 		Constants.HOPPER_INDEX_KD = Tuner.getTunerInputDouble("Hopper Index KD", Constants.HOPPER_INDEX_KD);

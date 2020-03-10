@@ -18,7 +18,6 @@ public class Flywheel extends Subsystem {
 	private static TalonFX motor1, motor2;
 	private static MovingAverage avgRPMS;
 	private static VelocityController controller;
-	//private static final double targetRPMS = 11000;
 	
 	//Loop
 	public void update() {
@@ -33,8 +32,6 @@ public class Flywheel extends Subsystem {
 		else {
 			setRampRate(Constants.FLYWHEEL_RAMP_RATE_DOWN);
 			stop();
-			//motor1.set(TalonFXControlMode.MusicTone, Math.random() * 400);
-			//motor2.set(TalonFXControlMode.MusicTone, Math.random() * 400);
 		}
 		
 		avgRPMS.update(getRPMS());
@@ -47,8 +44,7 @@ public class Flywheel extends Subsystem {
 		Tuner.setTunerOutput("Flywheel FF", controller.getLastFFOutput());
 		Tuner.setTunerOutput("Flywheel PID", controller.getLastPIDOutput());
 		Tuner.setTunerOutput("Flywheel Out", controller.getLastOutput());
-		Tuner.setTunerOutput("Flywheel Sped Up", isSpedUp());
-		Tuner.setTunerOutput("Flywheel Avg Sped Up", isAvgSpedUp());
+		Tuner.setTunerOutput("Flywheel Avg Sped Up", isSpedUp());
 		Tuner.setTunerOutput("Flywheel Current 1", motor1.getSupplyCurrent());
 		Tuner.setTunerOutput("Flywheel Current 2", motor2.getSupplyCurrent());
 		Tuner.setTunerOutput("Flywheel Voltage 1", motor1.getMotorOutputVoltage());
@@ -99,13 +95,8 @@ public class Flywheel extends Subsystem {
 		if (motor1 == null)
 			return true;
 		return BreakerMath.roughlyEquals(
-				getRPMS(), getTargetRPMS(), Constants.FLYWHEEL_RPM_TOL);
-	}
-	public static boolean isAvgSpedUp() {
-		if (motor1 == null)
-			return true;
-		return BreakerMath.roughlyEquals(
-				getAvgRPMS(), getTargetRPMS(), Constants.FLYWHEEL_RPM_TOL);
+				getAvgRPMS(), getTargetRPMS(), 
+				Constants.FLYWHEEL_RPM_TOL * Constants.SUPERSTRUCTURE_TOL_SCALAR);
 	}
 	
 	//Config

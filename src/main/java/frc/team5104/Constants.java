@@ -8,11 +8,12 @@ public class Constants {
 	public static final boolean OVERWRITE_NON_MATCH_LOGS = true;
 	public static final boolean OVERWRITE_MATCH_LOGS = false;
 	public static final int MAIN_LOOP_SPEED = 50;
-	public static final boolean AT_COMPETITION = false;
+	public static final boolean AT_COMP = true;
 	public static final String ROBOT_NAME = Filer.readFile(Filer.HOME_PATH + "robot.txt");
 	public static final boolean COMP_BOT = ROBOT_NAME.contains("Tsunami");
 	public static final double LIMELIGHT_ANGLE = 50.0;
 	public static final boolean LIMELIGHT_DEFAULT_OFF = true;
+	public static double SUPERSTRUCTURE_TOL_SCALAR = 1;
 	
 	//Drive
 	public static final double DRIVE_WHEEL_DIAMETER = 0.5; //ft
@@ -42,6 +43,7 @@ public class Constants {
 	
 	//Hood
 	public static final double HOOD_TOL = 3;
+	public static double HOOD_EQ_CONST = 0;
 	public static final double HOOD_CALIBRATE_SPEED = 0.4;
 	public static final double HOOD_TICKS_PER_REV = 4096.0 * (20.0 / 18.0) * (360.0 / 18.0);
 	public static double HOOD_KD = 0.0;
@@ -54,7 +56,7 @@ public class Constants {
 	//Hopper
 	public static final double HOPPER_START_INTAKE_SPEED = 7;
 	public static final double HOPPER_START_INDEX_SPEED = 0.5;
-	public static double HOPPER_INDEX_BALL_SIZE = Constants.COMP_BOT ? 2.1 : 2;
+	public static double HOPPER_INDEX_BALL_SIZE = Constants.COMP_BOT ? 2 : 2;
 	public static double HOPPER_INDEX_TOL = 0.05;
 	public static final double HOPPER_INDEX_TICKS_PER_REV = 2048 * (70.0/12.0);
 	public static double HOPPER_INDEX_KP = 14;

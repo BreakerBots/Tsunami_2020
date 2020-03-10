@@ -12,6 +12,7 @@ import frc.team5104.util.LatchedBoolean.LatchedBooleanMode;
 import frc.team5104.util.Limelight;
 import frc.team5104.util.Limelight.LEDMode;
 import frc.team5104.util.MovingAverage;
+import frc.team5104.util.Tuner;
 import frc.team5104.util.console;
 import frc.team5104.util.console.c;
 
@@ -65,6 +66,11 @@ public class Superstructure {
 	
 	//Loop
 	protected static void update() {
+		//Competition Debugging
+		if (Constants.AT_COMP) {
+			Constants.SUPERSTRUCTURE_TOL_SCALAR = Tuner.getTunerInputDouble("Superstructure Tolerance Scalar", Constants.SUPERSTRUCTURE_TOL_SCALAR);
+		}
+		
 		//Set Disabled
 		if (RobotState.isDisabled())
 			Superstructure.setSystemState(SystemState.DISABLED);
@@ -89,13 +95,13 @@ public class Superstructure {
 		}
 		
 		//Start Shooting after done Aiming
-		if (flywheelOnTarget.get(Flywheel.isAvgSpedUp()) && getMode() == Mode.AIMING)
+		if (flywheelOnTarget.get(Flywheel.isSpedUp()) && getMode() == Mode.AIMING)
 			console.log(c.FLYWHEEL, "sped up");
 		if (hoodOnTarget.get(Hood.onTarget()) && getMode() == Mode.AIMING)
 			console.log(c.HOOD, "on target");
 		if (turretOnTarget.get(Turret.onTarget()) && getMode() == Mode.AIMING)
 			console.log(c.TURRET, "on target");
-		readyToFire.update(getMode() == Mode.AIMING && Flywheel.isAvgSpedUp() && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget());
+		readyToFire.update(getMode() == Mode.AIMING && Flywheel.isSpedUp() && Turret.onTarget() && Hood.onTarget() && Limelight.hasTarget());
 		if (getMode() == Mode.AIMING && readyToFire.getBooleanOutput()) {
 			setMode(Mode.SHOOTING);
 			console.log(c.SUPERSTRUCTURE, "finished aiming... shooting");

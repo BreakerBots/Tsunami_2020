@@ -9,6 +9,7 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import frc.team5104.Constants;
 import frc.team5104.Ports;
 import frc.team5104.util.DriveSignal;
+import frc.team5104.util.Tuner;
 import frc.team5104.util.DriveEncoder;
 import frc.team5104.util.managers.Subsystem;
 
@@ -20,8 +21,12 @@ public class Drive extends Subsystem {
 	//Update
 	private static DriveSignal currentDriveSignal = new DriveSignal();
 	public void update() {
-//		falconL1.set(TalonFXControlMode.MusicTone, Math.random() * 400);
-//		falconR1.set(TalonFXControlMode.MusicTone, Math.random() * 400);
+		//Competition Debugging
+		if (Constants.AT_COMP) {
+			Tuner.setTunerOutput("Drive Left Side", currentDriveSignal.leftSpeed);
+			Tuner.setTunerOutput("Drive Right Side", currentDriveSignal.rightSpeed);
+		}
+			
 		switch (currentDriveSignal.unit) {
 			case PERCENT_OUTPUT: {
 				setMotors(

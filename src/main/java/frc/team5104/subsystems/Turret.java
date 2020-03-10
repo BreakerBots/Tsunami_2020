@@ -33,14 +33,20 @@ public class Turret extends Subsystem {
 	
 	//Loop
 	public void update() {
+		//Competition Debugging
+		if (Constants.AT_COMP) {
+			Tuner.setTunerOutput("Turret Output", motor.getMotorOutputPercent());
+			Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
+			Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
+			controller.setPID(Constants.TURRET_KP, 0, Constants.TURRET_KD);
+		}
+		
 		//Automatic
 		if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			//Calibrating
 			if (isCalibrating()) {
 				enableSoftLimits(false);
 				setPercentOutput(Constants.TURRET_CALIBRATE_SPEED);
-				//if (getTimeInCalibration() < 15000)
-				//else emergencyStop();
 			}
 			
 			//Vision
@@ -88,9 +94,9 @@ public class Turret extends Subsystem {
 		Tuner.setTunerOutput("Turret Error", controller.getLastError());
 		Tuner.setTunerOutput("Turret Angle", getAngle());
 		Tuner.setTunerOutput("Turret Target Angle", targetAngle);
-		Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
-		Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
-		controller.setPID(Constants.TURRET_KP, 0, Constants.TURRET_KD);
+		//Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
+		//Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
+		//controller.setPID(Constants.TURRET_KP, 0, Constants.TURRET_KD);
 	}
 
 	//Internal Functions
@@ -131,7 +137,7 @@ public class Turret extends Subsystem {
 	}
 	public static boolean onTarget() {
 		if (motor == null) return true;
-		return Math.abs(getAngle() - targetAngle) < Constants.TURRET_VISION_TOL;
+		return Math.abs(getAngle() - targetAngle) < (Constants.TURRET_VISION_TOL * Constants.SUPERSTRUCTURE_TOL_SCALAR);
 	}
 	public static void setFieldOrientedTarget(double angle) {
 		fieldOrientedOffset = angle;
@@ -161,8 +167,8 @@ public class Turret extends Subsystem {
 		compensator = new LatencyCompensator(() -> getAngle());
 		outputAverage = new MovingAverage(4, 0);
 		
-		//Always calibrate at comp. Only calibrate once per roborio boot while not.
-		if (Constants.AT_COMPETITION || !Filer.fileExists("/tmp/turret_calibrated.txt")) {
+		//Only calibrate once per roborio boot while not.
+		if (!Filer.fileExists("/tmp/turret_calibrated.txt")) {
 			console.log(c.TURRET, "ready to calibrate!");
 			startCalibrating();
 		}

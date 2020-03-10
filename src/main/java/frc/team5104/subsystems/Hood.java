@@ -24,18 +24,21 @@ public class Hood extends Subsystem {
 	private static TalonSRX motor;
 	private static MovingAverage visionFilter;
 	private static PositionController controller;
-	@SuppressWarnings("unused")
-	private static double targetAngle = 0, tunerTargetAngle;
+	private static double targetAngle = 0;
 
 	//Loop
 	public void update() {
+		//Competition Debugging
+		if (Constants.AT_COMP) {
+			Tuner.setTunerOutput("Hood Output", motor.getMotorOutputPercent());
+			Constants.HOOD_EQ_CONST = Tuner.getTunerInputDouble("Hood Eq Const", Constants.HOOD_EQ_CONST);
+		}
+		
 		//Automatic
 		if (Superstructure.getSystemState() == SystemState.AUTOMATIC) {
 			//Calibrating
 			if (isCalibrating()) {
 				setPercentOutput(-Constants.HOOD_CALIBRATE_SPEED);
-				//if (getTimeInCalibration() > 15000)
-				//else emergencyStop();
 			}
 			
 			//Low
@@ -85,7 +88,7 @@ public class Hood extends Subsystem {
 		Tuner.setTunerOutput("Hood KP", getKP());
 		Tuner.setTunerOutput("Hood Limit", backLimitHit());
 		Constants.HOOD_KD = Tuner.getTunerInputDouble("Hood KD", Constants.HOOD_KD);
-		tunerTargetAngle = Tuner.getTunerInputDouble("Hood Target Vision Angle", 10);
+		//tunerTargetAngle = Tuner.getTunerInputDouble("Hood Target Vision Angle", 10);
 	}
 
 	//Internal Functions
@@ -123,7 +126,7 @@ public class Hood extends Subsystem {
 	}
 	public static boolean onTarget() {
 		if (motor == null) return true;
-		return Math.abs(getAngle() - getTargetVisionAngle()) < Constants.HOOD_TOL;
+		return Math.abs(getAngle() - getTargetVisionAngle()) < (Constants.HOOD_TOL * Constants.SUPERSTRUCTURE_TOL_SCALAR);
 	}
 	public static boolean isTrenchMode() {
 		return visionFilter.getDoubleOutput() < -13;
@@ -132,7 +135,7 @@ public class Hood extends Subsystem {
 		if (isTrenchMode())
 			return 7;
 		double x = visionFilter.getDoubleOutput();
-		return -0.00638178 * x * x * x - 0.297426 * x * x - 3.24309 * x + 0;//4.26498;
+		return -0.00638178 * x * x * x - 0.297426 * x * x - 3.24309 * x + Constants.HOOD_EQ_CONST;
 	}
 
 	//Config
