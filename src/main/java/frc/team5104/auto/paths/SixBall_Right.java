@@ -24,13 +24,13 @@ public class SixBall_Right extends AutoPath {
 		add(new DelayAction(500));
 		add(new ShootAction());
 		add(new IntakeAction());
-		add(new DriveTrajectoryAction(true, false,
+		add(new DriveTrajectoryAction(false, false,
 				new Position(0, 0, 0),
 				new Position(14, 0, 0)
 			));
 		add(new IdleAction());
 		add(new ChargeFlywheelAction());
-		add(new DriveTrajectoryAction(true, true,
+		add(new DriveTrajectoryAction(false, true,
 				new Position (14, 0, 0),
 				new Position (0, -3.75, 45)
 				));

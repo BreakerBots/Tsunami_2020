@@ -17,9 +17,7 @@ import frc.team5104.util.setup.RobotState.RobotMode;
 
 public class RobotController extends RobotBase {
 	//Modes
-	private RobotMode lastMode = RobotMode.DISABLED;
 	private BreakerRobot robot;
-	private RobotState state = RobotState.getInstance();
 	private final double loopPeriod = 20;
 	
 	//Init Robot
@@ -31,9 +29,7 @@ public class RobotController extends RobotBase {
 			console.error("Please deploy robot.txt with the correct robot name!");
 		console.log(c.MAIN, t.INFO, "Initializing " + Constants.ROBOT_NAME + " Code...");
 		
-		//try {
-			robot = new Robot();
-		//} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
+		robot = new Robot();
 		
 		HAL.observeUserProgramStarting();
 		
@@ -53,7 +49,7 @@ public class RobotController extends RobotBase {
 			//Wait to make loop correct time
 			try { Thread.sleep(Math.round(loopPeriod - (Timer.getFPGATimestamp() - st))); } catch (Exception e) { console.error(e); }
 			
-			state.deltaTime = Timer.getFPGATimestamp() - st;
+			RobotState.setDeltaTime(Timer.getFPGATimestamp() - st);
 		}
 	}
 	public void endCompetition() {
@@ -63,30 +59,30 @@ public class RobotController extends RobotBase {
 	//Main Loop
 	private void loop() {
 		//Disabled
-		if (isDisabled()) state.currentMode = RobotMode.DISABLED;
-		
+		if (isDisabled()) RobotState.setMode(RobotMode.DISABLED);
+
 		//Enabled - Teleop/Test/Autonomous
 		else if (isEnabled()) {
 			//Test
-			if (isTest()) state.currentMode = RobotMode.TEST;
+			if (isTest()) RobotState.setMode(RobotMode.TEST);
 			
 			//Auto
-			if (isAutonomous()) state.currentMode = RobotMode.AUTONOMOUS;
+			else if (isAutonomous()) RobotState.setMode(RobotMode.AUTONOMOUS);
 			
 			//Default to Teleop
-			else state.currentMode = RobotMode.TELEOP;
+			else RobotState.setMode(RobotMode.TELEOP);
 		}
 		
 		//Handle Main Disabling
 		try {
-			if (lastMode != state.currentMode) {
-				if (state.currentMode == RobotMode.DISABLED) {
+			if (RobotState.getLastMode() != RobotState.getMode()) {
+				if (RobotState.getMode() == RobotMode.DISABLED) {
 					console.logFile.end();
 					robot.mainStop();
-					state.timer.reset();
-					state.timer.start();
+					RobotState.resetTimer();
+					RobotState.startTimer();
 				}
-				else if (lastMode == RobotMode.DISABLED) {
+				else if (RobotState.getLastMode() == RobotMode.DISABLED) {
 					console.logFile.end();
 					console.logFile.start();
 					robot.mainStart();
@@ -100,11 +96,11 @@ public class RobotController extends RobotBase {
 		} catch (Exception e) { CrashLogger.logCrash(new Crash("main", e)); }
 		
 		//Handle Modes
-		switch(state.currentMode) {
+		switch(RobotState.getMode()) {
 			case TELEOP: {
 				try {
 					//Teleop
-					if (lastMode != state.currentMode) {
+					if (RobotState.getLastMode() != RobotState.getMode()) {
 						console.log(c.MAIN, t.INFO, "Teleop Enabled");
 						robot.teleopStart();
 					}
@@ -116,7 +112,7 @@ public class RobotController extends RobotBase {
 			case AUTONOMOUS: {
 				try {
 					//Auto
-					if (lastMode != state.currentMode) {
+					if (RobotState.getLastMode() != RobotState.getMode()) {
 						console.log(c.MAIN, t.INFO, "Auto Enabled");
 						robot.autoStart();
 					}
@@ -128,7 +124,7 @@ public class RobotController extends RobotBase {
 			case TEST: {
 				try {
 					//Test
-					if (lastMode != state.currentMode) {
+					if (RobotState.getLastMode() != RobotState.getMode()) {
 						console.log(c.MAIN, t.INFO, "Test Enabled");
 						robot.testStart();
 					}
@@ -140,8 +136,8 @@ public class RobotController extends RobotBase {
 			case DISABLED: {
 				try {
 					//Disabled
-					if (lastMode != state.currentMode) {
-						switch (lastMode) {
+					if (RobotState.getLastMode() != RobotState.getMode()) {
+						switch (RobotState.getLastMode()) {
 							case TELEOP: { 
 								robot.teleopStop(); 
 								console.log(c.MAIN, t.INFO, "Teleop Disabled"); 
@@ -167,7 +163,7 @@ public class RobotController extends RobotBase {
 			default: break;
 		}
 		
-		lastMode = state.currentMode;
+		RobotState.setLastMode(RobotState.getMode());
 	}
 	
 	//Child Class

@@ -14,14 +14,14 @@ import frc.team5104.auto.actions.ZeroTurretAction;
  * Shoots 3 balls
  * Drives forward 7 feet
  */
-public class ThreeBall_Forward extends AutoPath {
-	public ThreeBall_Forward() {
+public class ThreeBall_Reverse extends AutoPath {
+	public ThreeBall_Reverse() {
 		add(new ZeroTurretAction(0));
 		add(new DelayAction(500));
 		add(new ShootAction());
-		add(new DriveTrajectoryAction(false, true,
+		add(new DriveTrajectoryAction(false, false,
 				new Position(0, 0, 0),
-				new Position(-7, 0, 0)
+				new Position(2, 0, 0)
 			));
 		add(new DriveStopAction());
 	}

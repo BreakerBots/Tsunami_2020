@@ -12,7 +12,7 @@ public class Constants {
 	public static final String ROBOT_NAME = Filer.readFile(Filer.HOME_PATH + "robot.txt");
 	public static final boolean COMP_BOT = ROBOT_NAME.contains("Tsunami");
 	public static final double LIMELIGHT_ANGLE = 50.0;
-	public static final boolean LIMELIGHT_DEFAULT_OFF = false;
+	public static final boolean LIMELIGHT_DEFAULT_OFF = true;
 	
 	//Drive
 	public static final double DRIVE_WHEEL_DIAMETER = 0.5; //ft

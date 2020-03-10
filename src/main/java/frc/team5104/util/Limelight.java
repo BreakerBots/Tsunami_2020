@@ -3,15 +3,19 @@ package frc.team5104.util;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Notifier;
 import frc.team5104.Constants;
-import frc.team5104.util.CrashLogger.Crash;
+import frc.team5104.util.LatchedBoolean.LatchedBooleanMode;
 import frc.team5104.util.console.c;
 
 public class Limelight {
 	private static NetworkTable table;
+	private static LatchedBoolean connected = new LatchedBoolean(LatchedBooleanMode.RISING);
+	private static Notifier limelightThread;
+	
 	public static NetworkTableEntry getEntry(String key) { 
 		if (table != null)
-			return table.getEntry(key); 
+			return table.getEntry(key);
 		else return null;
 	}
 	public static void setEntry(String key, double entry) { 
@@ -37,34 +41,20 @@ public class Limelight {
 		else console.warn(c.VISION, "limelight is not connected");
 	}
 
-//	public static enum CamMode { VISION(0), DRIVE(1); int value; private CamMode(int value) { this.value = value; } }
-//	public static void setCamMode(CamMode cMode) { 
-//		if (isConnected())
-//			setEntry("camMode", cMode.value);  
-//		else console.warn(c.VISION, "limelight is not connected");
-//	}
-	
 	public static void init() {
-		Thread initLimelightThread = new Thread() {
-			public void run() {
-				while (!Thread.interrupted()) { try { 
-					table = NetworkTableInstance.getDefault().getTable("limelight");
-					if (isConnected()) {
-						if (Constants.LIMELIGHT_DEFAULT_OFF)
-							setLEDMode(LEDMode.OFF);
-						else setLEDMode(LEDMode.ON);
-						setEntry("camMode", 0);
-						setEntry("pipeline", 0);
-						setEntry("stream", 0);
-						setEntry("snapshot", 0);
-						console.log(c.VISION, "connected to limelight");
-						break;
-					}
-					else Thread.sleep(200);
-				}
-				catch (Exception e) { CrashLogger.logCrash(new Crash("Init Limelight Thread", e)); } }
+		table = NetworkTableInstance.getDefault().getTable("limelight");
+		limelightThread = new Notifier(() -> {
+			if (connected.get(isConnected())) {
+				if (Constants.LIMELIGHT_DEFAULT_OFF)
+					setLEDMode(LEDMode.OFF);
+				else setLEDMode(LEDMode.ON);
+				setEntry("camMode", 0);
+				setEntry("pipeline", 0);
+				setEntry("stream", 0);
+				setEntry("snapshot", 0);
+				console.log(c.VISION, "connected to limelight");
 			}
-		};
-		initLimelightThread.start();
+		});
+		limelightThread.startPeriodic(1);
 	}
 }

@@ -8,22 +8,32 @@ public class RobotState {
 	public static enum RobotMode {
 		DISABLED, TELEOP, AUTONOMOUS, TEST
 	}; 
-	protected RobotMode currentMode = RobotMode.DISABLED;
-	protected RobotMode lastMode = RobotMode.DISABLED;
-	protected Timer timer = new Timer();
-	protected double deltaTime = 0;
+	private static RobotMode currentMode = RobotMode.DISABLED;
+	private static RobotMode lastMode = RobotMode.DISABLED;
+	private static Timer timer = new Timer();
+	private static double deltaTime = 0;
 	
-	//Access
-	protected static RobotState instance;
-	protected static RobotState getInstance() { 
-		if (instance == null) 
-			instance = new RobotState();
-		return instance; 
+	//Protected
+	protected static void setMode(RobotMode mode) {
+		currentMode = mode;
+	}
+	protected static void setLastMode(RobotMode mode) {
+		lastMode = mode;
+	}
+	protected static void setDeltaTime(double dt) {
+		deltaTime = dt;
+	}
+	protected static void resetTimer() {
+		timer.reset();
+	}
+	protected static void startTimer() {
+		timer.start();
 	}
 	
 	//External Functions
-	public static boolean isEnabled() { return getInstance().currentMode != RobotMode.DISABLED; }
-	public static RobotMode getMode() { return getInstance().currentMode; }
-	public static double getDeltaTime() { return getInstance().deltaTime; }
-	public static double getTimeSinceEnabled() { return getInstance().timer.get(); }
+	public static boolean isEnabled() { return currentMode != RobotMode.DISABLED; }
+	public static RobotMode getMode() { return currentMode; }
+	public static RobotMode getLastMode() { return lastMode; }
+	public static double getDeltaTime() { return deltaTime; }
+	public static double getTimeSinceEnabled() { return timer.get(); }
 }

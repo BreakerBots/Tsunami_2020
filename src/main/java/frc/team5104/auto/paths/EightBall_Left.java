@@ -8,6 +8,7 @@ import frc.team5104.auto.actions.DriveTrajectoryAction;
 import frc.team5104.auto.actions.IdleAction;
 import frc.team5104.auto.actions.IntakeAction;
 import frc.team5104.auto.actions.ShootAction;
+import frc.team5104.auto.actions.ZeroTurretAction;
 
 /**
  * @startingPosition Left of the Field
@@ -18,6 +19,7 @@ import frc.team5104.auto.actions.ShootAction;
  */
 public class EightBall_Left extends AutoPath {
 	public EightBall_Left() {
+		add(new ZeroTurretAction(0));
 		add(new IntakeAction());
 		add(new DriveTrajectoryAction(true, false,
 				new Position(0, 0, 0),

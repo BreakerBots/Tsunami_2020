@@ -1,7 +1,6 @@
 /*BreakerBots Robotics Team 2020*/
 package frc.team5104;
 
-import edu.wpi.first.wpilibj.RobotState;
 import frc.team5104.Superstructure.SystemState;
 import frc.team5104.auto.AutoManager;
 import frc.team5104.auto.Odometry;
@@ -18,6 +17,8 @@ import frc.team5104.util.console;
 import frc.team5104.util.managers.SubsystemManager;
 import frc.team5104.util.managers.TeleopControllerManager;
 import frc.team5104.util.setup.RobotController;
+import frc.team5104.util.setup.RobotState;
+import frc.team5104.util.setup.RobotState.RobotMode;
 
 public class Robot extends RobotController.BreakerRobot {
 	public Robot() {
@@ -33,9 +34,9 @@ public class Robot extends RobotController.BreakerRobot {
 			new Turret(),
 			new Flywheel(),
 			new Hopper(),
-			new Hood()
-//			new Climber(),
-//			new Paneler()
+			new Hood(),
+			new Climber(),
+			new Paneler()
 		);
 		TeleopControllerManager.useTeleopControllers(
 			new DriveController(),
@@ -86,10 +87,12 @@ public class Robot extends RobotController.BreakerRobot {
 	public void mainStart() {
 		Superstructure.reset();
 		SubsystemManager.reset();
+		CompressorController.stop();
 	}
 	public void mainStop() {
 		Superstructure.reset();
 		SubsystemManager.reset();
+		CompressorController.stop();
 		console.logFile.end();
 	}
 	public void mainLoop() {
@@ -97,7 +100,7 @@ public class Robot extends RobotController.BreakerRobot {
 		SubsystemManager.update();
 		XboxController.update();
 		
-		if (RobotState.isDisabled()) {
+		if (RobotState.getMode() == RobotMode.DISABLED) {
 			Drive.resetEncoders();
 			Drive.resetGyro();
 			Odometry.resetWithoutWaiting();
