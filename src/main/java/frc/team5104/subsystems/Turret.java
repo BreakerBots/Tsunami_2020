@@ -24,18 +24,17 @@ import frc.team5104.util.managers.Subsystem;
 
 public class Turret extends Subsystem {
 	private static TalonFX motor;
-	private static double fieldOrientedOffset = 0;
 	private static PositionController controller;
 	private static LatencyCompensator compensator;
 	private static MovingAverage outputAverage;
-	//private static MovingAverage visionFilter;
-	private static double targetAngle = 0;
+	private static double targetAngle = 0, fieldOrientedOffset = 0, tunerFieldOrientedOffsetAdd;
 	
 	//Loop
 	public void update() {
 		//Competition Debugging
 		if (Constants.AT_COMP) {
 			Tuner.setTunerOutput("Turret Output", motor.getMotorOutputPercent());
+			tunerFieldOrientedOffsetAdd = Tuner.getTunerInputDouble("Turret Field Oriented Offset Add", tunerFieldOrientedOffsetAdd);
 			Constants.TURRET_KP = Tuner.getTunerInputDouble("Turret KP", Constants.TURRET_KP);
 			Constants.TURRET_KD = Tuner.getTunerInputDouble("Turret KD", Constants.TURRET_KD);
 			controller.setPID(Constants.TURRET_KP, 0, Constants.TURRET_KD);
@@ -60,7 +59,11 @@ public class Turret extends Subsystem {
 			}
 
 			//Field Oriented Mode
-			else setAngle(BreakerMath.boundDegrees180(Drive.getGyro() + fieldOrientedOffset));
+			else setAngle(
+				BreakerMath.boundDegrees180(
+					Drive.getGyro() + fieldOrientedOffset + tunerFieldOrientedOffsetAdd
+				)
+			);
 		}
 		
 		//Disabled
