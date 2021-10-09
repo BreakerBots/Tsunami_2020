@@ -11,7 +11,8 @@ public class DriveController extends TeleopController {
 	protected void update() {
 		if (Controls.DRIVE_KICKSTAND.get())
 			kickstand = !kickstand;
-		
+
+		// Note: DRIVE_REVERSE.get() was made by Yasser. It's baddddd
 		double forward = Controls.DRIVE_FORWARD.get() - Controls.DRIVE_REVERSE.get();
 		Controls.DRIVE_TURN.changeCurveX1(DriveHelper.getTurnAdjust(forward));
 		double turn = Controls.DRIVE_TURN.get();

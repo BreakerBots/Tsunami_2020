@@ -79,6 +79,9 @@ public class Turret extends Subsystem {
 		//Exit Calibration
 		if (isCalibrating() && leftLimitHit()) {
 			console.log(c.TURRET, "finished calibration!");
+
+			//System.out.print("yousif is cool");
+
 			Filer.createFile("/tmp/turret_calibrated.txt");
 			stopCalibrating();
 		}

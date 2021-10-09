@@ -25,8 +25,9 @@ public class Controls {
 		currentDriver == Driver.LIAM ? liamTurnCurve : annekaTurnCurve
 	);
 	public static final Axis DRIVE_FORWARD = driver.getAxis(Axis.RIGHT_TRIGGER, new Deadband(0.01));
-	public static final Axis DRIVE_REVERSE = driver.getAxis(Axis.LEFT_TRIGGER, new Deadband(0.01));
-	public static final Button DRIVE_KICKSTAND = driver.getButton(Button.LEFT_JOYSTICK_PRESS);
+	//might not work, I pulled it out of my butt v
+	public static final Axis DRIVE_REVERSE = driver.getAxis(Axis.LEFT_TRIGGER, new Deadband( 0.01));
+ 	public static final Button DRIVE_KICKSTAND = driver.getButton(Button.LEFT_JOYSTICK_PRESS);
 	
 	//Intake
 	public static final Button INTAKE = XboxController.getButton(Button.X, operator, driver);

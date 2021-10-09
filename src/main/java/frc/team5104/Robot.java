@@ -31,10 +31,10 @@ public class Robot extends RobotController.BreakerRobot {
 		SubsystemManager.useSubsystems(
 			new Drive(),
 			new Intake(),
-			new Turret(),
+			// new Turret(),
 			new Flywheel(),
 			new Hopper(),
-			new Hood(),
+			// new Hood(),
 			new Climber(),
 			new Paneler()
 		);
